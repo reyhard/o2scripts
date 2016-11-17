@@ -1,0 +1,66 @@
+#include "std\paramFile.inc"
+
+CheckMaterial={ //[_material, _console]
+
+	private ["_console","_mat","_path","_rvmat","_pfile","_ambient","_diffuse","_forcedDiffuse","_emmisive","_specular","_i"];
+	scopeName "CheckMat";
+	
+	
+	
+	_console=_this @ 1;
+	_mat=_this @ 0;
+	
+	if (typename _mat!="STRING") exitWith {_console<<"Error 1: "<<str(_mat)<<" is not string"<<eoln;;};
+	_path=splitPath _mat;
+	if (count _path<4) exitWith {_console<<"Error 2: "<<str(_mat)<<" is not a pathname"<<eoln;;};
+	if (toupper(_path @ 3) != ".RVMAT") exitWith {_console<<"Error 3: "<<str(_mat)<<" is not RVMAT pathname"<<eoln;;};
+	_rvmat=openFile [_mat,1];
+	if (isnil{_rvmat}) exitWith {_console<<"Error 3: "<<str(_mat)<<" file cannot be opened"<<eoln;;};
+	_pfile=_rvmat call paramFileRead;
+	if (isnil{_pfile}) exitWith {_console<<"Error 4: "<<str(_mat)<<" error in format"<<eoln;;};
+	_ambient=[_pfile,"ambient"] call paramFileFind;
+	if (isnil{_ambient}) then {_console<<"Warning 5: "<<str(_mat)<<": ambient field missing"<<eoln;;};
+	_diffuse=[_pfile,"diffuse"] call paramFileFind;
+	if (isnil{_diffuse}) then {_console<<"Warning 6: "<<str(_mat)<<": diffuse field missing"<<eoln;;};
+	_forcedDiffuse=[_pfile,"forcedDiffuse"] call paramFileFind;
+	if (isnil{_forcedDiffuse}) then {/*_console<<"Error 7: "<<str(_mat)<<": _forcedDiffuse field missing"<<eoln;*/;forceDiffuse=["forceDiffuse","array",[0,0,0,0]];};
+	_emmisive=[_pfile,"emmisive"] call paramFileFind;
+	if (isnil{_emmisive}) then {/*_console<<"Warning 8: "<<str(_mat)<<": _emmisive field missing"<<eoln;*/_emmisive=["_emmisive","array",[0,0,0,0]];;};
+	_specular=[_pfile,"specular"] call paramFileFind;
+	if (isnil{_specular}) then {/*_console<<"Warning 9: "<<str(_mat)<<": _specular field missing"<<eoln;*/_specular=["_specular","array",[0,0,0,0]];;};
+	
+	if (_ambient @ 1!="array") exitWith {_console<<"Error 14: "<<str(_mat)<<": ambient field format error"<<eoln;;};
+	if (_diffuse @ 1!="array") exitWith {_console<<"Error 14: "<<str(_mat)<<": diffuse  field format error"<<eoln;;};
+	if (_forcedDiffuse @ 1!="array") exitWith {_console<<"Error 14: "<<str(_mat)<<": forcedDiffuse  field format error"<<eoln;;};
+	if (_emmisive @ 1!="array") exitWith {_console<<"Error 14: "<<str(_mat)<<": emmisive  field format error"<<eoln;;};
+	if (_specular @ 1!="array") exitWith {_console<<"Error 14: "<<str(_mat)<<": specular field format error"<<eoln;;};
+	
+	_ambient=_ambient @ 2;
+	_diffuse=_diffuse @ 2;
+	_forcedDiffuse=_forcedDiffuse @ 2;
+	_emmisive=_emmisive @ 2;
+	_specular=_specular @ 2;
+	
+	if (count _ambient!=4) exitWith {_console<<"Error 10: "<<str(_mat)<<": ambient field format error"<<eoln;;};
+	if (count _diffuse!=4) exitWith {_console<<"Error 10: "<<str(_mat)<<": diffuse field format error"<<eoln;;};
+	if (count _forcedDiffuse!=4) exitWith {_console<<"Error 10: "<<str(_mat)<<": forcedDiffuse field format error"<<eoln;;};
+	if (count _emmisive!=4) exitWith {_console<<"Error 10: "<<str(_mat)<<": emmisive field format error"<<eoln;;};
+	if (count _specular!=4) exitWith {_console<<"Error 10: "<<str(_mat)<<": specular field format error"<<eoln;;};
+	
+	private ["_parts"];
+	_parts=["Red","Green","Blue"];
+	for "_i" from 0 to 2 do
+	{
+		private ["_xa","_xd","_xf","_xe","_xs"];
+		_xa=_ambient @ _i;
+		_xd=_diffuse @ _i;
+		_xf=_forcedDiffuse @ _i;
+		_xe=_emmisive @ _i;
+		_xs=_specular @ _i;
+		if (_xd+_xf<_xa) then {_console<<"Warning 20: "<<str(_mat)<<": Diff + ForceDiff < Amb  ("<<(_parts @ _i)<<")"<<eoln;};
+		if (_xa>1) then {_console<<"Warning 21: "<<str(_mat)<<": Amb > 1 ("<<(_parts @ _i)<<")"<<eoln;};
+		if (_xd+_xf>1) then {_console<<"Warning 22: "<<str(_mat)<<": Diff + ForceDiff > 1 ("<<(_parts @ _i)<<")"<<eoln;};
+		if (_xs>1) then {_console<<"Warning 23: "<<str(_mat)<<": Specular > 1 ("<<(_parts @ _i)<<")"<<eoln;};
+		if (_xe>0) then {_console<<"Warning 24: "<<str(_mat)<<": Emmisive > 0 ("<<(_parts @ _i)<<")"<<eoln;};
+	};
+};

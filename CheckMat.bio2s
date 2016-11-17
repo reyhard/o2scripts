@@ -1,0 +1,3 @@
+#include "CheckMat.inc.bio2s"
+
+[this,openStandardIO] call CheckMaterial;
