@@ -140,9 +140,10 @@ inLodShow={
 				};
 			};
 
-			//check 3. UV in visible LODS
+			//check 3. UV & named properties in visible LODS
 			if (IS_LOD_RESOLUTION(_resol)) then
 			{
+				//private["_UV","_count","_prop"];
 				_UV =  getUVSetList _obj;
 				_count = count _UV;
 
@@ -159,6 +160,21 @@ inLodShow={
 							}foreach _UV;
 							needSave=true;
 						} else ERROR("no 0 and 1 UV SET");
+					};
+				};
+				_prop = properties _obj;
+				_count = (count _prop)-1;
+				if(_count > 1)then{
+					if (true) then ERROR("multiple named properties detected");
+					if(FIX_P3D)then{
+						if (true) then ERROR("attempting to fix by deleting excese properties [except lodNoShadow]");
+						private ["_i"];
+						for [{_i=0},{_i<_count},{_i=_i+2}] do {
+							if(_prop select _i != "lodnoshadow")then{
+								_obj setProperty [_prop select _i,nil];
+							};
+						};
+						needSave=true;
 					};
 				};
 			};
@@ -241,9 +257,9 @@ inLodShow={
 
 						if (!_nozero) then ERROR("Selection "<<_x<<" has zero mass.");
 						if (!_nozero && FIX_P3D)then{
-							console<<"	attempting to fix it by adding mass = 1."<<eoln;
+							console<<"	attempting to fix it by adding mass = 0.1."<<eoln;
 							{
-								_obj setPointMass [_x,1];
+								_obj setPointMass [_x,0.1];
 							}forEach _nsel;
 							needSave=true;
 						};
@@ -286,63 +302,91 @@ inLodShow={
 			{
 					if ((_resol==LOD_SHADOW_MIN) || (_resol==LOD_SHADOW_MIN+10)|| (_resol==LOD_SHADOW_VIEW_GUNNER)|| (_resol==LOD_SHADOW_VIEW_PILOT)|| (_resol==LOD_SHADOW_VIEW_CARGO)) then
 					{
-							private ["_edges","_quad"];
-							_obj callRuntime "checkclosed";
-							if (countPoints (_obj loadSelection "_current")>0) then ERROR("opened topology detected!");
-							_edges=+[];
-							_quad=false;
-							_obj forEachFace [{true},
-							{
-									private ["_vx","_last"];
-									_vx=getVertices (_obj face _x);
-									_quad=[_quad,true] select (count _vx>3);
-									_last=_vx @ (count _vx-1);
-									{
-											_edges set [count _edges,_last];
-											_edges set [count _edges,_x];
-											_last=_x;
-									}forEach _vx;
-							}];
-							if (_obj testSharpEdges _edges<1) then ERROR("Smooth edges detected");
-							if (_obj testSharpEdges _edges<1 && FIX_P3D) then {
-								console<<"	attempting to fix it by making all edges sharp."<<eoln;
-								_obj sharpEdges _edges;
-								needSave=true;
+						private ["_edges","_quad"];
+						_obj callRuntime "checkclosed";
+						if (countPoints (_obj loadSelection "_current")>0) then ERROR("opened topology detected!");
+						_edges=+[];
+						_quad=false;
+						_obj forEachFace [{true},
+						{
+								private ["_vx","_last"];
+								_vx=getVertices (_obj face _x);
+								_quad=[_quad,true] select (count _vx>3);
+								_last=_vx @ (count _vx-1);
+								{
+										_edges set [count _edges,_last];
+										_edges set [count _edges,_x];
+										_last=_x;
+								}forEach _vx;
+						}];
+						if (_obj testSharpEdges _edges<1) then ERROR("Smooth edges detected");
+						if (_obj testSharpEdges _edges<1 && FIX_P3D) then {
+							console<<"	attempting to fix it by making all edges sharp."<<eoln;
+							_obj sharpEdges _edges;
+							needSave=true;
+						};
+						if (_quad) then{
+							if (true) then ERROR("Polygons detected (only triangles allowed)");
+							if(FIX_P3D)then{
+								//if (true) then ERROR("attempting to fix by triangulation selections");
+								//_sel=	_obj loadSelection "open";
+								//_sel callRuntime "triangulatesel";
 							};
-							if (_quad) then{
-								if (true) then ERROR("Polygons detected (only triangles allowed)");
-								if(FIX_P3D)then{
-									//if (true) then ERROR("attempting to fix by triangulation selections");
-									//_sel=	_obj loadSelection "open";
-									//_sel callRuntime "triangulatesel";
+						};
+						//if (_resol>LOD_SHADOW_MIN) then ERROR("Warrning: Shadow volume LOD number different than 0");
+						if (_resol==LOD_SHADOW_MIN) then
+						{
+								private ["_num","_faceT","_texture","_material","_x","_txLinkBugInShadow","_matLinkBugInShadow"];
+								_num =  countFaces _obj;
+								for "_x" from 0 to _num do
+								{
+										_faceT =_obj face _X;
+										_texture = getTexture _FaceT;
+										_material = getMaterial _FaceT;
+										if (_texture!="") then {_txLinkBugInShadow=1};
+										if (_material!="") then {_matLinkBugInShadow=1};
+								};
+								if (_txLinkBugInShadow==1) then ERROR("Warrning: There is a texture link");
+								if (_matLinkBugInShadow==1) then ERROR("Warrning: There is a material link");
+						};
+						_chckSHDProp=_obj getProperty "LODNoShadow";
+						if (_chckSHDProp=="1") then {
+							if(true) then ERROR("Warrning: ShadowVolume disabled by property");
+							if(FIX_P3D)then{
+								if (true) then ERROR("attempting to fix by deleting excese properties");
+								private ["_prop","_count"];
+								_prop=  properties _obj;
+								_count = (count _prop)-1;
+								private ["_i"];
+								for [{_i=0},{_i<=_count},{_i=_i+2}] do {
+									_obj setProperty [_prop select _i,nil];
+									needSave=true;
 								};
 							};
-							//if (_resol>LOD_SHADOW_MIN) then ERROR("Warrning: Shadow volume LOD number different than 0");
-							if (_resol==LOD_SHADOW_MIN) then
-							{
-									private ["_num","_faceT","_texture","_material","_x","_txLinkBugInShadow","_matLinkBugInShadow"];
-									_num =  countFaces _obj;
-									for "_x" from 0 to _num do
-									{
-											_faceT =_obj face _X;
-											_texture = getTexture _FaceT;
-											_material = getMaterial _FaceT;
-											if (_texture!="") then {_txLinkBugInShadow=1};
-											if (_material!="") then {_matLinkBugInShadow=1};
-									};
-									if (_txLinkBugInShadow==1) then ERROR("Warrning: There is a texture link");
-									if (_matLinkBugInShadow==1) then ERROR("Warrning: There is a material link");
-							};
-							_chckSHDProp=_obj getProperty "LODNoShadow";
-							if (_chckSHDProp=="1") then ERROR("Warrning: ShadowVolume disabled by property");
+						};
 					}
 					else
 					{
-							if (_resol==LOD_SHADOW_MIN+1000) then
-							{
-									_chckSHDProp=_obj getProperty "LODNoShadow";
-									if (_chckSHDProp=="1") then ERROR("Warrning: ShadowVolume disabled by property");
-							} else ERROR("ShadowVolume "+str(_resol-LOD_SHADOW_MIN)+" is not supported");
+						if (_resol==LOD_SHADOW_MIN+1000) then
+						{
+							_chckSHDProp=_obj getProperty "LODNoShadow";
+							if (_chckSHDProp=="1") then {
+								if(true) then ERROR("Warrning: ShadowVolume disabled by property");
+								if(FIX_P3D)then{
+									if (true) then ERROR("attempting to fix by deleting excese properties");
+									private ["_prop","_count"];
+									_prop=  properties _obj;
+									_count = (count _prop)-1;
+									private ["_i"];
+									for [{_i=0},{_i<=_count},{_i=_i+2}] do {
+										if(_prop select _i != "lodnoshadow")then{
+											_obj setProperty [_prop select _i,nil];
+										};
+										needSave=true;
+									};
+								};
+							};
+						} else ERROR("ShadowVolume "+str(_resol-LOD_SHADOW_MIN)+" is not supported");
 
 					};
 			};
@@ -352,35 +396,37 @@ inLodShow={
 
 			private ["_reportMissing"];
 			_reportMissing={
-					private ["_file"];
-					if ((_x!="")and (_x@0!="#")) then
+				private ["_file"];
+				if ((_x!="")and (_x@0!="#")) then
+				{
+				   _file=openFile [texpath+_x,0];
+					_slash = _x find "/";
+					if ((isnil "_file")or(!isnil "_slash")) then ERROR("reference to file "<<_x<<" is invalid")
+					else
 					{
-						   _file=openFile [texpath+_x,0];
-							_slash = _x find "/";
-							if ((isnil "_file")or(!isnil "_slash")) then ERROR("reference to file "<<_x<<" is invalid")
-							else
+						if (_this==1) then
+						{
+							_x=tolower (texpath+_x);
+							if (!(_x in collectMats)) then
 							{
-									if (_this==1) then
-									{
-												_x=tolower (texpath+_x);
-											if (!(_x in collectMats)) then
-											{
-													collectMats set [count collectMats,_x];
-											};
-									};
+									collectMats set [count collectMats,_x];
 							};
+						};
 					};
+				};
 			};
 
-			/*{
-					0 call _reportMissing;
-					if ((_x!="")and (_x@0!="#")) then
-					{
-							_iscorect = _x findi "_co.tga";
-							_iscorect2 = _x findi "_ca.tga";
-							if (( isnil "_iscorect")and( isnil "_iscorect2")) then ERROR("texture "<<_x<<" is is not ""_co.tga"" || ""_ca.tga"" ending")
-						};
-				} forEach (_obj callRuntime "texlist");*/
+			/*
+			{
+				0 call _reportMissing;
+				if ((_x!="")and (_x@0!="#")) then
+				{
+					_iscorect = _x findi "_co.tga";
+					_iscorect2 = _x findi "_ca.tga";
+					if (( isnil "_iscorect")and( isnil "_iscorect2")) then ERROR("texture "<<_x<<" is is not ""_co.tga"" || ""_ca.tga"" ending")
+				};
+			} forEach (_obj callRuntime "texlist");
+			*/
 			{1 call _reportMissing} forEach (_obj callRuntime "matlist");
 
 
@@ -585,6 +631,9 @@ inLodShow={
 							_obj setPointFlags [_x,POINT_DECAL_MASK,0];
 							_obj setPointFlags [_x,POINT_USER_MASK,0];
 							_obj setPointFlags [_x,POINT_SPECIAL_MASK,0];
+							_obj setPointFlags [_x,[10,11],0];
+							_obj setPointFlags [_x,[14,15],0];
+							_obj setPointFlags [_x,[28,31],0];
 						};
 					};
 				};
