@@ -1,0 +1,2 @@
+"C:\Program Files (x86)\Steam\SteamApps\common\Arma 3 Tools\ObjectBuilder\O2Script.exe"  "C:\Program Files (x86)\Steam\SteamApps\common\Arma 3 Tools\ObjectBuilder\RDS\o2scripts\RDS_Check_All.bio2s" %1
+pause

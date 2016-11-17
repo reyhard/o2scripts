@@ -241,6 +241,7 @@ inLodShow={
 							{
 								_obj setPointMass [_x,1];
 							}forEach _nsel;
+							needSave=true;
 						};
 					};
 
@@ -304,7 +305,14 @@ inLodShow={
 								_obj sharpEdges _edges;
 								needSave=true;
 							};
-							if (_quad) then ERROR("Polygons detected (only triangles allowed)");
+							if (_quad) then{
+								if (true) then ERROR("Polygons detected (only triangles allowed)");
+								if(FIX_P3D)then{
+									//if (true) then ERROR("attempting to fix by triangulation selections");
+									//_sel=	_obj loadSelection "open";
+									//_sel callRuntime "triangulatesel";
+								};
+							};
 							//if (_resol>LOD_SHADOW_MIN) then ERROR("Warrning: Shadow volume LOD number different than 0");
 							if (_resol==LOD_SHADOW_MIN) then
 							{
@@ -723,7 +731,7 @@ inLodShow={
 	};
 	if (needSave) then
 	{
-		console<<"Saving file."<<eoln;
+		console<<eoln<<eoln<<"Saving file. ATTENTION:  DO NOT FORGET TO REAPPLY MASS TO GEOMETRY PHYSX LOD"<<eoln<<eoln<<eoln;
 		if (!save p3d)then {console <<"unable to SAVE "<<p3dname<<eoln;};
 	};
 	console<<"Done."<<eoln;
