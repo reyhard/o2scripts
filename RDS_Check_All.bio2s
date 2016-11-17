@@ -29,6 +29,7 @@ inLodShow={
 
 #define ERROR(x) {console<<(_resol call inLodShow)<<"	"<<x<<eoln;}
 #define ERROR_LOG(x) ERROR(x)
+// define if you want autofix detected issues
 #define FIX_P3D true
 
 
@@ -44,7 +45,7 @@ inLodShow={
 		p3dname=this;
 		if (!(p3d loadP3d this)) then {	console<<"Unable to open:"<<this<<eoln;BreakTo "CheckAll";};
 		runFromO2=false;
-		texpath="H:\Projekty\Arma3\";
+		texpath="H:\Projekty\Arma3\"; // define path to your project, most people will use P:\
 		//texpath=((splitPath p3dname) @ 0);
 		console<<"----------------------------------------------------------------------"<<eoln;
 		console<<"Checking file: "<<p3dname<<eoln;
@@ -164,6 +165,7 @@ inLodShow={
 
 			// proxies
 			 _names= [];
+			 _proxies = 0;
 			{
 				if (tolower _x in _names) then ERROR("duplicate named selection ("<<_x<<")");
 				_names=_names+[tolower _x];
@@ -183,8 +185,9 @@ inLodShow={
 							};
 						}forEach getSelections _obj;
 					};
+					_proxies= _proxies + (countPoints _nsel);
 					// delete proxies
-					deleteSelected _nsel;
+					//deleteSelected _nsel;
 				};
 
 			}forEach getSelections _obj;
@@ -213,7 +216,8 @@ inLodShow={
 				if (_isol>0) then ERROR("has incorrectly generated components."<<eoln
 						<<"     "<<str(_isol)<<" point(s) aren't selected.");
 				_obj callRuntime "checkclosed";
-				if (countPoints (_obj loadSelection "_current")>0) then ERROR("opened topology detected!");
+
+				if (countPoints (_obj loadSelection "_current")>_proxies) then ERROR("opened topology detected! ");
 				_obj callRuntime "checkconvexity";
 				if (countPoints (_obj loadSelection "_current")>0) then ERROR("non-convex points detected!");
 			};
@@ -223,7 +227,7 @@ inLodShow={
 			if (_resol==LOD_GEOMETRY) then
 			{
 				{
-					private "_nsel,_nozero";
+					private ["_nsel","_nozero"];
 					_nozero=false;
 					_sel = (_obj loadSelection _x);
 					_nsel=getSelectedPoints _sel;
