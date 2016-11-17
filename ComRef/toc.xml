@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml-stylesheet href="toc.xsl" type="text/xsl"?>
+<!DOCTYPE tocdoc SYSTEM "comref.dtd">
+
+<tocdoc>
+	<toc>
+		<tocentry>
+			<target>full</target>
+			<link>header.xml</link>
+			<name>About...</name>
+		</tocentry>
+		<tocentry>
+			<link>commandindex</link><name>Commands</name>
+			<commandreference>
+				&comref;
+			</commandreference>
+		</tocentry>
+		<tocentry>
+			<link>typeindex</link>
+			<name>Types</name>
+		</tocentry>
+		<tocentry>
+			<link>arrayindex</link>
+			<name>Common array formats</name>
+		</tocentry>
+		<tocentry>
+			<link>scripting</link>
+			<name>Scripting topics</name>
+		</tocentry>
+		<tocentry>
+			<link>class</link>
+			<name>String values</name>
+		</tocentry>
+	</toc>
+</tocdoc>

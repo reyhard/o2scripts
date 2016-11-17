@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml-stylesheet href="headerIE5.xsl" type="text/xsl"?>
+
+<header>
+	<name>Scripting Commands</name>
+	<version>1.85</version>
+	<copyright>Copyright (C) 2001, Bohemia Interactive Studio</copyright>
+	<link>www.bistudio.com</link>
+
+	<toc>
+		<tocentry>
+			<link>commandindex</link><name>Commands</name>
+		</tocentry>
+		<tocentry>
+			<link>typeindex</link><name>Types</name>
+		</tocentry>
+		<tocentry>
+			<link>arrayindex</link><name>Common array formats</name>
+		</tocentry>
+	</toc>
+</header>

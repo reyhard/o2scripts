@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml-stylesheet href="header.xsl" type="text/xsl"?>
+<!DOCTYPE header SYSTEM "comref.dtd">
+
+<header>
+	<name>Scripting Commands</name>
+	<version>1.85</version>
+	<copyright>Copyright (C) 2001-2002, Bohemia Interactive Studio,</copyright>
+	<companyUrl>www.bistudio.com</companyUrl>
+	<link>https://community.bistudio.com/wiki/Main_Page</link>
+</header>

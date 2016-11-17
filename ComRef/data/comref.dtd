@@ -1,0 +1,73 @@
+<!ENTITY comref SYSTEM "comref.xml">
+<!ENTITY script SYSTEM "script.xml">
+<!ENTITY class SYSTEM "class.xml">
+
+<!ELEMENT tocdoc (toc*)>
+<!ELEMENT header (name,version,copyright,companyUrl,link)>
+<!ELEMENT version (#PCDATA)>
+<!ELEMENT copyright (#PCDATA)>
+<!ELEMENT companyUrl (#PCDATA)>
+<!ELEMENT link (#PCDATA)>
+
+<!ELEMENT commandreference (versionFrom?,versionTo?,commandlist,typelist?,arraylist?,scripting?,classlist?)>
+<!ELEMENT versionFrom (#PCDATA)>
+<!ELEMENT versionTo (#PCDATA)>
+
+<!ELEMENT commandlist (name,command*)>
+<!ELEMENT scripting (topic*)>
+<!ELEMENT topic (name,description)>
+<!ELEMENT classlist (class*)>
+<!ELEMENT class (name,description,value*)>
+<!ELEMENT value (name,description,scope?,base?)>
+<!ELEMENT scope (#PCDATA)>
+<!ELEMENT base (#PCDATA)>
+
+
+<!ELEMENT command
+(
+	name, 
+	loper?, lopertype?, roper?, ropertype?,
+	since?, changed?, 
+	returntype,
+	description,
+	example?, exResult?,category?
+)
+>
+<!ATTLIST command letter CDATA #REQUIRED>
+
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT returntype (#PCDATA)>
+<!ELEMENT loper (#PCDATA)>
+<!ELEMENT roper (#PCDATA)>
+<!ELEMENT lopertype (#PCDATA)>
+<!ELEMENT ropertype (#PCDATA)>
+<!ELEMENT description (#PCDATA | ar | t | f | cl | i | b | br | tab | nibr)*>
+<!ELEMENT since (#PCDATA)>
+<!ELEMENT changed (#PCDATA)>
+<!ELEMENT example (#PCDATA)>
+<!ELEMENT exResult (#PCDATA)>
+
+<!ELEMENT ar (#PCDATA)>
+<!ELEMENT cl (#PCDATA)>
+<!ELEMENT t (#PCDATA)>
+<!ELEMENT f (#PCDATA)>
+<!ELEMENT i (#PCDATA | f)*>
+<!ELEMENT b (#PCDATA)>
+<!ELEMENT typelist (type*)>
+<!ELEMENT tab EMPTY>
+<!ELEMENT br EMPTY>
+<!ELEMENT nibr EMPTY>
+
+<!ELEMENT type (name,description)>
+
+<!ELEMENT arraylist (array*)>
+
+<!ELEMENT array (name,format,description)>
+<!ELEMENT format (#PCDATA)>
+
+<!ELEMENT toc (tocentry*)>
+
+<!ELEMENT tocentry (target?,(href | link),name,commandreference?)>
+
+<!ELEMENT href (#PCDATA)>
+<!ELEMENT target (#PCDATA)>

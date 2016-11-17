@@ -1,0 +1,127 @@
+/*
+TEXMERGE COMMANDS:
+
+OPEN filename        - opens PTM file
+NEW                  - creates empty project
+SAVE [filename]      - save PTM file
+GENERATE [path]      - generate textures
+AUTOARRANGE set,grow - autoarranges textures
+                         set = <index>|current|all
+                         grow = (on|off)
+ADDSET               - adds new set and selects it as current
+SETSIZE width,height - sets with and height of set
+SETTEX filename      - sets texture of set
+INFOSET              - displays information about set
+INFOSET[]            - displays information about set-script form (array)
+DELSET i             - removes set
+SELSET i             - selects set
+CURSET               - shows current set
+NSETS                - displays number of sets
+ADDITEM filename     - adds texture to set
+DELETEITEM i         - removes texture from set
+INFOITEM i           - informations about item
+INFOITEM i[]         - informations about item in script form (array)
+NITEMS               - displays number of items
+TRANSFORM texture    - calculates transform matrix for texture, and show
+                       name of merged texture
+TRANSFORMBACK u,v,tex- transforms back from merged to unmerged
+                         u,v - coordinates of center of bounding rectangle
+                         tex - merged texture name
+                       To get u,v parameters,take all uvs from face(s) and
+                       calculate the center of UV bounding rectangle
+TGAMODE [on|off]     - enables or disables TGA export
+FOREACHSET command   - function repeates command for each set.
+                     - note: use %d as index
+                     - note: Each command prints status
+FOREACHITEM command  - function repeates command for each item.
+                     - note: use %d as index
+                     - note: Each command prints status
+ECHO text            - prints text (+OK is omnitted)
+QUIT                 - exit server
+QUITAPP              - exit server and TexMerge
+
+INIT:
+
+call texMergeInit;
+
+USAGE:
+
+
+result="command" call texMerge 
+
+to read extra data
+
+extraData=call texMergeReadData
+*/
+
+
+texMergeCmdLine="TexMerge.exe /server";
+
+
+testTexMergeError={
+	private "_line";
+	private "_texMergeResult";
+	_line=getLine _this;
+	if (_line @ [0,4]=="-ERR") then
+	{
+		if (count _line>5) then {_line=_line @ [5]}
+		else {_line="";};
+		throw ["TEXMERGE","error",_line];
+	}
+	else { if (_line @ [0,3]=="+OK") then
+	{
+		if (count _line>4) then {_texMergeResult=_line @ [4]}
+		else {_texMergeResult=""};
+	}
+	else 
+	{
+		throw ["TEXMERGE","unknown reply",_line];
+	}};
+	if (_texMergeResult @ [0,11]=="ScriptForm:") then
+	{
+		_texMergeResult=call getLine _this;
+		getLine _this; //DOT
+	};
+	_texMergeResult
+};
+
+texMergeInit={
+	texMergeServer=shellCmdOpenPipe texMergeCmdLine;
+	texMergeServer call testTexMergeError
+};
+
+texMergeDone={
+	texMergeServer<<"QuitApp"<<eoln;
+	texMergeServer=nil;
+};
+
+
+texMerge={
+	texMergeServer<<_this<<eoln;
+	texMergeServer call testTexMergeError
+};
+
+texMergeReadData={
+	private ["_data","_line"];
+	_data=+[];
+	_line=getLine texMergeServer;
+	while {_line!="."} do
+	{
+		_data set [count _data,_line];
+		_line=getLine texMergeServer;
+	};
+	_data
+};
+
+
+
+texMergeBatch={
+	private "_batchCnt";
+	_batchCnt=1;	
+	while {_batchCnt>0} do
+	{
+		_line=texMergeServer call testTexMergeError;
+		if (_line=="Batch begin") then {_batchCnt=_batchCnt+1;};
+		if (_line=="Batch end") then {_batchCnt=_batchCnt-1;};
+	}	
+};

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE commandreference SYSTEM "comref.dtd">
+<?xml-stylesheet href="index.xsl" type="text/xsl"?>
+
+<commandreference>
+&comref;
+&script;
+&class;
+</commandreference>
+

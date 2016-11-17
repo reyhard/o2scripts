@@ -1,0 +1,733 @@
+#include "std\lodNames.inc"
+#include "std\o2config.inc"
+#include "std\paramFile.inc"
+#include "CheckMat.inc.bio2s"
+#include "std\flags.inc"
+
+
+
+scopeName "CheckAll";
+
+console=openStandardIO;
+
+lastLodShow=-1;
+inLodShow={
+	private "_res";
+	bugreported=true;
+	if (lastLodShow!=_this) then
+	{
+		_res=eoln+"In level "+(_this call lodNameGetName)+":"+eoln;
+		lastLodShow=_this;
+	}
+	else
+	{
+		_res="";
+	};
+	_res
+};
+
+
+#define ERROR(x) {console<<(_resol call inLodShow)<<"	"<<x<<eoln;}
+#define ERROR_LOG(x) ERROR(x)
+#define FIX_P3D true
+
+
+0 call
+{
+	needSave=false;
+	bugreported=false;
+
+	if (this in ["options"]) then {messageBox ["No options are available in this script!",0];BreakTo "CheckAll";};
+	if (typename this=="STRING") then
+	{
+		p3d=newLODObject;
+		p3dname=this;
+		if (!(p3d loadP3d this)) then {	console<<"Unable to open:"<<this<<eoln;BreakTo "CheckAll";};
+		runFromO2=false;
+		texpath="H:\Projekty\Arma3\";
+		//texpath=((splitPath p3dname) @ 0);
+		console<<"----------------------------------------------------------------------"<<eoln;
+		console<<"Checking file: "<<p3dname<<eoln;
+	}
+	else
+	{
+		p3dname=nameof this;
+		p3dname=splitPath p3dname;
+		p3dname=p3dname @ 2 + p3dname @ 3;
+		runFromO2=true;
+		p3d=this;
+		o2GetConfig IDS_CFGPATHFORTEX;
+		console<<"--------- Checking "<<p3dname<<" ------"<<eoln;
+	};
+
+	objects=getObjects p3d;
+	resols=getResolutions p3d;
+	collectMats=+[];
+
+	_hasView = false;
+	_hasFire = false;
+	_hasSW1000 = false;
+
+	for "_i" from 0 to (count p3d-1) do
+	{
+		private ["_obj","_resol","_isol","_numsect","_degen"];
+		_resol=resols @ _i;
+		_obj=objects @ _i;
+
+		// check isolated points
+		if (_resol<LOD_EDIT_MIN || _resol>=LOD_EDIT_MAX) then
+		{
+			// check characters skining (count not full keight (<100%) must be less that 3)
+			/*if (IS_LOD_RESOLUTION(_resol) || (_resol>=LOD_SHADOW_MIN && _resol<=LOD_SHADOW_MAX)) then
+			{
+				_obj forEachFace [{true},
+				{
+					_vx=getVertices (_obj face _x);
+						};
+			};   */
+
+			if (IS_LOD_RESOLUTION(_resol) || _resol==LOD_MEMORY || (_resol>=LOD_SHADOW_MIN && _resol<=LOD_SHADOW_MAX)) then
+			{
+					_obj callRuntime "isolatedpts";
+					_isol=getSelectedPoints (_obj loadSelection "_current");
+					if (count _isol>0) then
+					{
+							private ["_nsel","_pt"];
+							{_pt=_x;
+									{_nsel=_obj loadSelection _x;
+											if (_nsel isPointSelected _pt) exitWith {_isol=_isol-[_pt];};
+									}forEach GetSelections _obj
+							}forEach _isol;
+
+					};
+					_isol=count _isol;
+					if (_isol>0) then
+							ERROR("found isolated "<<str(_isol)<<" point(s)");
+			};
+
+			// check resolution levels for sections & blank lods
+
+			if (IS_LOD_RESOLUTION(_resol)) then
+			{
+					private "_mult";
+					_mult=[_resol,1] select (_resol>=1000);
+					_numsect=_obj callRuntime "countsections";
+					if (_numsect>1 && _numsect * _mult >50) then ERROR("probably too many sections ("<<str(_numsect)<<")");
+					if (_numsect == 0)then ERROR("blank lod detected");
+			};
+
+			//check 2. UV in not visible LODS
+			if (NOT IS_LOD_RESOLUTION(_resol)) then
+			{
+				_UV =  getUVSetList _obj;
+				_count = count _UV;
+
+				if (_count>1) then{
+					if (true) then ERROR("2nd UV in special lod ");
+					if(FIX_P3D)then{
+						if (true) then ERROR("attempting to fix by deleting excese uv sets");
+						if (0 in _UV) then
+						{
+							_obj setActiveUVSet 0;
+							_UV = _UV- [0];
+							{
+								_obj deleteUVSet _x;
+							}foreach _UV;
+							needSave=true;
+						} else ERROR("no 0 and 1 UV SET");
+					};
+				};
+			};
+
+			//check 3. UV in visible LODS
+			if (IS_LOD_RESOLUTION(_resol)) then
+			{
+				_UV =  getUVSetList _obj;
+				_count = count _UV;
+
+				if (_count>2) then{
+					if (true) then ERROR("3rd UV not supported");
+					if(FIX_P3D)then{
+						if (true) then ERROR("attempting to fix by deleting excese uv sets");
+						if ((0 in _UV)and (1 in _UV)) then
+						{
+							_obj setActiveUVSet 0;
+							_UV = _UV- [0,1];
+							{
+								_obj deleteUVSet _x;
+							}foreach _UV;
+							needSave=true;
+						} else ERROR("no 0 and 1 UV SET");
+					};
+				};
+			};
+
+			// proxies
+			 _names= [];
+			{
+				if (tolower _x in _names) then ERROR("duplicate named selection ("<<_x<<")");
+				_names=_names+[tolower _x];
+				private "_nsel";
+				if (_x @ [0,6]=="proxy:")  then
+				{
+					_nsel=_obj loadSelection _x;
+					// check name selections in geometry
+					if (_resol in LOD_ARR_GEOMETRY) then
+					{
+						{
+							if (_x @ [0,9]=="Component") then
+							{
+									_nselB=_obj loadSelection _x;
+									_nselB &= _nsel; // intersection of named selections
+									if (countPoints _nselB > 0) then ERROR("strange convex component in named selection ("<<_x<<")");
+							};
+						}forEach getSelections _obj;
+					};
+					// delete proxies
+					deleteSelected _nsel;
+				};
+
+			}forEach getSelections _obj;
+
+			// check levels for degenerated faces
+
+			_obj callRuntime "degfaces";
+			_degen=getSelectedPoints (_obj loadSelection "_current");
+			if (count _degen>0) then
+				ERROR("found degenerated face(s)");
+
+			// check unselected points in geometry
+
+			if (_resol in LOD_ARR_GEOMETRY) then
+			{
+				private ["_sel"];
+				_sel=newSelection _obj;
+				selectAll _sel;
+				{
+					private "_nsel";
+					_nsel=_obj loadSelection _x;
+					_sel-=_nsel;
+				}forEach getSelections _obj;
+				_obj forEachPoint [{(_sel weight _x)<0.2},{_sel unselectPoint _x}];
+				_isol=countPoints _sel;
+				if (_isol>0) then ERROR("has incorrectly generated components."<<eoln
+						<<"     "<<str(_isol)<<" point(s) aren't selected.");
+				_obj callRuntime "checkclosed";
+				if (countPoints (_obj loadSelection "_current")>0) then ERROR("opened topology detected!");
+				_obj callRuntime "checkconvexity";
+				if (countPoints (_obj loadSelection "_current")>0) then ERROR("non-convex points detected!");
+			};
+
+			// check for zero mass
+
+			if (_resol==LOD_GEOMETRY) then
+			{
+				{
+					private "_nsel,_nozero";
+					_nozero=false;
+					_sel = (_obj loadSelection _x);
+					_nsel=getSelectedPoints _sel;
+					_fsel=getSelectedFaces  _sel;
+					if ((_x @ [0,9]=="Component")and(count _fsel <4)) then ERROR("Selection "<<_x<<" none face selected");
+					if (count _nsel>0) then
+					{
+						{
+								if (_obj getPointMass _x>0) exitWith {_nozero=true;}
+						}forEach _nsel;
+
+						if (!_nozero) then ERROR("Selection "<<_x<<" has zero mass.");
+						if (!_nozero && FIX_P3D)then{
+							console<<"	attempting to fix it by adding mass = 1."<<eoln;
+							{
+								_obj setPointMass [_x,1];
+							}forEach _nsel;
+						};
+					};
+
+				}forEach getSelections _obj;
+
+				if ((_obj getProperty "sbsource" != "") and (_hasSW1000)) then ERROR_LOG("Probably using flag sbsource=shadowvolume and shadow buffer LOD is already present. Generated shadow buffer LODs are not used.");
+			};
+
+			/// check for sbsource property while having shadow buffer lod defined
+			if (_resol==LOD_GEOMETRY) then
+			{
+				if ((_obj getProperty "sbsource" != "") and (_hasSW1000)) then ERROR_LOG("Probably using flag sbsource=shadowvolume and shadow buffer LOD is already present. Generated shadow buffer LODs are not used.");
+			};
+
+			if (LOD_SHADOW_MIN+1000<=_resol and LOD_SHADOW_MAX>_resol) then
+			{
+				_hasSW1000 = true;
+			};
+
+			// check for less than 3 Points in selections within Geo
+
+			if (_resol==LOD_GEOMETRY) then
+			{
+				{
+					private "_nsel";
+					_nozero=false;
+					_nsel=getSelectedPoints (_obj loadSelection _x);
+					_testComponent=  _x@[0,9] findi "Component";
+					if ( !(isnil "_testComponent") && (count _nsel < 3) ) then {
+						ERROR("Selection "<<_x<<" has less then 3 points.")
+					};
+				}forEach getSelections _obj;
+			};
+
+			// check shadow
+			//if (_resol>=LOD_SHADOW_MIN) then {halt;};
+			if (IS_LOD_SHADOW(_resol)) then
+			{
+					if ((_resol==LOD_SHADOW_MIN) || (_resol==LOD_SHADOW_MIN+10)|| (_resol==LOD_SHADOW_VIEW_GUNNER)|| (_resol==LOD_SHADOW_VIEW_PILOT)|| (_resol==LOD_SHADOW_VIEW_CARGO)) then
+					{
+							private ["_edges","_quad"];
+							_obj callRuntime "checkclosed";
+							if (countPoints (_obj loadSelection "_current")>0) then ERROR("opened topology detected!");
+							_edges=+[];
+							_quad=false;
+							_obj forEachFace [{true},
+							{
+									private ["_vx","_last"];
+									_vx=getVertices (_obj face _x);
+									_quad=[_quad,true] select (count _vx>3);
+									_last=_vx @ (count _vx-1);
+									{
+											_edges set [count _edges,_last];
+											_edges set [count _edges,_x];
+											_last=_x;
+									}forEach _vx;
+							}];
+							if (_obj testSharpEdges _edges<1) then ERROR("Smooth edges detected");
+							if (_obj testSharpEdges _edges<1 && FIX_P3D) then {
+								console<<"	attempting to fix it by making all edges sharp."<<eoln;
+								_obj sharpEdges _edges;
+								needSave=true;
+							};
+							if (_quad) then ERROR("Polygons detected (only triangles allowed)");
+							//if (_resol>LOD_SHADOW_MIN) then ERROR("Warrning: Shadow volume LOD number different than 0");
+							if (_resol==LOD_SHADOW_MIN) then
+							{
+									private ["_num","_faceT","_texture","_material","_x","_txLinkBugInShadow","_matLinkBugInShadow"];
+									_num =  countFaces _obj;
+									for "_x" from 0 to _num do
+									{
+											_faceT =_obj face _X;
+											_texture = getTexture _FaceT;
+											_material = getMaterial _FaceT;
+											if (_texture!="") then {_txLinkBugInShadow=1};
+											if (_material!="") then {_matLinkBugInShadow=1};
+									};
+									if (_txLinkBugInShadow==1) then ERROR("Warrning: There is a texture link");
+									if (_matLinkBugInShadow==1) then ERROR("Warrning: There is a material link");
+							};
+							_chckSHDProp=_obj getProperty "LODNoShadow";
+							if (_chckSHDProp=="1") then ERROR("Warrning: ShadowVolume disabled by property");
+					}
+					else
+					{
+							if (_resol==LOD_SHADOW_MIN+1000) then
+							{
+									_chckSHDProp=_obj getProperty "LODNoShadow";
+									if (_chckSHDProp=="1") then ERROR("Warrning: ShadowVolume disabled by property");
+							} else ERROR("ShadowVolume "+str(_resol-LOD_SHADOW_MIN)+" is not supported");
+
+					};
+			};
+
+			// collect materials
+			// check wrong material or texture links
+
+			private ["_reportMissing"];
+			_reportMissing={
+					private ["_file"];
+					if ((_x!="")and (_x@0!="#")) then
+					{
+						   _file=openFile [texpath+_x,0];
+							_slash = _x find "/";
+							if ((isnil "_file")or(!isnil "_slash")) then ERROR("reference to file "<<_x<<" is invalid")
+							else
+							{
+									if (_this==1) then
+									{
+												_x=tolower (texpath+_x);
+											if (!(_x in collectMats)) then
+											{
+													collectMats set [count collectMats,_x];
+											};
+									};
+							};
+					};
+			};
+
+			/*{
+					0 call _reportMissing;
+					if ((_x!="")and (_x@0!="#")) then
+					{
+							_iscorect = _x findi "_co.tga";
+							_iscorect2 = _x findi "_ca.tga";
+							if (( isnil "_iscorect")and( isnil "_iscorect2")) then ERROR("texture "<<_x<<" is is not ""_co.tga"" || ""_ca.tga"" ending")
+						};
+				} forEach (_obj callRuntime "texlist");*/
+			{1 call _reportMissing} forEach (_obj callRuntime "matlist");
+
+
+			private "_checkUVSource";
+			_checkUVSource={
+					private ["_matname","_paramFile"];
+					_matname=texpath+_x;
+					_paramFile=openFile [_matname,1];
+					if (!isnil{_paramFile}) then
+					{
+							_paramFile=_paramFile call ParamFileRead;
+							if (!isnil{_paramFile}) then
+							{
+									private "_findUvSource";
+									_findUvSource={
+											if (_x @ 1=="class") then
+											{
+													_findUvSource forEach (_x @ 2);
+											}else{
+											if (tolower(_x @ 0)=="uvsource") then
+											{
+													private "_tmp";
+													_tmp=_x @ 2;
+													if (_tmp=="tex") then
+													{
+															_tmp="tex0";
+													};
+													if (_tmp @ [0,3]=="tex") then
+													{
+															_tmp=val(_tmp@[3]);
+															if (!(_obj isuvset _tmp)) then
+																	ERROR("Referenced unknown uv-set: "<<str(_tmp)<<" by material "<<_matname);
+													};
+
+											};};
+									};
+									_findUvSource forEach _paramFile;
+							}
+							else
+							{
+							ERROR("Parse error: "<<_matname);
+							};
+					};
+			};
+			_checkUVSource forEach (_obj callRuntime "matlist");
+
+
+
+
+			// check ST coordinates
+			if (false and IS_LOD_RESOLUTION(_resol)) then
+			{
+				_deleteMaterial=
+				{
+						_material=getMaterial (_obj face _x);
+						if (_material=="") then
+						{
+								_actual=newSelection _obj;
+								_actual selectFace _x;
+								deleteSelected _actual;
+						};
+				};
+				_obj forEachFace [{true},_deleteMaterial];
+				{
+						if (_x@[0,5]=="proxy:") then
+						{
+								deleteSelected _x;
+						};
+				} forEach getSelections _obj ;
+				_obj callRuntime "chkstvects";
+				_STbugs=getSelectedPoints (_obj loadSelection "_current");
+				if (count _STbugs>0) then
+					ERROR("cannot generate ST coordinates");
+
+				// Check texels
+				_texelmin = 0;
+				_texelmax = 0;
+				_checkTexels =
+				{
+						halt;
+						f_CrossProduct =
+					{
+							_ox = (_this@0)@0;
+							_oy = (_this@0)@1;
+							_oz = (_this@0)@2;
+							_lx = (_this@1)@0;
+							_ly = (_this@1)@1;
+							_lz = (_this@1)@2;
+
+							__x=_ly*_oz-_lz*_oy;
+							__y=_lz*_ox-_lx*_oz;
+							__z=_lx*_oy-_ly*_ox;
+							[__x,__y,__z]
+					};
+					_face =_obj face _X;
+					_uvset = getUVSet _face;
+					texwidth = 1;
+					texheight = 1;
+					halt;
+					_texture = getTexture _Face;
+					if (_texture!="") then
+					{
+						for "_k" from 0 to 3 step 3 do
+						{
+							_ps1_0=_uvset@(_k*2)*texwidth;
+							_ps1_1=_uvset@(_k*2+1)*texheight;
+							_ps2_0=_uvset@(1*2)*texwidth;
+							_ps2_1=_uvset@(1*2+1)*texheight;
+							_ps3_0=_uvset@(2*2)*texwidth;
+							_ps3_1=_uvset@(2*2+1)*texheight;
+
+							_da=[(_ps2_0-_ps1_0),(_ps2_1-_ps1_1),0];
+							_db=[(_ps3_0-_ps1_0),(_ps3_1-_ps1_1),0];
+							_cross=[_db,_da]call f_CrossProduct;
+							_texvolume=(sqrt (_cross@0^2 + _cross@1^2+ _cross@2^2))*0.5;
+						};
+					};
+					_texelmin=(_texelmin min _nfo_texelmin);
+					_texelmax=(_texelman max _nfo_texelmax);
+				};
+				_obj forEachFace [{true},_checkTexels];
+			};
+
+
+			// check link to temp directories
+			if (IS_LOD_RESOLUTION(_resol)||(_resol==LOD_SHADOW_MIN+1000)) then
+			{
+					private ["_num","_faceT","_texture","_material","_TellMe","_X"];
+					_num =  countFaces _obj;
+					for "_x" from 0 to _num do
+					{
+							_faceT =_obj face _X;
+							_texture = getTexture _FaceT;
+							_material = getMaterial _FaceT;
+
+							_TellMe = str(_material) findi "\temp\";
+							if (isnil{str(_TellMe)})  then
+							{}else
+							{
+									_X = _num;
+									console<<"      There is link to temp directory"<<eoln;
+							};
+
+							_TellMe = str(_texture) findi "\temp\";
+							if (isnil{str(_TellMe)})  then
+							{}else
+							{
+									_X = _num;
+									console<<"      There is link to temp directory"<<eoln;
+							};
+					};
+			};
+			// check flags in all
+			#define CHECK_FLAGS true
+			if (CHECK_FLAGS) then
+			{
+				_landERR = false;
+				_lightERR = false;
+				_fogERR = false;
+				_decalERR = false;
+				_userERR = false;
+				_specialERR = false;
+				_unknERR = false;
+				_hiddenERR = false;
+
+
+				for "_x" from 0 to (countPoints _obj)-1 do
+				{
+					_landERR = _landERR or ((_obj getPointFlags [_x,POINT_LAND_MASK])!=0);
+					_lightERR = _lightERR or ((_obj getPointFlags [_x,POINT_LIGHT_MASK])!=0);
+					_fogERR = _fogERR or ((_obj getPointFlags [_x,POINT_FOG_MASK])!=0);
+					_decalERR = _decalERR or ((_obj getPointFlags [_x,POINT_DECAL_MASK])!=0);
+					_userERR = _userERR or ((_obj getPointFlags [_x,POINT_USER_MASK])!=0);
+					_spc = (_obj getPointFlags [_x,POINT_SPECIAL_MASK]);
+					_specialERR = _specialERR or (_spc>1);
+					_hiddenERR = _hiddenERR or (_spc==1);
+					_unknERR = _unknERR or ((_obj getPointFlags [_x,[10,11]]!=0) or (_obj getPointFlags [_x,[14,15]]!=0) or (_obj getPointFlags [_x,[28,31]]!=0));
+				};
+
+				_FuserERR = false;
+				_FunknERR = false;
+				for "_x" from 0 to (countFaces _obj)-1 do
+				{
+					_face =  _obj face _x;
+					_FuserERR = _FuserERR or ((_face getFaceFlags FACE_USER_MASK)!=0);
+					_FunknERR = _FunknERR or ((_face getFaceFlags [10,11]!=0) or (_face getFaceFlags [16,19]!=0) or (_face getFaceFlags [22,23]!=0));
+				};
+				if (_lightERR or _decalERR or _unknERR or _hiddenERR) then
+				{
+					if (_hiddenERR)then ERROR_LOG("vertex hidden flag");
+					if (_decalERR)then ERROR_LOG("vertex decal flag");
+					if (_lightERR)then ERROR_LOG("vertex lighting flag");
+					if (_unknERR) then ERROR_LOG("vertex unknow flag");
+					if (_userERR) then ERROR_LOG("vertex user flag");
+					if (FIX_P3D) then
+					{
+						console<<"	attempting to fix vert flags."<<eoln;
+						needSave=true;
+						for "_x" from 0 to (countPoints _obj)-1 do
+						{
+							_obj setPointFlags [_x,POINT_LIGHT_MASK,0];
+							_obj setPointFlags [_x,POINT_DECAL_MASK,0];
+							_obj setPointFlags [_x,POINT_USER_MASK,0];
+							_obj setPointFlags [_x,POINT_SPECIAL_MASK,0];
+						};
+					};
+				};
+				if ( _FunknERR or _FuserERR) then
+				{
+					if (_FunknERR)then ERROR_LOG("faces unknow flag");
+					if (_FuserERR)then ERROR_LOG("faces user flag");
+					if (FIX_P3D) then
+					{
+						needSave=true;
+						console<<"	attempting to fix face flags."<<eoln;
+						for "_x" from 0 to (countFaces _obj)-1 do
+						{
+								_face =  _obj face _x;
+								_face setFaceFlags [FACE_USER_MASK,0];
+						};
+					};
+				};
+			};
+
+			#define CHECK_ROADWAY_SIZE true
+			// check count of faces in roadway and count of vertices in named selections
+			if (CHECK_ROADWAY_SIZE and LOD_ROADWAY==_resol) then
+			{
+				_num =  countFaces _obj;
+				if (_num> 1000 )then ERROR_LOG("faces count in is to high (limit 1000) "+p3dname+": "+str _num);
+				_animatedRoadWay = false;
+				{
+					if (!_animatedRoadWay) then
+					{
+					   _sel = _obj loadSelection _x;
+						if ((_x@0!=".") and (_x@0!="-")) then
+						{
+								_animatedRoadWay = true;
+						};
+					};
+				} foreach getSelections _obj;
+				if (_animatedRoadWay and (_num> 128 )) then  ERROR_LOG("vertices count in animated roadway to high (limit 128), in "+p3dname+": "+str _num);
+			};
+
+			#define CHECK_FIRE_AND_VIEW true
+			if (CHECK_FIRE_AND_VIEW and LOD_VIEWGEO==_resol) then
+			{
+					 _hasView = true;
+			};
+
+			if (CHECK_FIRE_AND_VIEW and LOD_FIREGEO==_resol) then
+			{
+					_hasFire = true;
+			};
+
+			if ((LOD_VIEW_GUNNER==_resol)or(LOD_VIEW_PILOT==_resol)or(LOD_VIEW_CARGO==_resol)) then
+			{
+				{
+					if (_x=="damageHide") then ERROR_LOG("warning: ""damageHide"" in special lod");
+					if (_x=="damageHide") then {
+						if(FIX_P3D) then{
+							console<<"	Deleting selection 'damageHide'."<<eoln;
+
+							needSave=true;
+							_obj deleteSelection "damageHide";
+						};
+					};
+				}forEach GetSelections _obj;
+			};
+
+			#define CHECK_ROADWAY true
+			if (CHECK_ROADWAY and LOD_ROADWAY==_resol) then
+			{
+				_num =  countFaces _obj;
+				for "_x" from 0 to (_num -1) do
+				{
+					_testRoadFace =
+					#define TestRoadFace(a,b,c) [a,b,c] call _testRoadFace
+					{
+						_ivx0 = _this@0;
+						_ivx1 = _this@1;
+						_ivx2 = _this@2;
+						_v01 = [_ivx1@0 - _ivx0@0,_ivx1@1 - _ivx0@1,_ivx1@2 - _ivx0@2];
+						_v03 = [_ivx2@0 - _ivx0@0,_ivx2@1 - _ivx0@1,_ivx2@2 - _ivx0@2];
+						_n = [_v01@1*_v03@2-_v01@2*_v03@1,_v01@2*_v03@0-_v01@0*_v03@2,_v01@0*_v03@1-_v01@1*_v03@0];
+						_n2 = [sqrt(_n@0^2+_n@2^2),_n@1];
+						_ischanged = false;
+						if (abs _n2@1>0.001) then
+						{
+								_alfa = -atan (_n2@0/_n2@1);
+								if (_n2@1>0) then
+								{
+										if (true) then ERROR_LOG(" face direction down: face: "+str (_x));
+										_ischanged = true;
+								};
+								if (abs (_alfa)>60) then
+								{
+										if (true) then ERROR_LOG(" face angle to large: "+str (_alfa) +" face: "+str (_x));
+										_ischanged = true;
+
+								};
+						}
+						else
+						{
+								if (true) then ERROR_LOG(" face angle to large: "+str (90) +" face: "+str (_x));
+								_ischanged = true;
+						};
+						_ischanged
+					};
+					_face = getVertices (_obj face _x);
+
+					_vx0 = _obj getPoint _face@0;
+					_vx1 = _obj getPoint _face@1;
+					_vx2 = _obj getPoint _face@2;
+					if  (count _face == 3) then
+					{
+						  TestRoadFace(_vx0,_vx1,_vx2);
+					}
+					else
+					{
+
+						_vx3 = _obj getPoint _face@3;
+						_fail = TestRoadFace(_vx0,_vx1,_vx3);
+						if (!_fail) then
+						{
+								TestRoadFace(_vx1,_vx2,_vx3);
+						};
+					};
+				};
+			};
+		};
+	};
+	if (CHECK_FIRE_AND_VIEW) then
+	{
+		if (_hasFire and not _hasView) then  {console <<"Fire LOD present but none View LOD : "+p3dname<< eoln;};
+	};
+
+
+
+	private ["_checkmatconsole","_checkmatres"];
+	_checkmatconsole=openMemoryStream "";
+	{[_x,_checkmatconsole] call CheckMaterial;} forEach collectMats;
+	_checkmatres=getBuffer _checkmatconsole;
+	if (_checkmatres!="") then
+	{
+		console<<"CheckMat: "<<eoln<<_checkmatres;
+		bugreported=true;
+	};
+	if (!bugreported) then
+	{
+		console<<"No error founds."<<eoln;
+	};
+	if (needSave) then
+	{
+		console<<"Saving file."<<eoln;
+		if (!save p3d)then {console <<"unable to SAVE "<<p3dname<<eoln;};
+	};
+	console<<"Done."<<eoln;
+};
+
+if (true) exitWith {-1};
+// tato hodnota vr?cen? na konci scriptu informuje O2 o tom ?e m? zahodit jak?koliv zm?ny, kter? by mohly za b?hu scriptu na modelu nastat

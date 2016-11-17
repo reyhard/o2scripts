@@ -1,0 +1,3607 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<commandlist>
+<name>Scripting Commands</name>
+	<command letter="#">
+		<name>!</name>
+		<roper>a</roper>
+		<ropertype>Boolean</ropertype>
+		<returntype>Boolean</returntype>
+		<description>not a</description>
+		<example>!true</example>
+		<exResult>false</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="#">
+		<name>!</name>
+		<roper>stream</roper>
+		<ropertype>IOStream</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Returns true, if an error has been reported during operation with stream.</description>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="#">
+		<name>!=</name>
+		<loper>a</loper>
+		<lopertype>Number</lopertype>
+		<roper>b</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Boolean</returntype>
+		<description>a is not equal to b</description>
+		<example>counter != 4</example>
+		<category>Default</category>
+	</command>
+	<command letter="#">
+		<name>!=</name>
+		<loper>a</loper>
+		<lopertype>String</lopertype>
+		<roper>b</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>a is not equal to b (case insensitive)</description>
+		<example>nameOfPlayer != &quot;John Doe&quot;</example>
+		<category>Default</category>
+	</command>
+	<command letter="#">
+		<name>%</name>
+		<loper>a</loper>
+		<lopertype>Number</lopertype>
+		<roper>b</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>The remainder of a divided by b. Note that the remainder is calculated in the real domain.</description>
+		<example>4.5 % 3</example>
+		<exResult>1.5</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="#">
+		<name>&amp;&amp;</name>
+		<loper>a</loper>
+		<lopertype>Boolean</lopertype>
+		<roper>b</roper>
+		<ropertype>Boolean</ropertype>
+		<returntype>Boolean</returntype>
+		<description>a and b</description>
+		<example>alive player &amp;&amp; alive leader player</example>
+		<category>Default</category>
+	</command>
+	<command letter="#">
+		<name>&amp;=</name>
+		<loper>a</loper>
+		<lopertype>Selection</lopertype>
+		<roper>b</roper>
+		<ropertype>Selection</ropertype>
+		<returntype>Selection</returntype>
+		<description>Create intersection of selection 'a' and selection 'b'. Result is stored into selection 'a'.</description>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="#">
+		<name>*</name>
+		<loper>a</loper>
+		<lopertype>Number</lopertype>
+		<roper>b</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>a multiplied by b</description>
+		<example>iCounter*3</example>
+		<category>Default</category>
+	</command>
+	<command letter="#">
+		<name>*</name>
+		<loper>a</loper>
+		<lopertype>Matrix</lopertype>
+		<roper>b</roper>
+		<ropertype>Matrix</ropertype>
+		<returntype>Matrix</returntype>
+		<description>Multiplies two matrices. It means, that two transformations is combined into one matrix in order. Note: a*b is not same as b*a, both creates different transformations</description>
+		<example>_t=_a*_b;</example>
+		<category>Matrix</category>
+	</command>
+	<command letter="#">
+		<name>+</name>
+		<roper>a</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>unary plus: returns a</description>
+		<example>+4</example>
+		<exResult>4</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="#">
+		<name>+</name>
+		<roper>a</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Array</returntype>
+		<description>unary plus: returns a copy of the array</description>
+		<example>+ [0, 1, 2]</example>
+		<exResult>[0, 1, 2]</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="#">
+		<name>+</name>
+		<roper>LODObject</roper>
+		<ropertype>LODObject</ropertype>
+		<returntype>LODObject</returntype>
+		<description>Creates new LODObject as copy of referenced object</description>
+		<example>_copy=copyLODObject _object</example>
+		<exResult>copy of object created</exResult>
+		<category>O2ScriptLib::LODObjects</category>
+	</command>
+	<command letter="#">
+		<name>+</name>
+		<roper>sel</roper>
+		<ropertype>ObjectData</ropertype>
+		<returntype>Selection</returntype>
+		<description>Same as copy</description>
+		<example>_newsel= +_sel</example>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="#">
+		<name>+</name>
+		<roper>mesh</roper>
+		<ropertype>ObjectData</ropertype>
+		<returntype>ObjectData</returntype>
+		<description>Creates copy of object. It constructs copy with new owner</description>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="#">
+		<name>+</name>
+		<loper>a</loper>
+		<lopertype>Number</lopertype>
+		<roper>b</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>a plus b</description>
+		<example>counter + 1</example>
+		<category>Default</category>
+	</command>
+	<command letter="#">
+		<name>+</name>
+		<loper>arrayA</loper>
+		<lopertype>Array</lopertype>
+		<roper>arrayB</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Array</returntype>
+		<description>arrayA and arrayB are concatenated.</description>
+		<example>[0, 1, 2] + [1, 2, 3]</example>
+		<exResult>[0, 1, 2, 1, 2, 3]</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="#">
+		<name>+</name>
+		<loper>stringA</loper>
+		<lopertype>String</lopertype>
+		<roper>stringB</roper>
+		<ropertype>String</ropertype>
+		<returntype>String</returntype>
+		<description>stringA and stringB are concatenated.</description>
+		<example>&quot;I&quot; + &quot; am&quot; + &quot; blind&quot;</example>
+		<exResult>&quot;I am blind&quot;</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="#">
+		<name>+=</name>
+		<loper>a</loper>
+		<lopertype>Selection</lopertype>
+		<roper>b</roper>
+		<ropertype>Selection</ropertype>
+		<returntype>Selection</returntype>
+		<description>Adds b to a. Selection 'a' is changed</description>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="#">
+		<name>-</name>
+		<roper>a</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>unary minus: zero minus a</description>
+		<example>- - 3</example>
+		<exResult>3</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="#">
+		<name>-</name>
+		<loper>a</loper>
+		<lopertype>Number</lopertype>
+		<roper>b</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>a minus b</description>
+		<example>counter - 1</example>
+		<category>Default</category>
+	</command>
+	<command letter="#">
+		<name>-</name>
+		<loper>arrayA</loper>
+		<lopertype>Array</lopertype>
+		<roper>arrayB</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Array</returntype>
+		<description>All elements in arrayB are removed from arrayA.</description>
+		<example>[0, 1, 2, 4, 0, 1, 2, 3, 4, 5] - [1, 2, 3]</example>
+		<exResult>[0, 4, 0, 4, 5]</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="#">
+		<name>-=</name>
+		<loper>a</loper>
+		<lopertype>Selection</lopertype>
+		<roper>b</roper>
+		<ropertype>Selection</ropertype>
+		<returntype>Selection</returntype>
+		<description>Removes b from a. Selection 'a' is changed</description>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="#">
+		<name>/</name>
+		<loper>a</loper>
+		<lopertype>Number</lopertype>
+		<roper>b</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>a divided by b</description>
+		<example>enemyStrenght/3</example>
+		<category>Default</category>
+	</command>
+	<command letter="#">
+		<name>:</name>
+		<loper>a</loper>
+		<lopertype>Switch Type</lopertype>
+		<roper>b</roper>
+		<ropertype>String</ropertype>
+		<returntype>Nothing</returntype>
+		<description>see switch</description>
+		<category>Default</category>
+	</command>
+	<command letter="#">
+		<name>:=</name>
+		<loper>LODObject</loper>
+		<lopertype>LODObject</lopertype>
+		<roper>LODObject</roper>
+		<ropertype>LODObject</ropertype>
+		<returntype>LODObject</returntype>
+		<description>Copies content of second object to first object</description>
+		<example>this:=_object</example>
+		<category>O2ScriptLib::LODObjects</category>
+	</command>
+	<command letter="#">
+		<name>:=</name>
+		<loper>trg</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>src</roper>
+		<ropertype>ObjectData</ropertype>
+		<returntype>ObjectData</returntype>
+		<description>Copy object to another. Content of trg is replaced by copy of src.</description>
+		<example>_b=getActiveObject newLODObject;_b:=_a; //_b is copy of _a</example>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="#">
+		<name>:=</name>
+		<loper>object</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>object</roper>
+		<ropertype>ObjectData</ropertype>
+		<returntype>ObjectData</returntype>
+		<description>Copies content of second object to first object</description>
+		<example>this:=_object</example>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="#">
+		<name>&lt;</name>
+		<loper>a</loper>
+		<lopertype>Number</lopertype>
+		<roper>b</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Boolean</returntype>
+		<description>a lesser than b</description>
+		<example>counter &lt; 4</example>
+		<category>Default</category>
+	</command>
+	<command letter="#">
+		<name>&lt;&lt;</name>
+		<loper>stream</loper>
+		<lopertype>IOStream</lopertype>
+		<roper>text</roper>
+		<ropertype>String</ropertype>
+		<returntype>IOStream</returntype>
+		<description>Writes text into the stream.</description>
+		<example>stream&lt;&lt;&quot;Hello &quot;&lt;&lt;&quot;world.&quot;</example>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="#">
+		<name>&lt;=</name>
+		<loper>a</loper>
+		<lopertype>Number</lopertype>
+		<roper>b</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Boolean</returntype>
+		<description>a lesser or equal than b</description>
+		<example>player distance redCar &lt;= 100</example>
+		<category>Default</category>
+	</command>
+	<command letter="#">
+		<name>==</name>
+		<loper>a</loper>
+		<lopertype>Number</lopertype>
+		<roper>b</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Boolean</returntype>
+		<description>a equal to b</description>
+		<example>counter == 4</example>
+		<category>Default</category>
+	</command>
+	<command letter="#">
+		<name>==</name>
+		<loper>a</loper>
+		<lopertype>String</lopertype>
+		<roper>b</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>a equal to b (case insensitive)</description>
+		<example>nameOfPlayer == &quot;John Doe&quot;</example>
+		<category>Default</category>
+	</command>
+	<command letter="#">
+		<name>&gt;</name>
+		<loper>a</loper>
+		<lopertype>Number</lopertype>
+		<roper>b</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Boolean</returntype>
+		<description>a greater than b</description>
+		<example>counter &gt; 4</example>
+		<category>Default</category>
+	</command>
+	<command letter="#">
+		<name>&gt;=</name>
+		<loper>a</loper>
+		<lopertype>Number</lopertype>
+		<roper>b</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Boolean</returntype>
+		<description>a greater or equal than b</description>
+		<example>player distance redCar &lt; 100</example>
+		<category>Default</category>
+	</command>
+	<command letter="#">
+		<name>@</name>
+		<loper>array</loper>
+		<lopertype>Array</lopertype>
+		<roper>idx</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Anything</returntype>
+		<description>Shortcut for select: array @ 1 is the same as array select 1</description>
+		<example>[&quot;a&quot;,&quot;b&quot;,true,3,8] @ 1</example>
+		<exResult>&quot;b&quot;</exResult>
+		<category>StringsArrays</category>
+	</command>
+	<command letter="#">
+		<name>@</name>
+		<loper>array</loper>
+		<lopertype>Array</lopertype>
+		<roper>[from,to]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Array</returntype>
+		<description>Various methods how to select subarray of array. Selection is defined from ,to but last element of array is excluded. Second parameter is optional, if not specified, remain of array is selected. If first parameter is negative, index is counted from end of array. If second parameter is negative, it specified length of subarray (in absolute form)</description>
+		<example>[&quot;a&quot;,&quot;b&quot;,true,3,8] @ [1,-3]</example>
+		<exResult>[&quot;b&quot;,true,3]</exResult>
+		<category>StringsArrays</category>
+	</command>
+	<command letter="#">
+		<name>@</name>
+		<loper>string</loper>
+		<lopertype>String</lopertype>
+		<roper>idx</roper>
+		<ropertype>Number</ropertype>
+		<returntype>String</returntype>
+		<description>Select one character from string identified by index</description>
+		<example>&quot;Hello&quot; @ 2</example>
+		<exResult>&quot;l&quot;</exResult>
+		<category>StringsArrays</category>
+	</command>
+	<command letter="#">
+		<name>@</name>
+		<loper>string</loper>
+		<lopertype>String</lopertype>
+		<roper>[from,to]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>String</returntype>
+		<description>Various methods how to select substring of string. It use the same style as selecting subarrays.Note: If you selecting abslute range, last character is excluded, see example:</description>
+		<example>&quot;Hello world&quot; @ [2,7]</example>
+		<exResult>llo w</exResult>
+		<category>StringsArrays</category>
+	</command>
+	<command letter="#">
+		<name>^</name>
+		<loper>a</loper>
+		<lopertype>Number</lopertype>
+		<roper>b</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>a raised to the power of b</description>
+		<example>count^4</example>
+		<category>Default</category>
+	</command>
+	<command letter="#">
+		<name>|=</name>
+		<loper>a</loper>
+		<lopertype>Selection</lopertype>
+		<roper>b</roper>
+		<ropertype>Selection</ropertype>
+		<returntype>Selection</returntype>
+		<description>Create union of selection 'a' and selection 'b'. Result is stored into selection 'a'. There is little difference between |= and +=. |= takes maximum from two weights, += takes suma of two weights.</description>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="#">
+		<name>||</name>
+		<loper>a</loper>
+		<lopertype>Boolean</lopertype>
+		<roper>b</roper>
+		<ropertype>Boolean</ropertype>
+		<returntype>Boolean</returntype>
+		<description>a or b</description>
+		<example>!alive player || !alive leader player</example>
+		<category>Default</category>
+	</command>
+	<command letter="A">
+		<name>abs</name>
+		<roper>x</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>The absolute value of x.</description>
+		<example>abs -3</example>
+		<exResult>3</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="A">
+		<name>acos</name>
+		<roper>x</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>The arccosine of x, the result is in degrees.</description>
+		<example>acos 0.5</example>
+		<exResult>60</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="A">
+		<name>activeLevel</name>
+		<roper>object</roper>
+		<ropertype>LODObject</ropertype>
+		<returntype>Number</returntype>
+		<description>Gets index  of active level</description>
+		<example>_level=activeLevel _object</example>
+		<exResult>1.0</exResult>
+		<category>O2ScriptLib::LODObjects</category>
+	</command>
+	<command letter="A">
+		<name>activeResolution</name>
+		<roper>LODObject</roper>
+		<ropertype>LODObject</ropertype>
+		<returntype>Number</returntype>
+		<description>Gets resolution (or special level id)  of active level</description>
+		<example>_level=activeResolution _object; if (_level==LOD_VIEW_CARGO_GEOMETRY) echo &quot;cargo&quot;</example>
+		<category>O2ScriptLib::LODObjects</category>
+	</command>
+	<command letter="A">
+		<name>addAnimFrame</name>
+		<loper>mesh</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>time</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>Creates new animation frame and assign it time. Returns index of created frame. It reindexes frames, so update all your variables that contain frame index.</description>
+		<example>_newframe=_mesh addAnimFrame 0.5</example>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="A">
+		<name>addFace</name>
+		<roper>object</roper>
+		<ropertype>ObjectData</ropertype>
+		<returntype>Number</returntype>
+		<description>Returns index of new face</description>
+		<example>_nwfc=face addFace _object;</example>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="A">
+		<name>addLevel</name>
+		<roper>LODObject</roper>
+		<ropertype>LODObject</ropertype>
+		<returntype>ObjectData</returntype>
+		<description>Creates new level and returns it. Added level becomes active</description>
+		<example>_object=AddLevel _p3d;</example>
+		<exResult>ObjectData</exResult>
+		<category>O2ScriptLib::LODObjects</category>
+	</command>
+	<command letter="A">
+		<name>addPoint</name>
+		<loper>object</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>vector</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Creates new points and returns its index.</description>
+		<example>_mesh addPoint [0,0,0]</example>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="A">
+		<name>and</name>
+		<loper>a</loper>
+		<lopertype>Boolean</lopertype>
+		<roper>b</roper>
+		<ropertype>Boolean</ropertype>
+		<returntype>Boolean</returntype>
+		<description>a and b</description>
+		<example>alive player and alive leader player</example>
+		<category>Default</category>
+	</command>
+	<command letter="A">
+		<name>as</name>
+		<loper>LODObject</loper>
+		<lopertype>LODObject</lopertype>
+		<roper>String</roper>
+		<ropertype>String</ropertype>
+		<returntype>LODObject</returntype>
+		<description>Returns clone of object but with another name</description>
+		<example>_copy=copyLODObject _object as &quot;test.p3d&quot;;</example>
+		<exResult>LODObject</exResult>
+		<category>O2ScriptLib::LODObjects</category>
+	</command>
+	<command letter="A">
+		<name>as</name>
+		<loper>sel</loper>
+		<lopertype>Selection</lopertype>
+		<roper>name</roper>
+		<ropertype>String</ropertype>
+		<returntype>Selection</returntype>
+		<description>Returns selection with name</description>
+		<example>_object save _sel as &quot;my selection&quot;;</example>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="A">
+		<name>asc</name>
+		<roper>a</roper>
+		<ropertype>String</ropertype>
+		<returntype>Number</returntype>
+		<description>Returns ascii code of first character</description>
+		<example>asc &quot;A&quot;</example>
+		<exResult>65</exResult>
+		<category>StringsArrays</category>
+	</command>
+	<command letter="A">
+		<name>asin</name>
+		<roper>x</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>The arcsine of x, the result is in degrees.</description>
+		<example>asin 0.5</example>
+		<exResult>30</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="A">
+		<name>assert</name>
+		<roper>codition</roper>
+		<ropertype>Boolean</ropertype>
+		<since>2.00</since>
+		<returntype>Boolean</returntype>
+		<description>Tests a condition and if the condition is false, halts the program.</description>
+		<example>assert (_x&gt;0)</example>
+		<category>Default</category>
+	</command>
+	<command letter="A">
+		<name>atan</name>
+		<roper>x</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>The arctangens of x, the result is in degrees.</description>
+		<example>atan 1</example>
+		<exResult>45</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="A">
+		<name>atan2</name>
+		<loper>x</loper>
+		<lopertype>Number</lopertype>
+		<roper>y</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>Returns the arctangens of x/y. The returned value is in degrees, in the range from -180 to +180, using the signs of both parameters to determine the quadrant of the returned value.</description>
+		<example>5 atan2 3</example>
+		<exResult>59.0362</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="A">
+		<name>atg</name>
+		<roper>x</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>The arctangens of x, the result is in degrees.</description>
+		<example>atg 1</example>
+		<exResult>45</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="B">
+		<name>backupFile</name>
+		<roper>file</roper>
+		<ropertype>String</ropertype>
+		<returntype>String</returntype>
+		<description>Renames file to file.bak. It useful before saving new version of file.Returns name of backup file. Note: It returns backup name even if original file doesn't exists (this means when there is nothing to backup). Operator returns empty string, when backup cannot be created due an error (file is R/O, cannot delete old backup, cannot move original file, disk integrity error etc.)</description>
+		<example>_backup= backupFile nameOf object;if (_backup!=) then {save object;};</example>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="B">
+		<name>breakOut</name>
+		<roper>name</roper>
+		<ropertype>String</ropertype>
+		<returntype>Nothing</returntype>
+		<description>Breaks block out scope named 'name'. Nil is returned.</description>
+		<category>Default</category>
+	</command>
+	<command letter="B">
+		<name>breakTo</name>
+		<roper>name</roper>
+		<ropertype>String</ropertype>
+		<returntype>Nothing</returntype>
+		<description>Breaks block to scope named 'name'. Nil is returned.</description>
+		<category>Default</category>
+	</command>
+	<command letter="C">
+		<name>call</name>
+		<loper>pars</loper>
+		<lopertype>Any Value</lopertype>
+		<roper>body</roper>
+		<ropertype>String</ropertype>
+		<since>1.85</since>
+		<returntype>Anything</returntype>
+		<description>Executes the function body. Argument pars is passed as _this.</description>
+		<example>[1,2] call {(_this select 0)+(_this select 1)}</example>
+		<exResult>3</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="C">
+		<name>call</name>
+		<roper>code</roper>
+		<ropertype>String</ropertype>
+		<since>1.85</since>
+		<returntype>Anything</returntype>
+		<description>Executes the given code.</description>
+		<example>call {&quot;x=2&quot;}</example>
+		<category>Default</category>
+	</command>
+	<command letter="C">
+		<name>callRuntime</name>
+		<loper>mesh</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>name</roper>
+		<ropertype>String</ropertype>
+		<returntype>Anything</returntype>
+		<description>Call a O2 runtime procedure. `name` specified name of procedure</description>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="C">
+		<name>case</name>
+		<roper>b</roper>
+		<ropertype>Anything</ropertype>
+		<returntype>Switch Type</returntype>
+		<description>see switch</description>
+		<category>Default</category>
+	</command>
+	<command letter="C">
+		<name>catch</name>
+		<loper>try-Block</loper>
+		<lopertype></lopertype>
+		<roper>code</roper>
+		<ropertype>String</ropertype>
+		<returntype>Anything</returntype>
+		<description>processes code, when exception is thrown in <f>try</f> block</description>
+		<category>Default</category>
+	</command>
+	<command letter="C">
+		<name>ceil</name>
+		<roper>x</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>The ceil value of x.</description>
+		<example>ceil 5.25</example>
+		<exResult>6</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="C">
+		<name>centerOf</name>
+		<roper>sel</roper>
+		<ropertype>Selection</ropertype>
+		<returntype>Array</returntype>
+		<description>Calculates center of selection</description>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="C">
+		<name>CEsc</name>
+		<roper>string</roper>
+		<ropertype>String</ropertype>
+		<returntype>String</returntype>
+		<description>Creates string from source usign C/C++ escapes</description>
+		<example>CEsc &quot;\r\n</example>
+		<exResult>new line</exResult>
+		<category>StringsArrays</category>
+	</command>
+	<command letter="C">
+		<name>checkSelectionName</name>
+		<loper>object</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>name</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Checks that selection 'name' exists in 'object'</description>
+		<example>_result=_object checkSelectionName &quot;machine gun&quot;;</example>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="C">
+		<name>chr</name>
+		<roper>a</roper>
+		<ropertype>Number</ropertype>
+		<returntype>String</returntype>
+		<description>Returns character identified by ascii code</description>
+		<example>chr 65</example>
+		<exResult>&quot;A&quot;</exResult>
+		<category>StringsArrays</category>
+	</command>
+	<command letter="C">
+		<name>cleanDoublePoly</name>
+		<roper>object</roper>
+		<ropertype>ObjectData</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Removes all currently selected double polygons (polygons are chosen without respect to mapping). </description>
+		<example>cleanDoublePoly _level;</example>
+		<exResult>true, if no error</exResult>
+		<category>O2Scripts::ObjToolJoinProxy</category>
+	</command>
+	<command letter="C">
+		<name>comment</name>
+		<roper>comment</roper>
+		<ropertype>String</ropertype>
+		<since>1.85</since>
+		<returntype>Nothing</returntype>
+		<description>This function does nothing. It's used to create comments.</description>
+		<example>comment &quot;This is a comment.&quot;</example>
+		<category>Default</category>
+	</command>
+	<command letter="C">
+		<name>copy</name>
+		<roper>sel</roper>
+		<ropertype>ObjectData</ropertype>
+		<returntype>Selection</returntype>
+		<description>Creates copy of selection</description>
+		<example>_newsel=copy _sel</example>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="C">
+		<name>copyFileTo</name>
+		<loper>file1</loper>
+		<lopertype>String</lopertype>
+		<roper>file2</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Copies one file into another. Function will fail, if target file exists. Use deleteFile, to delete target file, or use backupFile to create backup of target file.</description>
+		<example>_result=&quot;test1.txt&quot; copyFileTo &quot;test2.txt&quot;</example>
+		<exResult>Returns true, if successful. </exResult>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="C">
+		<name>copyFrame</name>
+		<loper>mesh</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>[trgframe,srcframe]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>ObjectData</returntype>
+		<description>Copies srcframe frame into trgframe frame.</description>
+		<example>_mesh copyFrame [2,1]; //copy frame 1 into frame 2</example>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="C">
+		<name>copyLODObject</name>
+		<roper>LODObject</roper>
+		<ropertype>LODObject</ropertype>
+		<returntype>LODObject</returntype>
+		<description>Creates new LODObject as copy of referenced object</description>
+		<example>_copy=copyLODObject _object</example>
+		<exResult>copy of object created</exResult>
+		<category>O2ScriptLib::LODObjects</category>
+	</command>
+	<command letter="C">
+		<name>cos</name>
+		<roper>x</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>The cosine of x, the argument is in degrees.</description>
+		<example>cos 60</example>
+		<exResult>0.5</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="C">
+		<name>count</name>
+		<roper>array</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Number</returntype>
+		<description>The number of elements in the array.</description>
+		<example>count [0,0,1,2]</example>
+		<exResult>4</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="C">
+		<name>count</name>
+		<roper>string</roper>
+		<ropertype>String</ropertype>
+		<returntype>Number</returntype>
+		<description>Returns count of characters in string.</description>
+		<example>count &quot;Test&quot;</example>
+		<exResult>4</exResult>
+		<category>StringsArrays</category>
+	</command>
+	<command letter="C">
+		<name>count</name>
+		<roper>LODObject</roper>
+		<ropertype>LODObject</ropertype>
+		<returntype>Number</returntype>
+		<description>Returns number of levels in object</description>
+		<category>O2ScriptLib::LODObjects</category>
+	</command>
+	<command letter="C">
+		<name>count</name>
+		<loper>condition</loper>
+		<lopertype>String</lopertype>
+		<roper>array</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Number</returntype>
+		<description>Counts the elements in the array for which the given condition is true.
+
+It is calculated as follows:
+
+1) Set the count to 0.
+2) For each element in the array assign an element as _x and evaluate the condition expression. If it's true, increase the count.</description>
+		<example>&quot;_x &gt; 2&quot; count [0, 1, 1, 2, 3, 3]</example>
+		<exResult>2</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="C">
+		<name>countAnimations</name>
+		<roper>object</roper>
+		<ropertype>ObjectData</ropertype>
+		<returntype>Number</returntype>
+		<description>Counts animations in object</description>
+		<example>_nanims=countAnimations _object</example>
+		<exResult>count of animations in objects</exResult>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="C">
+		<name>countFaces</name>
+		<roper>object</roper>
+		<ropertype>ObjectData</ropertype>
+		<returntype>Number</returntype>
+		<description>Counts  faces in object</description>
+		<example>_nfaces=countFaces _object</example>
+		<exResult>count of faces in object</exResult>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="C">
+		<name>countFaces</name>
+		<roper>sel</roper>
+		<ropertype>Selection</ropertype>
+		<returntype>Number</returntype>
+		<description>Returns count of selected faces</description>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="C">
+		<name>countPoints</name>
+		<roper>object</roper>
+		<ropertype>ObjectData</ropertype>
+		<returntype>Number</returntype>
+		<description>Counts points in object</description>
+		<example>_npoints=countPoints _object</example>
+		<exResult>count of points in objects</exResult>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="C">
+		<name>countPoints</name>
+		<roper>sel</roper>
+		<ropertype>Selection</ropertype>
+		<returntype>Number</returntype>
+		<description>Returns count of selected points</description>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="C">
+		<name>createFolder</name>
+		<roper>folderName</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Creates new folde. You can specify full pathname for new folder, but all referenced folders specified in path must exist (of course, except last - name of folder)</description>
+		<example>_result = createFolder &quot;p:\ofp\testing\&quot;</example>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="C">
+		<name>createFolderEx</name>
+		<roper>folderName</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Creates new folder. You can specify full pathname for new folder. If specified path doesn't exists, creates it</description>
+		<example>_result = createFolderEx &quot;p:\ofp\testing\&quot;</example>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="C">
+		<name>createLODObject</name>
+		<loper>object</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>[proxies, project root, allow shift]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>LODObject</returntype>
+		<description>Creates new LODObject, by merging all proxies specified by their names. The result object will be created in the coordinate system of the object owning proxies if "allow shift" is false. Otherwise the result object will be created in the coordinate system of the first proxy.</description>
+		<example>_object createLODObject [[&quot;proxy:\model.01&quot;,&quot;proxy:\model.02&quot;], &quot;P:\&quot;, false];</example>
+		<exResult>created LODObject</exResult>
+		<category>O2Scripts::ObjToolJoinProxy</category>
+	</command>
+	<command letter="C">
+		<name>createProxiesFromGroups</name>
+		<loper>object</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>[group prefix, project root]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Creates LODObjects by merging proxies in groups (a named selections containing proxies). Each group is replaced by the proxy referencing to the created LODObjects. The LODObjects are saved into file defined by "project root" and the group name without the group prefix path. Only groups with name starting with "group prefix" are processed.</description>
+		<example>_object createProxiesFromGroups [&quot;-sbp.&quot;,&quot;P:\&quot;];</example>
+		<exResult>true, if no error</exResult>
+		<category>O2Scripts::ObjToolJoinProxy</category>
+	</command>
+	<command letter="C">
+		<name>createProxy</name>
+		<loper>mesh</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>[proxyname,pin]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>ObjectData</returntype>
+		<description>Function creates</description>
+		<example>_newobj=_mesh selectionToProxy [&quot;hlava&quot;,&quot;\data\hlava\hlava.p3d&quot;]</example>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="C">
+		<name>createProxyGroups</name>
+		<loper>object</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>[group name,min members in group, max members in group]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Number</returntype>
+		<description>Creates selections containing currently selected proxies. Those selections are called groups. Functions tries to create compact groups, where proxies in group are close to each other. </description>
+		<example>_object createProxyGroups [&quot;-sbp.group&quot;,5,10];</example>
+		<exResult>number of created groups</exResult>
+		<category>O2Scripts::ObjToolJoinProxy</category>
+	</command>
+	<command letter="D">
+		<name>default</name>
+		<roper>a</roper>
+		<ropertype>String</ropertype>
+		<returntype>Nothing</returntype>
+		<description>see switch</description>
+		<category>Default</category>
+	</command>
+	<command letter="D">
+		<name>deg</name>
+		<roper>x</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>Converts x from radians to degrees.</description>
+		<example>deg 1</example>
+		<exResult>57.295</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="D">
+		<name>deleteAllFrames</name>
+		<roper>mesh</roper>
+		<ropertype>ObjectData</ropertype>
+		<returntype>ObjectData</returntype>
+		<description>Deletes all frames in object.</description>
+		<example>deleteAllFrames _mesh;</example>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="D">
+		<name>deleteAnimFrame</name>
+		<loper>mesh</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>frame</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>Deletes frame specified by index. Returns new count of animations in mesh. It reindexes frames, so update all your variables that contain frame index</description>
+		<example>_mesh deleteAnimFrame 5;</example>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="D">
+		<name>deleteFile</name>
+		<roper>file</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Deletes file. Returns true, if operation was successful</description>
+		<example>deleteFile &quot;test.txt&quot;</example>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="D">
+		<name>deleteLevel</name>
+		<loper>LODObject</loper>
+		<lopertype>LODObject</lopertype>
+		<roper>Scalar</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Deletes specified level. After it, levels are reindexed</description>
+		<example>while &quot;_p3d DeleteLevel 0&quot; {};</example>
+		<exResult>true</exResult>
+		<category>O2ScriptLib::LODObjects</category>
+	</command>
+	<command letter="D">
+		<name>deleteSelected</name>
+		<roper>sel</roper>
+		<ropertype>Selection</ropertype>
+		<returntype>Selection</returntype>
+		<description>Deletes points and faces on source model</description>
+		<example>_arr=getSelectedPoints _sel</example>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="D">
+		<name>deleteSelection</name>
+		<loper>object</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>name</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Deletes selection with name in object. It does'n affect selections in variables</description>
+		<example>_result=_object deleteSelection &quot;machine gun&quot;;</example>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="D">
+		<name>dialogBox</name>
+		<roper>desc</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Number</returntype>
+		<description>Starts dialog. Returns ID of button that closes dialog</description>
+		<category>dialogs</category>
+	</command>
+	<command letter="D">
+		<name>dlgClose</name>
+		<roper>res</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Closes dialogs. 'res' specified result of dialog. 1 often means OK button, 2 means Cancel button. This command should be the last command in event procedure.</description>
+		<category>dialogs</category>
+	</command>
+	<command letter="D">
+		<name>dlgEnableControl</name>
+		<loper>controlID</loper>
+		<lopertype>Number</lopertype>
+		<roper>enable</roper>
+		<ropertype>Boolean</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Enables control in dialog. 'controlID' specified a control identifier, that can be optained by dlgGetControl function. 'enable' can be true=control is enabled or false=control is disabled</description>
+		<category>dialogs</category>
+	</command>
+	<command letter="D">
+		<name>dlgGetControls</name>
+		<roper>controlName/variable</roper>
+		<ropertype>String</ropertype>
+		<returntype>Array</returntype>
+		<description>Returns array of controls' IDs for specified name of variable. One variable can be attached with more controls. If control is named, name is specified starting with '#'</description>
+		<category>dialogs</category>
+	</command>
+	<command letter="D">
+		<name>dlgSetFocus</name>
+		<roper>controlID</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Sets focus to another control. It triggers 'onexit'('onexitchanged') and 'onenter' events</description>
+		<category>dialogs</category>
+	</command>
+	<command letter="D">
+		<name>dlgUpdate</name>
+		<roper>variable</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Updates the dialog to reflect value of 'variable'. It is usefull to update dialog before event procedure reach its end. There are little disadvantages: Updating may slow script processing, some events may be triggered in reaction that controls are updated.</description>
+		<category>dialogs</category>
+	</command>
+	<command letter="D">
+		<name>dlgUpdateList</name>
+		<loper>controlName</loper>
+		<lopertype>String</lopertype>
+		<roper>_newlist</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Updates list in control - applicable with comboboxes or listboxes. Completly removes all strings from list and loads new list from _newlist variable. NOTE: Current selection will be remove, so don't forget call dlgUpdate.</description>
+		<category>dialogs</category>
+	</command>
+	<command letter="D">
+		<name>dlgUpdateMCList</name>
+		<loper>controlName</loper>
+		<lopertype>String</lopertype>
+		<roper>[newitems,firstItem,count]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Number</returntype>
+		<description>Function updates block of items in multi-collumn list. Parameters are:<br /><br />newitems - array of items. Each item is array of fields, and each field is assigned to column. Example: [[col1,col2,col3],[col1,col2,col3],...,[col1,col2,col3]]<br />firstItem - index of first item to update<br />count - count of items to update. The count don't need match the count of new items. List will remove or add extra items. Count=0 - Only inserts new items, Count=-1 replaces all items from firstItem till end. If you specify positive count and newitems is empty, function deletes count items.</description>
+		<exResult>Count if items in listView</exResult>
+		<category>dialogs</category>
+	</command>
+	<command letter="D">
+		<name>dlgVisibleControl</name>
+		<loper>controlID</loper>
+		<lopertype>Number</lopertype>
+		<roper>visible</roper>
+		<ropertype>Boolean</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Changes visibility of a control. 'controlID' specified a control identifier, that can be optained by dlgGetControl function. 'visible' can be true=control is visible or false=control is hidden</description>
+		<category>dialogs</category>
+	</command>
+	<command letter="D">
+		<name>dlgWaitCursor</name>
+		<returntype>Boolean</returntype>
+		<description>Shows wait cursor during long operation is processed. Wait cursor is changed to normal when event procedure is finished</description>
+		<category>dialogs</category>
+	</command>
+	<command letter="D">
+		<name>do</name>
+		<loper>while</loper>
+		<lopertype>While Type</lopertype>
+		<roper>code</roper>
+		<ropertype>String</ropertype>
+		<since>1.85</since>
+		<returntype>Nothing</returntype>
+		<description>Repeats the code while the condition is true. Note: the maximum repeat count for the loop is 10000. If the condition is still true after the loop was repeated 10000 times, the loop will be terminated and an error message is shown.</description>
+		<example>while &quot;a&gt;b&quot; do {a=a+1}</example>
+		<category>Default</category>
+	</command>
+	<command letter="D">
+		<name>do</name>
+		<loper>forCommand</loper>
+		<lopertype>for type</lopertype>
+		<roper>code</roper>
+		<ropertype>String</ropertype>
+		<returntype>Anything</returntype>
+		<description>End of for command, starts cycle</description>
+		<example>for &quot;_x&quot; from 20 to 10 step -2 do {..code..}</example>
+		<category>Default</category>
+	</command>
+	<command letter="D">
+		<name>do</name>
+		<loper>switch</loper>
+		<lopertype>Switch Type</lopertype>
+		<roper>block</roper>
+		<ropertype>String</ropertype>
+		<returntype>Anything</returntype>
+		<description>Switch form</description>
+		<example>switch (_a) do { case 1: {block}; case 2 : {block}; default {block};}</example>
+		<category>Default</category>
+	</command>
+	<command letter="E">
+		<name>eatWS</name>
+		<roper>stream</roper>
+		<ropertype>IOStream</ropertype>
+		<returntype>IOStream</returntype>
+		<description>Ignores all waitspace (spaces, tabs, new-lines etc), unitil any other character found, or end of file reached.</description>
+		<example>eatWS stream exploreFor &quot;[_a-zA-Z][_a-zA-Z0-9]*&quot;</example>
+		<exResult>true, if stream contain identifier. Before test, all waitspaces is skipped</exResult>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="E">
+		<name>eatWSEOL</name>
+		<roper>stream</roper>
+		<ropertype>IOStream</ropertype>
+		<returntype>IOStream</returntype>
+		<description>Ignores all waitspace u(spaces, tabs, etc), unitil any other character found, or end of line or end of file reached. End of line delimiter is not skipped, but it can be skipped by ignore command</description>
+		<example>eatWSEOL stream exploreFor ignore 0</example>
+		<exResult>eats whitespace until new line, then new line delimiter is skipped</exResult>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="E">
+		<name>echo</name>
+		<roper>text</roper>
+		<ropertype>String</ropertype>
+		<since>2.00</since>
+		<returntype>Nothing</returntype>
+		<description>Sends any text into the debugger console or the logfile.</description>
+		<example>echo &quot;Text in logfile&quot;</example>
+		<category>Default</category>
+	</command>
+	<command letter="E">
+		<name>else</name>
+		<loper>ifCode</loper>
+		<lopertype>String</lopertype>
+		<roper>elseCode</roper>
+		<ropertype>String</ropertype>
+		<since>1.85</since>
+		<returntype>Array</returntype>
+		<description>Constructs an array that can be processed by <f>then</f>.</description>
+		<example>if (a&gt;b) then {c=0} else {c=1}</example>
+		<category>Default</category>
+	</command>
+	<command letter="E">
+		<name>eof</name>
+		<roper>stream</roper>
+		<ropertype>IOStream</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Returns true, if stream reached end.</description>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="E">
+		<name>eoln</name>
+		<returntype>String</returntype>
+		<description>Returns end of line for streams. It also can be used with strings. Result is \r\n</description>
+		<example>stream &lt;&lt; &quot;line1&quot; &lt;&lt; eoln &lt;&lt; &quot;line2&quot; &lt;&lt; eoln</example>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="E">
+		<name>exitWith</name>
+		<loper>if</loper>
+		<lopertype>If Type</lopertype>
+		<roper>code</roper>
+		<ropertype>String</ropertype>
+		<since>2</since>
+		<returntype>Anything</returntype>
+		<description>if result of condition is true, evaluates code, and current block with result of code</description>
+		<example>if (_x&gt;5) exitWith {echo &quot;_x is too big&quot;;_x}</example>
+		<exResult>[when _x is greater then 5, outputs message and terminates code in current level with value of _x</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="E">
+		<name>exp</name>
+		<roper>x</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>The exponential value of x.</description>
+		<example>exp 1</example>
+		<exResult>2.7182</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="E">
+		<name>exploreFor</name>
+		<loper>stream</loper>
+		<lopertype>IOStream</lopertype>
+		<roper>&quot;pattern&quot;</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Explores input stream for pattern. Regular expression is used. It doesn't affect state of input stream, so multiple explores can be called, until request pattern match. More informations about regular expressions at www.regexp.cz</description>
+		<example>stream exploreFor &quot;-?[0-9]+&quot;</example>
+		<exResult>returns true, if streams contain any integer number</exResult>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="E">
+		<name>exportBiTXT_Edges</name>
+		<loper>p3d</loper>
+		<lopertype>LODObject</lopertype>
+		<roper>name</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Saves (exports) LODObject to BiTXT file. Sharp edges are exported as list of edges. It doesn't change internal name of object.</description>
+		<example>p3d exportBiTXT&lt;SG&gt; &quot;shape.txt&quot;;</example>
+		<exResult>true, if file has been successfully exported.</exResult>
+		<category>O2Scripts::ImportBiTXT</category>
+	</command>
+	<command letter="E">
+		<name>exportBiTXT_Normals</name>
+		<loper>p3d</loper>
+		<lopertype>LODObject</lopertype>
+		<roper>name</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Saves (exports) LODObject to BiTXT file. Each face also contain normal vectors. It doesn't change internal name of object.</description>
+		<example>p3d exportBiTXT&lt;SG&gt; &quot;shape.txt&quot;;</example>
+		<exResult>true, if file has been successfully exported.</exResult>
+		<category>O2Scripts::ImportBiTXT</category>
+	</command>
+	<command letter="E">
+		<name>exportBiTXT_SG</name>
+		<loper>p3d</loper>
+		<lopertype>LODObject</lopertype>
+		<roper>name</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Saves (exports) LODObject to BiTXT file. Sharp edges are exported as smoothgroups. It doesn't change internal name of object.</description>
+		<example>p3d exportBiTXT&lt;SG&gt; &quot;shape.txt&quot;;</example>
+		<exResult>true, if file has been successfully exported.</exResult>
+		<category>O2Scripts::ImportBiTXT</category>
+	</command>
+	<command letter="E">
+		<name>exportRTM</name>
+		<loper>mesh</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>filename</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Exports RTM from animation. Returns true, when success. Function excepted normalized animation and properties step and XStep defined</description>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="F">
+		<name>face</name>
+		<loper>object</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>index</roper>
+		<ropertype>Number</ropertype>
+		<returntype>FaceT</returntype>
+		<description>Returns face indexed by index.</description>
+		<example>_object face 10 setTexture &quot;example.paa&quot;;</example>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="F">
+		<name>false</name>
+		<returntype>Boolean</returntype>
+		<description>Always false.</description>
+		<category>Default</category>
+	</command>
+	<command letter="F">
+		<name>find</name>
+		<loper>string</loper>
+		<lopertype>String</lopertype>
+		<roper>what</roper>
+		<ropertype>String</ropertype>
+		<returntype>Number</returntype>
+		<description>Finds substring in string.</description>
+		<example>&quot;one two three&quot; find &quot;two&quot;</example>
+		<exResult>4</exResult>
+		<category>StringsArrays</category>
+	</command>
+	<command letter="F">
+		<name>findi</name>
+		<loper>string</loper>
+		<lopertype>String</lopertype>
+		<roper>what</roper>
+		<ropertype>String</ropertype>
+		<returntype>Number</returntype>
+		<description>Finds substring in string case insensitive.</description>
+		<example>&quot;one two three&quot; findi &quot;TWO&quot;</example>
+		<exResult>4</exResult>
+		<category>StringsArrays</category>
+	</command>
+	<command letter="F">
+		<name>findLevel</name>
+		<loper>LODObject</loper>
+		<lopertype>LODObject</lopertype>
+		<roper>Scalar</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>Finds level by resolution. If resolution doesn't exists, finds nearest</description>
+		<category>O2ScriptLib::LODObjects</category>
+	</command>
+	<command letter="F">
+		<name>findLevelSpecial</name>
+		<loper>LODObject</loper>
+		<lopertype>LODObject</lopertype>
+		<roper>Scalar</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>Finds special level. use LOD_ constants to specify special level</description>
+		<category>O2ScriptLib::LODObjects</category>
+	</command>
+	<command letter="F">
+		<name>finite</name>
+		<roper>x</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Boolean</returntype>
+		<description>True, if number is finite (not infinite and valid number)</description>
+		<example>finite 10/0</example>
+		<exResult>false</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="F">
+		<name>floor</name>
+		<roper>x</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>The floor value of x.</description>
+		<example>floor 5.25 </example>
+		<exResult>5</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="F">
+		<name>for</name>
+		<roper>forspec</roper>
+		<ropertype>Array</ropertype>
+		<returntype>for type</returntype>
+		<description>creates cycle, using C like style. See example.</description>
+		<example>for [&quot;_x=1&quot;;&quot;_x&lt;=10&quot;;&quot;_x=_x+1&quot;] do {echo str _x+&quot;,&quot;;}</example>
+		<exResult>1,2,3,4,5,6,7,8,9,10</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="F">
+		<name>for</name>
+		<roper>var</roper>
+		<ropertype>String</ropertype>
+		<returntype>for type</returntype>
+		<description>Starts for sequence, use in complette form(see example).</description>
+		<example>for &quot;_x&quot; from 1 to 10 do {echo str _x+&quot;,&quot;;}</example>
+		<exResult>1,2,3,4,5,6,7,8,9,10</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="F">
+		<name>forEach</name>
+		<loper>command</loper>
+		<lopertype>String</lopertype>
+		<roper>array</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Nothing</returntype>
+		<description>Executes the given command for each element in array.
+It's executed as follows:
+
+for each element of array an element is assigned as _x and the command is executed.</description>
+		<example>&quot;_x setdammage 1&quot; forEach units group player</example>
+		<category>Default</category>
+	</command>
+	<command letter="F">
+		<name>forEachFace</name>
+		<loper>object</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>[condition,operation,back]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Anything</returntype>
+		<description>Call 'operation' for each face in object. 'condition' string that is evaluated for each face. If 'condition' returns true, 'operation' is evaluated. 'back' is optional (default false). If true, enumeration is processed from end to begin</description>
+		<example>same kind as forEachPoint</example>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="F">
+		<name>forEachPoint</name>
+		<loper>object</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>[condition,operation,back]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Anything</returntype>
+		<description>Call 'operation' for each point in object. 'condition' string that is evaluated for each point. If 'condition' returns true, 'operation' is evaluated. 'back' is optional (default false). If true, enumeration is processed from end to begin</description>
+		<example>_mesh forEachPoint [&quot;_this isPointSelected _x&quot;,&quot;_vector=_this getPoint _x;_this setPoint [_x,[_vector @ 0,_vector @ 1, _vector @ 2+0.5]]&quot;];nil</example>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="F">
+		<name>FrameFromTime</name>
+		<loper>mesh</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>time</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>Retruns frame index of nearest time</description>
+		<example>_frame = _mesh frameFromTime 0.5</example>
+		<exResult>frame index nearest to time 0.5</exResult>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="F">
+		<name>from</name>
+		<loper>for &quot;_var&quot;</loper>
+		<lopertype>for type</lopertype>
+		<roper>b</roper>
+		<ropertype>Number</ropertype>
+		<returntype>for type</returntype>
+		<description>Continue sequence of 'for' command.</description>
+		<example>for &quot;_x&quot; from 10 to 20 do {..code..}</example>
+		<category>Default</category>
+	</command>
+	<command letter="F">
+		<name>fromHex</name>
+		<roper>a</roper>
+		<ropertype>String</ropertype>
+		<returntype>Number</returntype>
+		<description>Converts hex number in string into Number type. Doesn't evaluates any expression. Returns 0 if error</description>
+		<example>hex &quot;12EC7&quot;</example>
+		<exResult>77511.0</exResult>
+		<category>StringsArrays</category>
+	</command>
+	<command letter="G">
+		<name>get</name>
+		<loper>stream</loper>
+		<lopertype>IOStream</lopertype>
+		<roper>count</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Get count of characters from stream. If count &lt;=0 than gets 'last tested characters'+count. For example, -1 will get 5 characters, if 6 characters was tested.</description>
+		<example>if (stream exploreFor &quot;-?[0-9]+&quot;) then {result=stream get 0;}; </example>
+		<exResult>number in stream</exResult>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="G">
+		<name>getActiveFrame</name>
+		<roper>mesh</roper>
+		<ropertype>ObjectData</ropertype>
+		<returntype>Number</returntype>
+		<description>Returns index of animation currently mapped to vertices. Returns nil, if no animation is mapped</description>
+		<example>_mesh setActiveFrame 1;getActiveFrame _mesh</example>
+		<exResult>1</exResult>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="G">
+		<name>getActiveObject</name>
+		<roper>LODObject</roper>
+		<ropertype>LODObject</ropertype>
+		<returntype>ObjectData</returntype>
+		<description>Returns active object</description>
+		<example>_object=getActiveObject _p3d;</example>
+		<exResult>ObjectData</exResult>
+		<category>O2ScriptLib::LODObjects</category>
+	</command>
+	<command letter="G">
+		<name>getAnimPoint</name>
+		<loper>mesh</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>[frame,index]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Array</returntype>
+		<description>Gets vertex in animation frame as array [x,y,z]</description>
+		<example>_vertex=_mesh getAnimPoint [1,10];</example>
+		<exResult>vertex with index 10 in frame 1</exResult>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="G">
+		<name>getBuffer</name>
+		<roper>stream</roper>
+		<ropertype>IOStream</ropertype>
+		<returntype>String</returntype>
+		<description>Retrieves buffer output from memory stream. Data sent through memory stream are stored in buffer. The buffer can be converted to the String using this command. Note: Function returns NIL if parameter is not memory stream</description>
+		<example>_data=getBuffer stream</example>
+		<exResult>content of buffer of the memory stream</exResult>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="G">
+		<name>getFaceFlags</name>
+		<loper>face</loper>
+		<lopertype>FaceT</lopertype>
+		<roper>index</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>Gets face flag. Argument is flag's index. Use predefined constants to get meanful flags</description>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="G">
+		<name>getFaceFlags</name>
+		<loper>face</loper>
+		<lopertype>FaceT</lopertype>
+		<roper>[range]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Number</returntype>
+		<description>Gets face flags. Argument is range of flags in form [l,h]. Use predefined constants to get meanful flags</description>
+		<example>_face getFaceFlags FLAG_FACE_USERVALUE;</example>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="G">
+		<name>getFaceFlagsStr</name>
+		<loper>mesh</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>index</roper>
+		<ropertype>Number</ropertype>
+		<returntype>String</returntype>
+		<description>Gets code-string represents flags of face.</description>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="G">
+		<name>getLastBiTXTImportError</name>
+		<returntype>String</returntype>
+		<description>Returns error string of last error of importBiTXT.</description>
+		<category>O2Scripts::ImportBiTXT</category>
+	</command>
+	<command letter="G">
+		<name>getLine</name>
+		<roper>stream</roper>
+		<ropertype>IOStream</ropertype>
+		<returntype>String</returntype>
+		<description>Reads whole line. Return string without new-line delimiter.</description>
+		<example>_line=getLine console;</example>
+		<exResult>whole line</exResult>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="G">
+		<name>getMaterial</name>
+		<roper>face</roper>
+		<ropertype>FaceT</ropertype>
+		<returntype>String</returntype>
+		<description>Returns current face material</description>
+		<example>_material=getMaterial _face;</example>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="G">
+		<name>getObject</name>
+		<loper>LODObject</loper>
+		<lopertype>LODObject</lopertype>
+		<roper>Scalar</roper>
+		<ropertype>Number</ropertype>
+		<returntype>ObjectData</returntype>
+		<description>Sets resolution of active level.You can use special constants declared in LODObject.inc</description>
+		<example>_success=_object setResolution LOD_VIEW_COMMANDER</example>
+		<exResult>always true, operation was successfull</exResult>
+		<category>O2ScriptLib::LODObjects</category>
+	</command>
+	<command letter="G">
+		<name>getObjects</name>
+		<roper>LODObject</roper>
+		<ropertype>LODObject</ropertype>
+		<returntype>Array</returntype>
+		<description>Returns an array of objects in LODObject</description>
+		<example>{echo (NFaces _x)} forEach getObjects _p3d</example>
+		<exResult>Array</exResult>
+		<category>O2ScriptLib::LODObjects</category>
+	</command>
+	<command letter="G">
+		<name>getPoint</name>
+		<loper>object</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>index</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Array</returntype>
+		<description>Gets point in object. </description>
+		<example>_vector=_mesh getPoint _index;</example>
+		<exResult>vector or NIL if error</exResult>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="G">
+		<name>getPointFlags</name>
+		<loper>mesh</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>[point_index,flag_index/range]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Number</returntype>
+		<description>Gets point flag(s). Use predefined constants to get meanful flags</description>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="G">
+		<name>getPointFlagsStr</name>
+		<loper>mesh</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>index</roper>
+		<ropertype>Number</ropertype>
+		<returntype>String</returntype>
+		<description>Gets code-string represents flags of point.</description>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="G">
+		<name>getPointMass</name>
+		<loper>mesh</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>index</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>Gets vertex's mass. Mass is valid only for Gemometry Level</description>
+		<example>_mesh getMassPoint 10;</example>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="G">
+		<name>getPointWeights</name>
+		<roper>sel</roper>
+		<ropertype>Selection</ropertype>
+		<returntype>Array</returntype>
+		<description>Creates array with contain weight for each point by index. NOTE: not all values may be assigned to valid points. If index is unused, weight is set to zero</description>
+		<example>_weights=getPointWeights _sel</example>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="G">
+		<name>getProperty</name>
+		<loper>object</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>property</roper>
+		<ropertype>String</ropertype>
+		<returntype>String</returntype>
+		<description>Gets property of object.</description>
+		<example>_object getProperty &quot;XStep&quot;;</example>
+		<exResult>for.ex: &quot;0.520&quot;</exResult>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="G">
+		<name>getProxies</name>
+		<roper>selection</roper>
+		<ropertype>Selection</ropertype>
+		<returntype>Array</returntype>
+		<description>Returns array with the names of proxies selected by the selection.</description>
+		<example>getProxies _sel;</example>
+		<exResult>array with name of proxies selected by the selection</exResult>
+		<category>O2Scripts::ObjToolJoinProxy</category>
+	</command>
+	<command letter="G">
+		<name>getResolution</name>
+		<loper>LODObject</loper>
+		<lopertype>LODObject</lopertype>
+		<roper>index</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>Gets resolution of object by index</description>
+		<category>O2ScriptLib::LODObjects</category>
+	</command>
+	<command letter="G">
+		<name>getResolutions</name>
+		<roper>LODObject</roper>
+		<ropertype>LODObject</ropertype>
+		<returntype>Array</returntype>
+		<description>Returns an array of objects in LODObject</description>
+		<example>{echo (NFaces _x)} forEach getObjects _p3d</example>
+		<exResult>Array</exResult>
+		<category>O2ScriptLib::LODObjects</category>
+	</command>
+	<command letter="G">
+		<name>getSelectedFaces</name>
+		<roper>sel</roper>
+		<ropertype>Selection</ropertype>
+		<returntype>Array</returntype>
+		<description>Creates array with contain indicies with selected faces</description>
+		<example>_arr=getSelectedFaces _sel</example>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="G">
+		<name>getSelectedPoints</name>
+		<roper>sel</roper>
+		<ropertype>Selection</ropertype>
+		<returntype>Array</returntype>
+		<description>Creates array with contain indicies with selected points</description>
+		<example>_arr=getSelectedPoints _sel</example>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="G">
+		<name>getSelections</name>
+		<roper>object</roper>
+		<ropertype>ObjectData</ropertype>
+		<returntype>Array</returntype>
+		<description>Returns array of selections exists in object'</description>
+		<example>{..code...} forEach getSelections _object;</example>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="G">
+		<name>getTexture</name>
+		<roper>face</roper>
+		<ropertype>FaceT</ropertype>
+		<returntype>String</returntype>
+		<description>Returns current face texture</description>
+		<example>_texture=getTexture _face;</example>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="G">
+		<name>getUVSet</name>
+		<roper>face</roper>
+		<ropertype>FaceT</ropertype>
+		<returntype>Array</returntype>
+		<description>Returns array of UV coordinates of current stage in order U,V,U,V..etc</description>
+		<example>_uvset=getUVSet _face;</example>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="G">
+		<name>getVertices</name>
+		<roper>face</roper>
+		<ropertype>FaceT</ropertype>
+		<returntype>Array</returntype>
+		<description>Returns array of vertices at face.</description>
+		<example>{..code _x...} forEach getVertices (_object face 10) </example>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="G">
+		<name>getXMLTag</name>
+		<roper>stream</roper>
+		<ropertype>IOStream</ropertype>
+		<returntype>Array</returntype>
+		<description>Return parsed XML tag. Before using this function, you must test stream for presence of tag! use testXMLTag function.</description>
+		<example>if (stream testXMLTag &quot;name&quot;) then {tag=getXMLTag stream;}</example>
+		<exResult>array [&quot;nameOfTag&quot;,&quot;firstAttrib&quot;,&quot;firstAttribValue&quot;,&quot;secondAttrib&quot;,&quot;secondAtrribValue&quot;, ... etc.]</exResult>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="H">
+		<name>halt</name>
+		<since>2.00</since>
+		<returntype>Nothing</returntype>
+		<description>Stops the program into a debugger.</description>
+		<example>halt</example>
+		<category>Default</category>
+	</command>
+	<command letter="H">
+		<name>homeFolder</name>
+		<returntype>String</returntype>
+		<description>Returns path of hosting module</description>
+		<example>homeFolder</example>
+		<exResult>c:\bis\Oxygen\</exResult>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="H">
+		<name>hostingApp</name>
+		<returntype>String</returntype>
+		<description>Returns filename of hosting application. It useful with shell commands etc.</description>
+		<example>hostingApp</example>
+		<exResult>c:\bis\Oxygen\Objektiv2.exe</exResult>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="I">
+		<name>if</name>
+		<roper>condition</roper>
+		<ropertype>Boolean</ropertype>
+		<since>1.85</since>
+		<returntype>If Type</returntype>
+		<description>The first part of the if command.</description>
+		<example>if (a&gt;b) then {a=b}</example>
+		<category>Default</category>
+	</command>
+	<command letter="I">
+		<name>ignore</name>
+		<loper>stream</loper>
+		<lopertype>IOStream</lopertype>
+		<roper>count</roper>
+		<ropertype>Number</ropertype>
+		<returntype>IOStream</returntype>
+		<description>ignores count of characters from stream. If count &lt;=0 than ignores 'last tested characters'+count. For example, -1 will ignores 5 characters, if 6 characters was tested.</description>
+		<example>if (stream exploreFor &quot;-?[0-9]+&quot;) then {stream ignore 0;}; //ignore number </example>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="I">
+		<name>importBiFXT</name>
+		<loper>p3d</loper>
+		<lopertype>LODObject</lopertype>
+		<roper>name</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Loads (imports) BiFXT file into LODObject. It doesn't change internal name of object.</description>
+		<example>p3d=newLODObject;result=p3d importBiFXT &quot;shape.fxt&quot;;</example>
+		<exResult>true, if file has been successfully parsed and imported. false, if there was an error.</exResult>
+		<category>O2Scripts::ImportBiFXT</category>
+	</command>
+	<command letter="I">
+		<name>importBiTXT</name>
+		<loper>p3d</loper>
+		<lopertype>LODObject</lopertype>
+		<roper>name</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Loads (imports) BiTXT file into LODObject. It doesn't change internal name of object.</description>
+		<example>p3d=newLODObject;result=p3d importBiTXT &quot;shape.txt&quot;;</example>
+		<exResult>true, if file has been successfully parsed and imported. false, if there was an error. Use getLastBiTXTImportError to get reason of fail.</exResult>
+		<category>O2Scripts::ImportBiTXT</category>
+	</command>
+	<command letter="I">
+		<name>importRTM</name>
+		<loper>mesh</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>filename</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Imports RTM to animation. Returns true, when success.</description>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="I">
+		<name>in</name>
+		<loper>x</loper>
+		<lopertype>Any Value</lopertype>
+		<roper>array</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Checks whether x is equal to any element in the array.</description>
+		<example>1 in [0, 1, 2]</example>
+		<exResult>true</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="I">
+		<name>inForm</name>
+		<loper>number</loper>
+		<lopertype>Number</lopertype>
+		<roper>&quot;format&quot;</roper>
+		<ropertype>String</ropertype>
+		<returntype>String</returntype>
+		<description>Formats number to string. format is string, and use the same form as format in printf function in C/C++ language (format specification for %f)</description>
+		<example>3.15 inForm &quot;10.3&quot;</example>
+		<exResult>&quot;000003.150&quot;</exResult>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="I">
+		<name>inForm</name>
+		<loper>text</loper>
+		<lopertype>String</lopertype>
+		<roper>&quot;format&quot;</roper>
+		<ropertype>String</ropertype>
+		<returntype>String</returntype>
+		<description>Formats string to string. format is string, and use the same form as format in printf function in C/C++ language (format specification for %s)</description>
+		<example>&quot;Ahoj&quot; inForm &quot;-10.3&quot;</example>
+		<exResult>&quot;Aho       &quot;</exResult>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="I">
+		<name>isFaceSelected</name>
+		<loper>sel</loper>
+		<lopertype>Selection</lopertype>
+		<roper>index</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Returns true, if face is selected. If index is out of range, reports error</description>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="I">
+		<name>isnil</name>
+		<roper>variable</roper>
+		<ropertype>String</ropertype>
+		<since>2.00</since>
+		<returntype>Boolean</returntype>
+		<description>Tests whether the variable is null. The function returns true if the variable is null and false if it's not.</description>
+		<example>if (isnil(&quot;_pokus&quot;)) then {_pokus=0;}</example>
+		<category>Default</category>
+	</command>
+	<command letter="I">
+		<name>isPointSelected</name>
+		<loper>sel</loper>
+		<lopertype>Selection</lopertype>
+		<roper>index</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Returns true, if point is selected. If index is out of range, reports error. Points with weight>0 are selected</description>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="L">
+		<name>ln</name>
+		<roper>x</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>The natural logarithm of x.</description>
+		<example>ln 10</example>
+		<exResult>2.302</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="L">
+		<name>loadP3D</name>
+		<loper>LOObject</loper>
+		<lopertype>LODObject</lopertype>
+		<roper>String</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Loads file into object</description>
+		<example>_object=newLODObject;_result=_object loadP3D &quot;example.p3d&quot;</example>
+		<exResult>true, if load has been successful</exResult>
+		<category>O2ScriptLib::LODObjects</category>
+	</command>
+	<command letter="L">
+		<name>loadSelection</name>
+		<loper>object</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>name</roper>
+		<ropertype>String</ropertype>
+		<returntype>Selection</returntype>
+		<description>Loads selection from object with name. If selection doesn't exists, returns nil.There are three special selections named: _current, _hidden, _locked. Use this names to select current selection, current hidden selection, or current locked selection.</description>
+		<example>_sel=_object loadSelection &quot;Component1&quot;;</example>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="L">
+		<name>log</name>
+		<roper>x</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>The base-10 logarithm of x.</description>
+		<example>log 10</example>
+		<exResult>1</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="M">
+		<name>massCenterOf</name>
+		<roper>mesh</roper>
+		<ropertype>ObjectData</ropertype>
+		<returntype>Array</returntype>
+		<description>Calculates center of mass</description>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="M">
+		<name>mergeObject</name>
+		<loper>trg</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>[src,selName]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>ObjectData</returntype>
+		<description>Merges one object (src) into another (trg). You can specify selection name(selName), that will contain new object.Works same way as File->Merge in Objectiv menu.</description>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="M">
+		<name>mergeObject</name>
+		<loper>trg</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>src</roper>
+		<ropertype>ObjectData</ropertype>
+		<returntype>ObjectData</returntype>
+		<description>Merges one object (src) into another (trg). Works same way as File->Merge in Objectiv menu.</description>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="M">
+		<name>mergePoints</name>
+		<loper>sel</loper>
+		<lopertype>Selection</lopertype>
+		<roper>distance</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Selection</returntype>
+		<description>Merges points in selection. Parameter distance specified distance between points to merge. Specify some BIG value to merge all points in selection into one</description>
+		<example>_selection mergePoints 0.0001;</example>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="M">
+		<name>messageBox</name>
+		<roper>[text,flags]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Number</returntype>
+		<description>Shows message box with text and buttons. Returns ID of pressed button</description>
+		<category>dialogs</category>
+	</command>
+	<command letter="M">
+		<name>mod</name>
+		<loper>a</loper>
+		<lopertype>Number</lopertype>
+		<roper>b</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>The remainder of a divided by b. Note that the remainer is calculated in the real domain.</description>
+		<example>3 mod 2</example>
+		<exResult>1</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="M">
+		<name>mxCalculateHierarchy</name>
+		<loper>parents</loper>
+		<lopertype>Array</lopertype>
+		<roper>matrices</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Array</returntype>
+		<description>Calculates hierarchy. parents is array of scalar values contains indicies to parent matrices. If -1 is used, matrix has no parent. It recomended use it on root parent, it enables you transform whole hierarchy by modifiing one matrix</description>
+		<example>_matrices = [-1,0,0,2,3] mxInterpolate _relmx;//hierarchy (0,(1,2,(3,(4)))</example>
+		<exResult>array _matrices contains transforms in world space. </exResult>
+		<category>Matrix</category>
+	</command>
+	<command letter="M">
+		<name>mxGet</name>
+		<roper>matrix</roper>
+		<ropertype>Matrix</ropertype>
+		<returntype>Array</returntype>
+		<description>Creates array from matrix</description>
+		<example>_array=mxGet _mx</example>
+		<category>Matrix</category>
+	</command>
+	<command letter="M">
+		<name>mxInterpolate</name>
+		<loper>stack</loper>
+		<lopertype>Array</lopertype>
+		<roper>factor</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Matrix</returntype>
+		<description>Creates interpolation between two matrices (most recent in stack). factor is value in range &lt;0,1&gt; or &lt;-1,0&gt;. If factor is negative, absolute value is get, and interpolation will normalize rotation vectors in matrix</description>
+		<example>_stack mxInterpolate -0.5</example>
+		<category>Matrix</category>
+	</command>
+	<command letter="M">
+		<name>mxInverse</name>
+		<roper>mx</roper>
+		<ropertype>Matrix</ropertype>
+		<returntype>Matrix</returntype>
+		<description>Calculates inversion for matrix</description>
+		<example>_inv=mxInverse _mx</example>
+		<category>Matrix</category>
+	</command>
+	<command letter="M">
+		<name>mxLoad</name>
+		<roper>matrix</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Matrix</returntype>
+		<description>Loads matrix from array</description>
+		<example>_mx=mxLoad [[2,0,0],[0,1,0],[0,0,2]]</example>
+		<category>Matrix</category>
+	</command>
+	<command letter="M">
+		<name>mxMove</name>
+		<roper>vector</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Matrix</returntype>
+		<description>Creates matrix represents trasnlation by offset [x,y,z]</description>
+		<example>_mx=mxMove [0.5,-1.2,0.2]</example>
+		<exResult>[0,0,0][0,0,0][0,0,0][0.5,-1.2,0.2]</exResult>
+		<category>Matrix</category>
+	</command>
+	<command letter="M">
+		<name>mxPivot</name>
+		<roper>pivot</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Matrix</returntype>
+		<description>Creates matrix that enables you to use all other trasnforms about pivot</description>
+		<example>see mxUnpivot example</example>
+		<category>Matrix</category>
+	</command>
+	<command letter="M">
+		<name>mxPivotRotate</name>
+		<loper>pivot</loper>
+		<lopertype>Array</lopertype>
+		<roper>array</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Matrix</returntype>
+		<description>Creates matrix that represents rotation about axis relative to pin. Two forms are possible: [[axis_x,axis_y,axis_z],angle] or [axis_x,axis_y,axis_z,angle]</description>
+		<example>_mx=[1,2,3] mxPivotRotate [0,1,0,90]</example>
+		<exResult>... rotation relative to [1,2,3]</exResult>
+		<category>Matrix</category>
+	</command>
+	<command letter="M">
+		<name>mxPivotScale</name>
+		<loper>pivot</loper>
+		<lopertype>Array</lopertype>
+		<roper>factor</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Matrix</returntype>
+		<description>Creates matrix that represents scaling object relative to pin</description>
+		<example>_mx=[1,2,3] mxPivotScale [2,2,2]</example>
+		<exResult>... resizition twice relative to [1,2,3]</exResult>
+		<category>Matrix</category>
+	</command>
+	<command letter="M">
+		<name>mxPivotScale</name>
+		<loper>pivot</loper>
+		<lopertype>Array</lopertype>
+		<roper>vector</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Matrix</returntype>
+		<description>Creates matrix that represents scaling object relative to pin</description>
+		<example>_mx=[1,2,3] mxPivotScale [2,2,2]</example>
+		<exResult>... resizition twice relative to [1,2,3]</exResult>
+		<category>Matrix</category>
+	</command>
+	<command letter="M">
+		<name>mxPop</name>
+		<roper>stack</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Matrix</returntype>
+		<description>Removes most recent matrix from stack. If stack is empty, do nothing and returns identity. You can use it to get identity matrix _ident=mxPop []</description>
+		<example>_mx=mxPop _stack</example>
+		<category>Matrix</category>
+	</command>
+	<command letter="M">
+		<name>mxPush</name>
+		<loper>a</loper>
+		<lopertype>Array</lopertype>
+		<roper>b</roper>
+		<ropertype>Matrix</ropertype>
+		<returntype>Array</returntype>
+		<description>Pushes matrix into stack. Stack is represented as array. New matrix is inserted at the end of array</description>
+		<example>_stack _mxPush (_mxTop _stack * _mxScale 5);</example>
+		<category>Matrix</category>
+	</command>
+	<command letter="M">
+		<name>mxRotate</name>
+		<roper>array</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Matrix</returntype>
+		<description>Creates rotation matrix. Rotation is represented as axis and angle. Two forms are possible: [[axis_x,axis_y,axis_z],angle] or [axis_x,axis_y,axis_z,angle]</description>
+		<example>_mx=mxRotate [0,1,0,90]</example>
+		<exResult>rotation about Y using angle 90*</exResult>
+		<category>Matrix</category>
+	</command>
+	<command letter="M">
+		<name>mxScale</name>
+		<roper>scale</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Matrix</returntype>
+		<description>Creates matrix represents uniform scale</description>
+		<example>_mx=mxScale 2</example>
+		<exResult>[2,0,0][0,2,0][0,0,2][0,0,0]</exResult>
+		<category>Matrix</category>
+	</command>
+	<command letter="M">
+		<name>mxScale</name>
+		<roper>vector</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Matrix</returntype>
+		<description>Creates matrix represents scale by vector [x,y,z]</description>
+		<example>_mx=mxScale [2,-2,1]</example>
+		<exResult>[2,0,0][0,-2,0][0,0,1][0,0,0]</exResult>
+		<category>Matrix</category>
+	</command>
+	<command letter="M">
+		<name>mxTop</name>
+		<roper>stack</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Matrix</returntype>
+		<description>Returns most recent matrix in stack. If stack is empty, do nothing and returns identity. You can use it to get identity matrix _ident=mxTop []</description>
+		<example>_mx=mxTop _stack</example>
+		<category>Matrix</category>
+	</command>
+	<command letter="M">
+		<name>mxUnpivot</name>
+		<roper>vector</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Matrix</returntype>
+		<description>Creates matrix that closes all pivot transforms. mxPivot and mxUnpivot is useful if used in transform stream or transform stack</description>
+		<example>_mx=mxPivot _pivot * mxScale _scale * mxRotate _rotate * mxUnpivot _pivot</example>
+		<exResult>... create scaling and rotation about pivot</exResult>
+		<category>Matrix</category>
+	</command>
+	<command letter="N">
+		<name>nameOf</name>
+		<roper>obj</roper>
+		<ropertype>LODObject</ropertype>
+		<returntype>String</returntype>
+		<description>Return full name of object</description>
+		<example>nameOf _p3d</example>
+		<category>O2ScriptLib::LODObjects</category>
+	</command>
+	<command letter="N">
+		<name>nameOf</name>
+		<roper>sel</roper>
+		<ropertype>Selection</ropertype>
+		<returntype>String</returntype>
+		<description>Returns name of selection.</description>
+		<example>_name=nameof _sel</example>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="N">
+		<name>newLODObject</name>
+		<returntype>LODObject</returntype>
+		<description>Creates new empty object. Best usage is assign result to the variable. New object is shared between variables.</description>
+		<example>_object = newLODObject</example>
+		<category>O2ScriptLib::LODObjects</category>
+	</command>
+	<command letter="N">
+		<name>newSelection</name>
+		<roper>object</roper>
+		<ropertype>ObjectData</ropertype>
+		<returntype>Selection</returntype>
+		<description>Creates selection at object</description>
+		<example>_newsel=newSelection _object</example>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="N">
+		<name>nil</name>
+		<returntype>Any Value</returntype>
+		<description>Nil value. This value can be used to undefine an existing variable.</description>
+		<example>variableToDestroy = nil</example>
+		<category>Default</category>
+	</command>
+	<command letter="N">
+		<name>normAnimation</name>
+		<roper>mesh</roper>
+		<ropertype>ObjectData</ropertype>
+		<returntype>ObjectData</returntype>
+		<description>Normalizes animation. Animation will start at time 0 and ends at time 1</description>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="N">
+		<name>not</name>
+		<roper>a</roper>
+		<ropertype>Boolean</ropertype>
+		<returntype>Boolean</returntype>
+		<description>not a</description>
+		<example>not false</example>
+		<exResult>true</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="O">
+		<name>o2EditMaterial</name>
+		<roper>name</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Opens material 'name' in MAT editor, if available.</description>
+		<category>Objektiv2::Internal</category>
+	</command>
+	<command letter="O">
+		<name>o2GetConfig</name>
+		<roper>id</roper>
+		<ropertype>Number</ropertype>
+		<returntype>String</returntype>
+		<description>Gets O2 configuration. ID is constant from std/o2config.inc</description>
+		<category>Objektiv2::Internal</category>
+	</command>
+	<command letter="O">
+		<name>o2GetConfigBool</name>
+		<roper>id</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Gets O2 configuration. ID is constant from std/o2config.inc</description>
+		<category>Objektiv2::Internal</category>
+	</command>
+	<command letter="O">
+		<name>o2GetConfigScalar</name>
+		<roper>id</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>Gets O2 configuration. ID is constant from std/o2config.inc</description>
+		<category>Objektiv2::Internal</category>
+	</command>
+	<command letter="O">
+		<name>o2InputBox</name>
+		<roper>[&quot;content&quot;,_browse,&quot;title&quot;,&quot;filters&quot;,]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>String</returntype>
+		<description>Opens o2 standard input box. 'content' is string that initialize text line. When _browse field if true, browse button is available. 'title' is displayed as title of dialog. 'filters' is optional, and is valid when _browse is true.</description>
+		<example>_file=o2InputBox [_file,true,&quot;Select a P3D file&quot;,&quot;P3D Files|*.p3d|All files|*.*|&quot;];</example>
+		<category>Objektiv2::Internal</category>
+	</command>
+	<command letter="O">
+		<name>o2MenuCommand</name>
+		<roper>id</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Nothing</returntype>
+		<description>Process any menu command. ID is constant from std/o2commands.inc. Remember: Changes in object by menu commands doesn't affect 'this' object. Use o2UpdateThis to update 'this'.</description>
+		<category>Objektiv2::Internal</category>
+	</command>
+	<command letter="O">
+		<name>o2NoRunScriptDialog</name>
+		<returntype>Nothing</returntype>
+		<description>Function hides "Run Script" dialog. User will cannot debug or stop script processing. Useful only when script has own dialog (for example, in options)</description>
+		<category>Objektiv2::Internal</category>
+	</command>
+	<command letter="O">
+		<name>o2UpdateThisObject</name>
+		<returntype>Nothing</returntype>
+		<description>Function updates 'this' object from editor. All changes made in 'this' will be discarded. Script cannot update editor's object from 'this'. It is done after script successfully exits.</description>
+		<category>Objektiv2::Internal</category>
+	</command>
+	<command letter="O">
+		<name>onProgressEvent</name>
+		<roper>Code</roper>
+		<ropertype>String</ropertype>
+		<returntype>String</returntype>
+		<description>Sets function to display progress status</description>
+		<example>onProgressEvent {echo (&quot;progress&quot;+str(_x*100)+&quot;%&quot;);}</example>
+		<exResult>Nothing</exResult>
+		<category>O2ScriptLib::LODObjects</category>
+	</command>
+	<command letter="O">
+		<name>openErrorIO</name>
+		<returntype>IOStream</returntype>
+		<description>Opens stream for standard input and error output . If no standard I/O is assigned, creates console, and redirect I/O into console. Note: Always assign result to variable, and access stream with variable.Use error stream to displaying error messages, that shouldn't be included in standard output</description>
+		<example>errorcons=openErrorIO; errorcons&lt;&lt;&quot;An error has occured.&quot;</example>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="O">
+		<name>openFile</name>
+		<roper>[&quot;filename&quot;,mode]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>IOStream</returntype>
+		<description>Opens or creates a file specified by filename. Mode contain one of following values: 0 - test existence of file (no open), 1 - open existing file for reading, 2 - create new file for writting, 3 - open existing file for reading and writting, 4 - open (create if not exists) file for reading and writting</description>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="O">
+		<name>openHybridStream</name>
+		<roper>[input,output]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>IOStream</returntype>
+		<description>Creates stream that combines two other streams. Data readed using this stream is readed from `input` stream, and data written to this stream is written to the `output` stream.</description>
+		<example>file=openFile [&quot;pokus&quot;,1];console=openStandardIO;hybrid=openHybridStream [file,console]</example>
+		<exResult>bidirectional stream that reads data from file a writes data to standard output</exResult>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="O">
+		<name>openMemoryStream</name>
+		<roper>&quot;input&quot;</roper>
+		<ropertype>String</ropertype>
+		<returntype>IOStream</returntype>
+		<description>Creates stream in memory, but acts as any other I/O device. You can specify input text, that will be read. Data written into the stream may be later read using getStreamBuffer function.</description>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="O">
+		<name>openNetworkServer</name>
+		<roper>[port,timeout]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>IOStream</returntype>
+		<description>Creates server for accepting connection. Another computer may connect to the current computer. Script halts processing for timeout period and waits for connection. Timeout also specified any other waitings</description>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="O">
+		<name>openNetworkStream</name>
+		<roper>[&quot;server&quot;,timeout]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>IOStream</returntype>
+		<description>Creates network stream to another computer, server is string in format address:port. Timeout specified waiting for connection/data in miliseconds.</description>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="O">
+		<name>openStandardIO</name>
+		<returntype>IOStream</returntype>
+		<description>Opens stream for standard input and output. If no standard I/O is assigned, creates console, and redirect I/O into console. Note: Always assign result to variable, and access stream with variable.</description>
+		<example>console=openStandardIO; console&lt;&lt;&quot;Hallo world&quot;</example>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="O">
+		<name>or</name>
+		<loper>a</loper>
+		<lopertype>Boolean</lopertype>
+		<roper>b</roper>
+		<ropertype>Boolean</ropertype>
+		<returntype>Boolean</returntype>
+		<description>a or b</description>
+		<example>not alive player or not alive leader player</example>
+		<category>Default</category>
+	</command>
+	<command letter="O">
+		<name>ownerOf</name>
+		<roper>mesh</roper>
+		<ropertype>ObjectData</ropertype>
+		<returntype>LODObject</returntype>
+		<description>Returns owner LODObject of this object</description>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="P">
+		<name>pi</name>
+		<returntype>Number</returntype>
+		<description>pi (180 degrees converted to radians)</description>
+		<example>pi</example>
+		<exResult>3.1415</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="P">
+		<name>private</name>
+		<roper>variable</roper>
+		<ropertype>String or Array</ropertype>
+		<since>1.85</since>
+		<returntype>Nothing</returntype>
+		<description>Introduces one or more local variables in the innermost scope.</description>
+		<category>Default</category>
+	</command>
+	<command letter="P">
+		<name>properties</name>
+		<roper>object</roper>
+		<ropertype>ObjectData</ropertype>
+		<returntype>Array</returntype>
+		<description>Returns array of properties. Array is organised into pairs, each pair contain property name and its value. If you want to get count of array, divide the result twice</description>
+		<example>_numprop=count properties _object /2</example>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="R">
+		<name>rad</name>
+		<roper>x</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>Converts x from degrees to radians.</description>
+		<example>rad 180</example>
+		<exResult>3.1415</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="R">
+		<name>random</name>
+		<roper>x</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>The random real value from 0 to x.</description>
+		<example>random 1</example>
+		<category>Default</category>
+	</command>
+	<command letter="R">
+		<name>renameFileTo</name>
+		<loper>a</loper>
+		<lopertype>String</lopertype>
+		<roper>b</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Renames one file into another.</description>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="R">
+		<name>resize</name>
+		<loper>array</loper>
+		<lopertype>Array</lopertype>
+		<roper>count</roper>
+		<ropertype>Number</ropertype>
+		<since>1.75</since>
+		<returntype>Nothing</returntype>
+		<description>Changes the array size. This function can be used to add or remove elements from the array.</description>
+		<example>array resize 2</example>
+		<category>Default</category>
+	</command>
+	<command letter="R">
+		<name>round</name>
+		<roper>x</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>The round value of x.</description>
+		<example>round -5.25</example>
+		<exResult>-6</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="S">
+		<name>save</name>
+		<roper>LODObject</roper>
+		<ropertype>LODObject</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Saves object into the disk. It used assigned file name. To specify new filename, use as operator</description>
+		<example>save (_object as &quot;test.p3d&quot;);</example>
+		<exResult>true means no error</exResult>
+		<category>O2ScriptLib::LODObjects</category>
+	</command>
+	<command letter="S">
+		<name>save</name>
+		<loper>object</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>selection</roper>
+		<ropertype>Selection</ropertype>
+		<returntype>Selection</returntype>
+		<description>Saves selection. Selection must have name. If selection with name exists, it is replaced.There are three special selections named: _current, _hidden, _locked. Use this names to save as current selection, current hidden selection, or current locked selection.</description>
+		<example>_object save _sel as &quot;my selection&quot;;</example>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="S">
+		<name>scopeName</name>
+		<roper>name</roper>
+		<ropertype>String</ropertype>
+		<returntype>Nothing</returntype>
+		<description>defines name of current scope. Name is visible in debugger, and name is also used as reference in some commands. Scope name can be defined only once per scope.</description>
+		<category>Default</category>
+	</command>
+	<command letter="S">
+		<name>seekInput</name>
+		<loper>stream</loper>
+		<lopertype>IOStream</lopertype>
+		<roper>position</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Nothing</returntype>
+		<description>This command moves reading pointer (current reading position) in static stream (file or memory stream) at specified position. Position is calculated in bytes from the beginning of stream. Note: File-streams shares one pointer for both directions. Moving reading pointer will also move reading pointer. Note: non-static stream doesn't support this command. If it used, sets stream into error state.</description>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="S">
+		<name>seekOutput</name>
+		<loper>stream</loper>
+		<lopertype>IOStream</lopertype>
+		<roper>position</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Nothing</returntype>
+		<description>This command moves writting pointer (current writting position) in static stream (file or memory stream) at specified position. Position is calculated in bytes from the beginning of stream. Note: File-streams shares one pointer for both directions. Moving writting pointer will also move reading pointer. Note: non-static stream doesn't support this command. If it used, sets stream into error state.</description>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="S">
+		<name>select</name>
+		<loper>array</loper>
+		<lopertype>Array</lopertype>
+		<roper>index</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Any Value</returntype>
+		<description>Selects index element of the array. Index 0 denotes the first element, 1 the second, etc.</description>
+		<example>[1, 2, 3] select 1</example>
+		<exResult>2</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="S">
+		<name>select</name>
+		<loper>array</loper>
+		<lopertype>Array</lopertype>
+		<roper>index</roper>
+		<ropertype>Boolean</ropertype>
+		<returntype>Any Value</returntype>
+		<description>If the index is false, this selects the first element of the array. If it is true, it selects the second one.</description>
+		<category>Default</category>
+	</command>
+	<command letter="S">
+		<name>selectAll</name>
+		<roper>sel</roper>
+		<ropertype>Selection</ropertype>
+		<returntype>Selection</returntype>
+		<description>Select everything in selection.</description>
+		<example>selectAll _sel</example>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="S">
+		<name>selectFace</name>
+		<loper>sel</loper>
+		<lopertype>Selection</lopertype>
+		<roper>index</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Selection</returntype>
+		<description>Selects face</description>
+		<example>_sel selectFace _index</example>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="S">
+		<name>selectFaces</name>
+		<loper>sel</loper>
+		<lopertype>Selection</lopertype>
+		<roper>indices</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Selection</returntype>
+		<description>Select faces specified by indices in array</description>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="S">
+		<name>selectFacesFromPoints</name>
+		<roper>sel</roper>
+		<ropertype>Selection</ropertype>
+		<returntype>Selection</returntype>
+		<description>Select points from selected faces.</description>
+		<example>selectPointFromFaces _sel</example>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="S">
+		<name>selectionToProxy</name>
+		<loper>mesh</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>[selection,proxyname,pin]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>ObjectData</returntype>
+		<description>Function extracts selection, and replaces it with proxy. Specify name of selection, and proxyname without "proxy:" word. Pin is vector [x,y,z] and specifies location of new proxy.<p>Note: Object is not saved, script may use ownerOf to get owning LODObject, and call save itself</p></description>
+		<example>_newobj=_mesh selectionToProxy [&quot;hlava&quot;,&quot;\data\hlava\hlava.p3d&quot;,[0,0,0]]</example>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="S">
+		<name>selectPoint</name>
+		<loper>sel</loper>
+		<lopertype>Selection</lopertype>
+		<roper>index</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Selection</returntype>
+		<description>Selects point</description>
+		<example>_sel selectPoint _index</example>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="S">
+		<name>selectPoint</name>
+		<loper>sel</loper>
+		<lopertype>Selection</lopertype>
+		<roper>index weight value</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Selection</returntype>
+		<description>Select point and sets point's weight</description>
+		<example>_sel selectPoint _index weight _value</example>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="S">
+		<name>selectPoints</name>
+		<loper>sel</loper>
+		<lopertype>Selection</lopertype>
+		<roper>indices</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Selection</returntype>
+		<description>Select points specified by indices in array</description>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="S">
+		<name>selectPointsFromFaces</name>
+		<roper>sel</roper>
+		<ropertype>Selection</ropertype>
+		<returntype>Selection</returntype>
+		<description>Select points from selected faces.</description>
+		<example>selectPointFromFaces _sel</example>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="S">
+		<name>set</name>
+		<loper>array</loper>
+		<lopertype>Array</lopertype>
+		<roper>element</roper>
+		<ropertype>Array</ropertype>
+		<since>1.75</since>
+		<returntype>Nothing</returntype>
+		<description>Format of element is [index, value].
+Changes an element of the given array. If the element does not exist, index+1 is called to create it.</description>
+		<example>array set [0, &quot;Hello&quot;]</example>
+		<category>Default</category>
+	</command>
+	<command letter="S">
+		<name>setActive</name>
+		<loper>LODObject</loper>
+		<lopertype>LODObject</lopertype>
+		<roper>Scalar</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Selects active LOD from LOD array. Scalar is zero based integer number</description>
+		<example>_success=_object setActive 5.0</example>
+		<exResult>true, operation was successfull</exResult>
+		<category>O2ScriptLib::LODObjects</category>
+	</command>
+	<command letter="S">
+		<name>setActiveFrame</name>
+		<loper>mesh</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>frame</roper>
+		<ropertype>Number</ropertype>
+		<returntype>ObjectData</returntype>
+		<description>Sets active frame. Active frame is mapped into vertices in model, so you can use setPoint and getPoint to manipulate with vertices in frame. Changes is not reflected in animation untilactive frame is changed or saveActiveFrame is called or object is saved. Do not try change active frame using setAnimVertex, all changes may be discarded. If you want change active frame, use -1 as frame number to unset active frame. But changes made using setPoint after may be discarded</description>
+		<example>_mesh setActiveFrame 1;</example>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="S">
+		<name>setActiveSpecial</name>
+		<loper>LODObject</loper>
+		<lopertype>LODObject</lopertype>
+		<roper>Scalar</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Selects active LOD from LOD array. Scalar one of constants declared in LODObject.inc</description>
+		<example>_success=_object setActiveSpecial LOD_VIEW_COMMANDER</example>
+		<exResult>true, operation was successfull</exResult>
+		<category>O2ScriptLib::LODObjects</category>
+	</command>
+	<command letter="S">
+		<name>setAnimPoint</name>
+		<loper>mesh</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>[frame,index,vertex]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>ObjectData</returntype>
+		<description>Sets vertex in animation frame. Vertex is array [x,y,z]</description>
+		<example>_mesh setAnimPoint [1,10,[2,3,4]];</example>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="S">
+		<name>setFaceFlags</name>
+		<loper>face</loper>
+		<lopertype>FaceT</lopertype>
+		<roper>[index/range,value]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>FaceT</returntype>
+		<description>Sets face flag(s). First argument can be number of flags, or range of flags in form [l,h]. Second argument is value. Use predefined constants to set meanful flags</description>
+		<example>_face setFaceFlags [FLAG_FACE_USERVALUE,10];</example>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="S">
+		<name>setFrameTime</name>
+		<loper>mesh</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>[frame,time]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>ObjectData</returntype>
+		<description>sets time of specified frame</description>
+		<example>_mesh setFrameTime [10,0.5];</example>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="S">
+		<name>setMaterial</name>
+		<loper>face</loper>
+		<lopertype>FaceT</lopertype>
+		<roper>file</roper>
+		<ropertype>String</ropertype>
+		<returntype>FaceT</returntype>
+		<description>Sets material to the face.</description>
+		<example>_face setMaterial &quot;example.rvmat&quot;</example>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="S">
+		<name>setPoint</name>
+		<loper>object</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>[index,vector]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Sets point in object. </description>
+		<example>_mesh setPoint [_index,[_x,_y,_z]];</example>
+		<exResult>true, if success</exResult>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="S">
+		<name>setPointFlags</name>
+		<loper>mesh</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>[point_index,flag_index/range,value]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>ObjectData</returntype>
+		<description>Sets point flag(s). Use predefined constants to get meanful flags</description>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="S">
+		<name>setPointMass</name>
+		<loper>mesh</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>[index,value]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>ObjectData</returntype>
+		<description>Sets vertex's mass. Mass is valid only for Gemometry Level</description>
+		<example>_mesh setMassPoint [10,1200];</example>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="S">
+		<name>setPointsWeights</name>
+		<loper>sel</loper>
+		<lopertype>Selection</lopertype>
+		<roper>weights</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Selection</returntype>
+		<description>Copies weights in array into selection from index 0</description>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="S">
+		<name>setProperty</name>
+		<loper>object</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>[property,value]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Sets property in object. Property is representes as array with two field (second argument can be anyType): [name,value]. If value is nil, property is deleted</description>
+		<example>_object setProperty [&quot;XStep&quot;,0.520]</example>
+		<exResult>true, if no error</exResult>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="S">
+		<name>setResolution</name>
+		<loper>LODObject</loper>
+		<lopertype>LODObject</lopertype>
+		<roper>Scalar</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Sets resolution of active level.You can use special constants declared in LODObject.inc</description>
+		<example>_success=_object setResolution LOD_VIEW_COMMANDER</example>
+		<exResult>always true, operation was successfull</exResult>
+		<category>O2ScriptLib::LODObjects</category>
+	</command>
+	<command letter="S">
+		<name>setTexture</name>
+		<loper>face</loper>
+		<lopertype>FaceT</lopertype>
+		<roper>file</roper>
+		<ropertype>String</ropertype>
+		<returntype>FaceT</returntype>
+		<description>Sets texture to the face.</description>
+		<example>_face setTexture &quot;example.paa&quot;</example>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="S">
+		<name>setUVSet</name>
+		<loper>face</loper>
+		<lopertype>FaceT</lopertype>
+		<roper>set</roper>
+		<ropertype>Array</ropertype>
+		<returntype>FaceT</returntype>
+		<description>Assign new uv coordinates to face. If array is to short, missing values is assumed as zero</description>
+		<example>_face setUVSet [0,0, 1,0, 1,1, 1,0];</example>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="S">
+		<name>setVertices</name>
+		<loper>face</loper>
+		<lopertype>FaceT</lopertype>
+		<roper>array</roper>
+		<ropertype>Array</ropertype>
+		<returntype>FaceT</returntype>
+		<description>Sets new vertices to face. Array contains new vertices.</description>
+		<example>_object face 10 setVertices [1,8,15,11]</example>
+		<exResult>true if operation succesed</exResult>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="S">
+		<name>sharpEdges</name>
+		<loper>mesh</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>[a,b,a,b,a,b ...]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>ObjectData</returntype>
+		<description>Sets edges sharp</description>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="S">
+		<name>shell</name>
+		<loper>file1</loper>
+		<lopertype>String</lopertype>
+		<roper>command</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Executes command on shell with specified file (URLs is also allowed). `command` is command defined in registers. Use empty string "" for default ("open"). Return is true, if shell executes command without error</description>
+		<example>&quot;note.txt&quot; shell &quot;print&quot;;</example>
+		<exResult>true, if successfull. Prints note.txt on printer, using application registered in explorer. </exResult>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="S">
+		<name>shellCmd</name>
+		<roper>command</roper>
+		<ropertype>String</ropertype>
+		<returntype>Number</returntype>
+		<description>Executes shell command as if were written in shell's command line. Function waits until command is finished</description>
+		<example>_result = shellCmd &quot;notepad.exe&quot;</example>
+		<exResult>-1 if file not found, or cannot be started, otherwise returns application&apos;s exit code </exResult>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="S">
+		<name>shellCmdNoWait</name>
+		<roper>command</roper>
+		<ropertype>String</ropertype>
+		<returntype>Number</returntype>
+		<description>Executes shell command as if were written in shell's command line. Function continues immediatelly</description>
+		<exResult>-1 if file not found, or cannot be started, otherwise returns application&apos;s exit code </exResult>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="S">
+		<name>shellCmdOpenPipe</name>
+		<roper>command</roper>
+		<ropertype>String</ropertype>
+		<returntype>IOStream</returntype>
+		<description>Executes shell command as if were written in shell's command line. Creates bi-directional pipe to the new process. Script can use this pipe to send commands to child process and read its results</description>
+		<example>_pipe=shellCmdOpenPipe &quot;dir /b&quot;</example>
+		<exResult>stream contains files in current folder, each on new line</exResult>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="S">
+		<name>simplifyPoly</name>
+		<roper>object</roper>
+		<ropertype>ObjectData</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Re-tesellates all currently selected regions. It respects mapping and polygons are simplified by removing of the unnecessary points.</description>
+		<example>simplifyPoly _level;</example>
+		<exResult>true, if no error</exResult>
+		<category>O2Scripts::ObjToolJoinProxy</category>
+	</command>
+	<command letter="S">
+		<name>sin</name>
+		<roper>x</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>The sine of x, the argument is in degrees.</description>
+		<example>sin 30</example>
+		<exResult>0.5</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="S">
+		<name>skipUntil</name>
+		<loper>stream</loper>
+		<lopertype>IOStream</lopertype>
+		<roper>&quot;pattern&quot;</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Explores input stream for pattern. Regular expression is used. It doesn't affect state of input stream, so multiple explores can be called, until request pattern match. More informations about regular expressions at www.regexp.cz</description>
+		<example>stream exploreFor &quot;-?[0-9]+&quot;</example>
+		<exResult>returns true, if streams contain any integer number</exResult>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="S">
+		<name>smoothEdges</name>
+		<loper>mesh</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>[a,b,a,b,a,b ...]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>ObjectData</returntype>
+		<description>Sets edges smooth</description>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="S">
+		<name>splitPath</name>
+		<roper>path</roper>
+		<ropertype>String</ropertype>
+		<returntype>Array</returntype>
+		<description>Splits path into araay</description>
+		<example>splitPath &quot;C:\test\anFile.txt&quot;</example>
+		<exResult>[&quot;c:&quot;,&quot;\test\&quot;,&quot;anFile&quot;,&quot;.txt&quot;]</exResult>
+		<category>StringsArrays</category>
+	</command>
+	<command letter="S">
+		<name>sqrt</name>
+		<roper>x</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>The square root of x.</description>
+		<example>sqrt 9</example>
+		<exResult>3</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="S">
+		<name>SSAdd</name>
+		<roper>[fnames]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Adds file to source control. Returns true, if it was successful</description>
+		<example>SSAdd [&quot;file1.txt&quot;,&quot;file1.txt&quot;]</example>
+		<category>SourceSafe</category>
+	</command>
+	<command letter="S">
+		<name>SSAdd</name>
+		<roper>fname</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Adds files to source control. Returns true, if it was successful</description>
+		<example>SSAdd &quot;file.txt&quot;</example>
+		<category>SourceSafe</category>
+	</command>
+	<command letter="S">
+		<name>SSBrowse</name>
+		<roper>path</roper>
+		<ropertype>String</ropertype>
+		<returntype>String</returntype>
+		<description>Opens source save browser. Function returns selected path or empty string, if dialog has been canceled. Parameter path is default path selected in browser</description>
+		<category>SourceSafe</category>
+	</command>
+	<command letter="S">
+		<name>SSCheckIn</name>
+		<roper>[fnames]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Checks in files. Returns true, if it was successful</description>
+		<category>SourceSafe</category>
+	</command>
+	<command letter="S">
+		<name>SSCheckIn</name>
+		<roper>fname</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Checks in file. Returns true, if it was successful</description>
+		<category>SourceSafe</category>
+	</command>
+	<command letter="S">
+		<name>SSCheckOut</name>
+		<roper>[fnames]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Checks out files. Returns true, if it was successful</description>
+		<example>SSCheckOut [&quot;file1.txt&quot;,&quot;file1.txt&quot;]</example>
+		<category>SourceSafe</category>
+	</command>
+	<command letter="S">
+		<name>SSCheckOut</name>
+		<roper>fname</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Checks out file. Returns true, if it was successful</description>
+		<example>SSCheckOut &quot;file.txt&quot;</example>
+		<category>SourceSafe</category>
+	</command>
+	<command letter="S">
+		<name>SSComment</name>
+		<roper>comment</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Sets comment for next CheckIn/CheckOut operation. Comment is reset after CheckIn/CheckOut</description>
+		<category>SourceSafe</category>
+	</command>
+	<command letter="S">
+		<name>SSGetLatestVersion</name>
+		<roper>[fname]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Gets latest version of files</description>
+		<category>SourceSafe</category>
+	</command>
+	<command letter="S">
+		<name>SSGetLatestVersion</name>
+		<roper>fname</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Gets latest version of file</description>
+		<category>SourceSafe</category>
+	</command>
+	<command letter="S">
+		<name>SSGetLatestVersionDir</name>
+		<roper>directory</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Gets latest version of directory</description>
+		<category>SourceSafe</category>
+	</command>
+	<command letter="S">
+		<name>SSGetLatestVersionDirRecursive</name>
+		<roper>directory</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Gets latest version of directory and all subdirectories</description>
+		<category>SourceSafe</category>
+	</command>
+	<command letter="S">
+		<name>SSGetProjectFolder</name>
+		<returntype>String</returntype>
+		<description>Returns default Source Safe project folder.</description>
+		<category>SourceSafe</category>
+	</command>
+	<command letter="S">
+		<name>SSHistory</name>
+		<roper>file</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Function shows history of file. Returns true, if user select another version of file</description>
+		<category>SourceSafe</category>
+	</command>
+	<command letter="S">
+		<name>SSHistory</name>
+		<roper>[files]</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Function shows history of files. Returns true, if user select another version of file</description>
+		<category>SourceSafe</category>
+	</command>
+	<command letter="S">
+		<name>SSIsActive</name>
+		<returntype>String</returntype>
+		<description>Returns true, SourceControl is initialized</description>
+		<category>SourceSafe</category>
+	</command>
+	<command letter="S">
+		<name>SSIsCanceled</name>
+		<returntype>String</returntype>
+		<description>Returns true, if SourceControl is canceled. In this state, all SS commands are ignored</description>
+		<category>SourceSafe</category>
+	</command>
+	<command letter="S">
+		<name>SSIsCheckedOut</name>
+		<roper>file</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Returns true, if file is checked out</description>
+		<category>SourceSafe</category>
+	</command>
+	<command letter="S">
+		<name>SSIsControled</name>
+		<roper>file</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Returns true, if file is controled</description>
+		<category>SourceSafe</category>
+	</command>
+	<command letter="S">
+		<name>SSIsDeleted</name>
+		<roper>file</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Returns true, if file is deleted</description>
+		<category>SourceSafe</category>
+	</command>
+	<command letter="S">
+		<name>SSRemove</name>
+		<roper>[files]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Removes files form source control</description>
+		<category>SourceSafe</category>
+	</command>
+	<command letter="S">
+		<name>SSRemove</name>
+		<roper>file</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Removes file form source control</description>
+		<category>SourceSafe</category>
+	</command>
+	<command letter="S">
+		<name>SSTestRO</name>
+		<roper>fname</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Function returns true, if file is R/W. If file is R/O, it popups dialog for user action, also enables to user Check Out the file.</description>
+		<example>SSTestRO &quot;file.txt&quot;</example>
+		<category>SourceSafe</category>
+	</command>
+	<command letter="S">
+		<name>SSTestROSave</name>
+		<roper>fname</roper>
+		<ropertype>String</ropertype>
+		<returntype>String</returntype>
+		<description>Function returns parameter, if file is R/W. If file is R/O, it popups dialog for user action, also enables to user Check Out the file. This funcion is designed to Save operation. If user cancels dialog, result is empty string. If user select SaveAs, it returns entered name.</description>
+		<example>SSTestROSave &quot;file.txt&quot;</example>
+		<category>SourceSafe</category>
+	</command>
+	<command letter="S">
+		<name>SSUndoCheckOut</name>
+		<roper>[files]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Undoes check out</description>
+		<category>SourceSafe</category>
+	</command>
+	<command letter="S">
+		<name>SSUndoCheckOut</name>
+		<roper>file</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Undoes check out</description>
+		<category>SourceSafe</category>
+	</command>
+	<command letter="S">
+		<name>step</name>
+		<loper>for /.../</loper>
+		<lopertype>for type</lopertype>
+		<roper>step</roper>
+		<ropertype>Number</ropertype>
+		<returntype>for type</returntype>
+		<description>Optionaly can set step. If you want to count down, step must be specified, and set negative. Default value is 1.</description>
+		<example>for &quot;_x&quot; from 20 to 10 step -2 do {..code..}</example>
+		<category>Default</category>
+	</command>
+	<command letter="S">
+		<name>str</name>
+		<roper>any value</roper>
+		<ropertype>Anything</ropertype>
+		<since>2.00</since>
+		<returntype>String</returntype>
+		<description>Converts any variable to a string.</description>
+		<example>str(2+3)</example>
+		<exResult>&quot;5&quot;</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="S">
+		<name>supportInfo</name>
+		<roper>mask</roper>
+		<ropertype>String</ropertype>
+		<since>2.00</since>
+		<returntype>Array</returntype>
+		<description>Creates list of supported operators and type. Each field of array has format: "x:name" where x is 't' - type, 'n' - nullary operator, 'u' - unary operator, 'b' - binary operator. 'name' is operator's/type's name (in case operator, type of input operands is included). `mask` parameter can be empty string, or one of field. In this case, function returns empty array, if operator is not included in list. `mask` can contain wildcards, for example: *:name, t:*, t:name* or *:*.</description>
+		<example>supportInfo &quot;b:select*&quot;</example>
+		<exResult>[&quot;b:ARRAY select SCALAR&quot;,&quot;b:ARRAY select BOOL&quot;]</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="S">
+		<name>switch</name>
+		<roper>exp</roper>
+		<ropertype>Anything</ropertype>
+		<returntype>Switch Type</returntype>
+		<description>Begins switch form</description>
+		<example>switch (_a) do { case 1: {block}; case 2 : {block}; default {block};}</example>
+		<category>Default</category>
+	</command>
+	<command letter="T">
+		<name>tan</name>
+		<roper>x</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>The tangens of x, the argument is in degrees.</description>
+		<example>tan 45</example>
+		<exResult>1</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="T">
+		<name>tellInput</name>
+		<roper>stream</roper>
+		<ropertype>IOStream</ropertype>
+		<returntype>String</returntype>
+		<description>Retrieves current reading pointer for static stream. Returns -1, if stream is non-static</description>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="T">
+		<name>tellOutput</name>
+		<roper>stream</roper>
+		<ropertype>IOStream</ropertype>
+		<returntype>String</returntype>
+		<description>Retrieves current writting pointer for static stream. Returns -1, if stream is non-static</description>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="T">
+		<name>testIdentifier</name>
+		<roper>stream</roper>
+		<ropertype>IOStream</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Tests input stream for identifier. Identitfier is world starting with alpha character or underscore '_' and can contain any alphanumeric characters or underscores</description>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="T">
+		<name>testNumber</name>
+		<roper>stream</roper>
+		<ropertype>IOStream</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Tests input stream for number, returns true, if input stream contains number. It doesn't read the number, so if script calls this function repeatly, always return last same result, until number is readed by function get</description>
+		<example>if (testNumber stream) then {_value=val (_stream get 0);}</example>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="T">
+		<name>testNumberInt</name>
+		<roper>stream</roper>
+		<ropertype>IOStream</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Tests input stream for integer number, returns true, if input stream contains number. It doesn't read the number, so if script calls this function repeatly, always return last same result, until number is readed by function get</description>
+		<example>if (testNumberInt stream) then {_value=val (_stream get 0);}</example>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="T">
+		<name>testSharpEdges</name>
+		<loper>mesh</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>[a,b,a,b,a,b ...]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Number</returntype>
+		<description>Test edges to sharpness. Result is -1, 0 or 1. Result -1: all edges has been smooth. Result 1 all edges has been sharp. Result 0 some edges has been smooth and some edges has been sharp</description>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="T">
+		<name>testXMLTag</name>
+		<loper>stream</loper>
+		<lopertype>IOStream</lopertype>
+		<roper>tag</roper>
+		<ropertype>String</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Test, if input contains xml tag &lt;tag [param="value"]&gt; If tag starts with '/', it will test for end tag. Return is integer with defined meaning: 0 - test failed, 1 - test passed, and result is open or close tag, 2 - test passed, and result is single tag (not for close tag)</description>
+		<example>res=testXMLTag &quot;name&quot;</example>
+		<exResult>1 = stream contains &lt;name ... &amp;gt;</exResult>
+		<category>O2Script:IOStream</category>
+	</command>
+	<command letter="T">
+		<name>tg</name>
+		<roper>x</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>The tangens of x, the argument is in degrees.</description>
+		<example>tg 45</example>
+		<exResult>1</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="T">
+		<name>then</name>
+		<loper>if</loper>
+		<lopertype>If Type</lopertype>
+		<roper>else</roper>
+		<ropertype>Array</ropertype>
+		<since>1.85</since>
+		<returntype>Anything</returntype>
+		<description>The first or second element of the array is executed depending on the result of the if condition. The result of the executed expression is returned as a result (the result may be <t>nothing</t>).</description>
+		<example>if (a&gt;b) then {c=1} else {c=2};if (a&gt;b) then [{c=1},{c=2}]</example>
+		<category>Default</category>
+	</command>
+	<command letter="T">
+		<name>then</name>
+		<loper>if</loper>
+		<lopertype>If Type</lopertype>
+		<roper>codeToExecute</roper>
+		<ropertype>String</ropertype>
+		<since>1.85</since>
+		<returntype>Anything</returntype>
+		<description>The code is executed when the if condition is met. If the code is executed, the last value calculated in the code is returned. If the code is not executed, <t>nothing</t> is returned.</description>
+		<example>if (a&gt;b) then {c=1}</example>
+		<category>Default</category>
+	</command>
+	<command letter="T">
+		<name>throw</name>
+		<roper>expression</roper>
+		<ropertype>Anything</ropertype>
+		<returntype>Nothing</returntype>
+		<description>Throws an exception. The exception is processed by first catch block. See <f>try</f>.</description>
+		<example>throw &quot;invalid argument&quot;</example>
+		<category>Default</category>
+	</command>
+	<command letter="T">
+		<name>TimeFromFrame</name>
+		<loper>mesh</loper>
+		<lopertype>ObjectData</lopertype>
+		<roper>frame</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Number</returntype>
+		<description>Retusn time of specified frame</description>
+		<example>_time = _mesh timeFromFrame 10</example>
+		<exResult>time of frame 10</exResult>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="T">
+		<name>to</name>
+		<loper>for &quot;_var&quot; from a</loper>
+		<lopertype>for type</lopertype>
+		<roper>b</roper>
+		<ropertype>Number</ropertype>
+		<returntype>for type</returntype>
+		<description>Continue sequence of 'for' command.</description>
+		<example>for &quot;_x&quot; from 10 to 20 do {..code..}</example>
+		<category>Default</category>
+	</command>
+	<command letter="T">
+		<name>toHex</name>
+		<roper>a</roper>
+		<ropertype>Number</ropertype>
+		<returntype>String</returntype>
+		<description>Converts number into hexadecimal string.</description>
+		<example>tohex 77511 </example>
+		<exResult>&quot;12EC7&quot;</exResult>
+		<category>StringsArrays</category>
+	</command>
+	<command letter="T">
+		<name>transform</name>
+		<loper>sel</loper>
+		<lopertype>Selection</lopertype>
+		<roper>mx</roper>
+		<ropertype>Matrix</ropertype>
+		<returntype>Selection</returntype>
+		<description>Transforms selection by matrix</description>
+		<example>_selection transform _matrix;</example>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="T">
+		<name>transformFrame</name>
+		<loper>sel</loper>
+		<lopertype>Selection</lopertype>
+		<roper>[frame,mx]</roper>
+		<ropertype>Array</ropertype>
+		<returntype>Selection</returntype>
+		<description>Transforms selection by matrix. Transform is applied to the specified. frame is Number, mx is Matrix</description>
+		<example>_selection transformFrame [2,_matrix];</example>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="T">
+		<name>true</name>
+		<returntype>Boolean</returntype>
+		<description>Always true.</description>
+		<category>Default</category>
+	</command>
+	<command letter="T">
+		<name>try</name>
+		<roper>code</roper>
+		<ropertype>String</ropertype>
+		<returntype></returntype>
+		<description>Defines try-catch structure. This is structured exception block. Any thrown exception in try block is catched in catch block. The structured exception block has following form<pre>try   //begin of try-catch block
+{
+   //block, that can throw exception
+}
+catch{
+   //block, that process an exception. Exception is descriped in _exception variable
+}</pre>;
+</description>
+		<category>Default</category>
+	</command>
+	<command letter="T">
+		<name>typeName</name>
+		<roper>any</roper>
+		<ropertype>Anything</ropertype>
+		<since>2.00</since>
+		<returntype>String</returntype>
+		<description>Returns type-name of expression. Type is returned as string</description>
+		<example>typeName &quot;hello&quot;</example>
+		<exResult>&quot;string&quot;</exResult>
+		<category>Default</category>
+	</command>
+	<command letter="U">
+		<name>unselectAll</name>
+		<roper>sel</roper>
+		<ropertype>Selection</ropertype>
+		<returntype>Selection</returntype>
+		<description>Unselect all in selection.</description>
+		<example>selectAll _sel</example>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="U">
+		<name>unselectFace</name>
+		<loper>sel</loper>
+		<lopertype>Selection</lopertype>
+		<roper>index</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Selection</returntype>
+		<description>Unselects face</description>
+		<example>_sel unselectFace _index</example>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="U">
+		<name>unselectPoint</name>
+		<loper>sel</loper>
+		<lopertype>Selection</lopertype>
+		<roper>index</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Selection</returntype>
+		<description>Selects point</description>
+		<example>_sel unselectPoint _index</example>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="U">
+		<name>updateActiveFrame</name>
+		<roper>mesh</roper>
+		<ropertype>ObjectData</ropertype>
+		<returntype>ObjectData</returntype>
+		<description>Updates animation. All changes made using setPoint is copied to vertices in active animation.</description>
+		<example>_mesh setActiveFrame 1;_mesh setPoint [1,[1,2,3]];updateActiveFrame _mesh;</example>
+		<category>O2ScriptLib::ObjectData</category>
+	</command>
+	<command letter="U">
+		<name>UVFromPoly</name>
+		<roper>object</roper>
+		<ropertype>ObjectData</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Shifts UV on selected faces. UVs are shifted by integer number. It tries to build the largest polygon with continuous UV.</description>
+		<example>UVFromPoly _level;</example>
+		<exResult>true, if no error</exResult>
+		<category>O2Scripts::ObjToolJoinProxy</category>
+	</command>
+	<command letter="U">
+		<name>UVInto01</name>
+		<roper>object</roper>
+		<ropertype>ObjectData</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Shifts UV on selected faces. UVs are shifted by integer number so that minimum for U or V is in interval &lt;0,1).</description>
+		<example>UVInto01 _level;</example>
+		<exResult>true, if no error</exResult>
+		<category>O2Scripts::ObjToolJoinProxy</category>
+	</command>
+	<command letter="V">
+		<name>val</name>
+		<roper>a</roper>
+		<ropertype>String</ropertype>
+		<returntype>Number</returntype>
+		<description>Converts number in string into Number type. Doesn't evaluates any expression. Returns 0 if error</description>
+		<example>val &quot;124&quot;</example>
+		<exResult>124.0</exResult>
+		<category>StringsArrays</category>
+	</command>
+	<command letter="W">
+		<name>weight</name>
+		<loper>index</loper>
+		<lopertype>Number</lopertype>
+		<roper>weight</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Array</returntype>
+		<description>See select point</description>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="W">
+		<name>weight</name>
+		<loper>sel</loper>
+		<lopertype>Selection</lopertype>
+		<roper>index</roper>
+		<ropertype>Number</ropertype>
+		<returntype>Boolean</returntype>
+		<description>Returns weight of point. If index is out of range, reports error</description>
+		<category>O2ScriptLib::Selection</category>
+	</command>
+	<command letter="W">
+		<name>while</name>
+		<roper>condition</roper>
+		<ropertype>String</ropertype>
+		<since>1.85</since>
+		<returntype>While Type</returntype>
+		<description>The first part of the while contruct.</description>
+		<example>while &quot;x&lt;10&quot; do {x=x+1}</example>
+		<category>Default</category>
+	</command>
+</commandlist>
+<typelist>
+	<type>
+		<name>Number</name>
+		<description>A real number.</description>
+		<category>Default</category>
+	</type>
+	<type>
+		<name>Boolean</name>
+		<description>Boolean (<f>true</f> or <f>false</f>).</description>
+		<category>Default</category>
+	</type>
+	<type>
+		<name>Array</name>
+		<description>An array of items, each may be of any type.</description>
+		<category>Default</category>
+	</type>
+	<type>
+		<name>String</name>
+		<description>An ASCII string.</description>
+		<category>Default</category>
+	</type>
+	<type>
+		<name>Nothing</name>
+		<description>Nothing - no value.</description>
+		<category>Default</category>
+	</type>
+	<type>
+		<name>If Type</name>
+		<description>A helper type used in <f>if</f>..<f>then</f> constructs.</description>
+		<category>Default</category>
+	</type>
+	<type>
+		<name>While Type</name>
+		<description>A helper type used in <f>while</f>..<f>do</f> constructs.</description>
+		<category>Default</category>
+	</type>
+	<type>
+		<name>for type</name>
+		<description>This type handles for cycles. Usage of this type: for "_var" from :expr: to :expr: [step &lt;expr&gt;] do {..code..};Second usage: for [":initPhase:",":condition:",":updatePhase:"] do {...code...};</description>
+		<category>Default</category>
+	</type>
+	<type>
+		<name>Switch Type</name>
+		<description>A helper type used in <f>switch</f> constructs.</description>
+		<category>Default</category>
+	</type>
+	<type>
+		<name>Exception Type</name>
+		<description>A helper type used in <f>try</f>-<f>catch</f> constructs.</description>
+		<category>Default</category>
+	</type>
+	<type>
+		<name>Anything</name>
+		<description>Anything, including nothing.</description>
+		<category>Default</category>
+	</type>
+	<type>
+		<name>Any Value</name>
+		<description>Any value.</description>
+		<category>Default</category>
+	</type>
+	<type>
+		<name>String or Array</name>
+		<description><t>String</t> or <t>Array</t>.</description>
+		<category>Default</category>
+	</type>
+	<type>
+		<name>Number or Nothing</name>
+		<description><t>Number</t> or <t>Nothing</t>.</description>
+		<category>Default</category>
+	</type>
+	<type>
+		<name>Anything or if</name>
+		<description><t>Anything</t> or <t>if</t>.</description>
+		<category>Default</category>
+	</type>
+	<type>
+		<name>LODObject</name>
+		<description>This type represents whole P3D object. It is set of levels which is organised same way like in Objektiv2</description>
+		<category>O2ScriptLib::LODObjects</category>
+	</type>
+	<type>
+		<name>ObjectData</name>
+		<description>This type represents one level of P3D.</description>
+		<category>O2ScriptLib::ObjectData</category>
+	</type>
+	<type>
+		<name>FaceT</name>
+		<description>This type represents one face in object.</description>
+		<category>O2ScriptLib::ObjectData</category>
+	</type>
+	<type>
+		<name>Selection</name>
+		<description>This object represents general selection on mesh</description>
+		<category>O2ScriptLib::Selection</category>
+	</type>
+	<type>
+		<name>Matrix</name>
+		<description>This type represents general transformation matrix 4x3 (for 3D transforms)</description>
+		<category>Matrix</category>
+	</type>
+	<type>
+		<name>IOStream</name>
+		<description>Handles various input/output streams, such as file, network, memory and console streams and also enables simple text file parsing</description>
+		<category>O2Script:IOStream</category>
+	</type>
+</typelist>
+<arraylist>
+</arraylist>

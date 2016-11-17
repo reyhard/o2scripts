@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<scripting>
+    <topic>
+        <name>Variables</name>
+        <description>
+		Variable must be inicialized before being used.
+		When any uninitialized variable is detected in any expression, the whole expression results nil (undefined value).
+		When undefined value is encountered in field where boolean value is expected, it is converted to false.
+		Variable may be unitialized by assigning it nil value. This effectively destroys variable as if it never existed.
+		</description>
+    </topic>
+    <topic>
+        <name>Array assignment</name>
+        <description>
+		Assignment used on arrays assigns only pointer to the same array to the target variable.
+		When <i>b</i> is an array, after executing <i>a = b</i> both <i>a</i> and <i>b</i> represent the same array.
+		When <i>b</i> is changed, <i>a</i> is changed as well. One particular situation that can lead to this behaviour is <i>aList = <f>list</f> sensor_name</i>.
+		You can force creating a copy of array by using unary operator <f>+Array</f>
+		</description>
+    </topic>
+
+    <topic>
+        <name>Triggers</name>
+        <description>
+<i>Condition</i> expression is used to determine when the trigger is activated.
+Boolean variable <i>this</i> is set during evaluation of condition expression to primary sensor activation condition.
+Array variable <i>thisList</i> is set to list of all vehicles that would satisfy primary sensor activation condition.
+<i>Condition</i> must return <t>boolean</t> value.
+<br/>
+
+<i>On Activation</i> and <i>On Deactivation</i> expressions define action that is peformed when trigger condition changes
+to <i>true</i> or <i>false</i>. Expression must either be an assignment or return nothing (see type <t>none</t>).
+<br/>
+Variable denoting trigger can be created by filling in <i>name</i> field.
+
+		</description>
+    </topic>
+
+    <topic>
+        <name>Waypoints</name>
+        <description>
+<i>Condition</i> expression is used to determine when the waypoint execution is terminated.
+Boolean variable <i>this</i> is set during evaluation of condition expression to primary waypoint termination condition.
+Array variable <i>thisList</i> is set to list of all units in the group that given waypoint is assigned to.
+<i>Condition</i> must return <t>boolean</t> value.
+<br/>
+
+<i>On Activation</i> expression define action that is peformed after the waypoint is terminated.
+Expression must either be an assignment or return nothing (see type <t>none</t>).
+
+		</description>
+    </topic>
+
+    <topic>
+        <name>Script syntax</name>
+        <description>
+Each script line may be one of following:<nibr/>
+<nibr/>
+<b>Comment:</b> line starting with ';'. <br/>
+Example: <i>;This is comment</i><nibr/><nibr/>
+<b>Label:</b> line starting with '#'. <br/>
+Example: <i>#LabelName</i><nibr/><nibr/>
+<b>Waiting for a condition:</b> line starting with '@'. <br/>
+Example: <i>@condition</i><nibr/><nibr/>
+<b>Waiting for a time:</b> line starting with '&amp;'. <br/>
+Example: <i>&amp;endTime</i> is equivalent to <i>@_time &gt;= (endTime)</i><nibr/><nibr/>
+<b>Delay:</b> line starting with '~'. <br/>
+Example: <i>~delay</i> is equivalent to <i>__waitUntil = _time+(cas) ; &amp;__waitUntil</i><nibr/><nibr/>
+<b>Command:</b> any expression returning no value.<br/>
+Example: <i>_unit setBehaviour "safe"</i><nibr/><nibr/>
+<b>Assignment:</b> assignment of any value to variable.<br/>
+Example: <i>_a = 10</i><nibr/><nibr/>
+<b>Conditional:</b> ? condition : command or assignmented, command is executed only when condition is satisfied.<br/>
+Example: <i>?_condVar>10:_var=_var+2</i><nibr/><nibr/>
+<br/>
+Note: variable <i>_time</i> is reserved. It is used to keep time elapsed since script execution started.
+<br/>
+Local variable can be used during script execution to avoid variable conflicts.
+Local variable name starts with underscore ('_').
+Variables starting with two underscores are reserved and should never be used.
+		</description>
+    </topic>
+
+	<topic>
+		<name>Event based scripts</name>
+		<description>
+			There are some scripts in the game which are launched when some event occured.
+			Some of them has name given by mission designer (scripted waypoint, particle scripts (since 1.50), user action scripts).
+			Names of others are given by the program.<nibr/><nibr/>
+			<b>init.sqs</b> - launched when mission is started (before briefing screen)<br/>
+			- no arguments<nibr/><nibr/>
+			<b>initIntro.sqs</b> - launched when intro is started (since 1.50)<br/>
+			- no arguments<nibr/><nibr/>
+			<b>exit.sqs</b> - launched when mission is finished (before debriefing screen, since 1.50)<br/>
+			- argument: <i>end #</i> - number of game end<nibr/><nibr/>
+			<b>onFlare.sqs</b> - launched when illuminating shell is lit(since 1.45)<br/>
+			- arguments: [[<i>r</i>, <i>g</i>, <i>b</i>], <i>gunner</i>] - r, g, b is light color
+		</description>
+	</topic>
+
+    <topic>
+        <name>Code strings</name>
+        <description>
+Many languague constructs (including forEach, if, while) use concept of "code strings".
+Code is passed as string to them and they interpret it as code if they wish.
+Since 1.85 string constants can be written in two ways: using double quotes (like "Hello")
+or curled braces (like {a=a+1}). While both ways are currently equivalent and string constant is created,
+we recommend to use curled braces for code only, as this makes scripts easier to read - moreover future
+versions of scripting language may precompile code enclosed in curled braces.
+		</description>
+    </topic>
+    <topic>
+        <name>Functions - SQF</name>
+        <description>
+While script syntax (see <f>exec</f>) are line based, functions (see <f>call</f>, <f>then</f>, <f>do</f>)
+are based on structured expressions and end-of-line
+has no special meaning, it is considered to be equivalent to space - semicolon is therefore required even when ending line.
+Note: scripts can do some things that are not possible in functions. Script can wait suspended until some condition it met, it can also use goto to change execution point at any time.<br/>
+<br/>Main language contructs used in functions are:<br/>
+<tab/><f>if</f>..<f>then</f>..<f>else</f><br/>
+<tab/><f>while</f>..<f>do</f><br/>
+<tab/>Curled braces<br/>
+<tab/>Multiple commands (including assigment commands) delimited with semicolon<br/>
+<br/>Result of the last expression evaluated is returned as a function result.
+This can be <t>nothing</t> when a function returns no value.<br/>
+
+<br/><br/><b>Example 1 (max.sqf)</b><br/>
+<br/>
+comment "Return maximum of first and second argument";<br/>
+private {"_a","_b"};<br/>
+_a = _this select 0;<br/>
+_b = _this select 1;<br/>
+if (_a>_b) then {_a} else {_b}<br/>
+<br/>
+<br/><br/><b>Example 2 (infantrySafe.sqf)</b><br/>
+<br/>
+comment "Switch all infantry units to safe mode";<br/>
+{<br/>
+<tab/>if (vehicle _x == _x) then<br/>
+<tab/>{<br/>
+<tab/><tab/>_x setBehaviour "safe"<br/>
+<tab/>}<br/>
+} forEach _this<br/>
+<br/>
+
+Due to line-based nature of scripts it is not possible to create multiline string constants in them.
+To overcome this limitation you can store multiline in separate files and load them using
+<f>loadFile</f> or <f>preprocessFile</f> functions
+(the second uses C-like preprocessor with // or /* */ comments and #define macros).
+		
+Recommended file extension for functions is .SQF (as opposed to .SQS used for scripts).
+        </description>
+	</topic>
+
+
+    <topic>
+        <name>Local variables</name>
+        <description>
+		Local variable is any variable which name starts with underscore. All other variables are global.<br/>
+Each of commands <f>then</f>, <f>do</f>, <f>while</f>, <f>forEach</f>, <f>count</f>, <f>exec</f>, <f>call</f>
+defines a visibility scope for local variables.
+All local variables from outer scopes are visible as well.
+If assignment is made into a variable that does not exist in any visible scope,
+it is created in the innermost scope.
+You can use function <f>private</f> to introduce variable at any given scope.
+		</description>
+    </topic>
+
+    <topic>
+        <name>Event handlers</name>
+        <description>
+Event handlers can be defined in unit config or by function <f>addEventHandler</f>.
+Multiple handlers can be attached at one time.
+Event handler types are defined below.
+Each handler receives arguments in _this. _this select 0 is always the source of the event.
+Other argument types and meaning are defined below.<br/>
+<br/>
+	"Killed" <t>object</t>:killer<br/>
+	"Hit" <t>object</t>:causedBy,<t>scalar</t>:howMuch<br/>
+	"Engine" <t>bool</t>:engineState<br/>
+	<br/>
+	"GetIn" <t>string</t>:position (1),<t>object</t>:unit<br/> 
+	"GetOut" <t>string</t>:position (1),<t>object</t>:unit<br/>
+	<br/>
+	"Fired" <t>string</t>:weapon,<t>string</t>:muzzle,<t>string</t>:mode,<t>string</t>:ammo<br/>
+	"IncomingMissile" <t>string</t>:ammo,<t>object</t>:whoFired<br/>
+	"Dammaged" <t>string</t>:selectionName,<t>scalar</t>:howMuch<br/>
+	"Gear" <t>bool</t>:gearState<br/>
+	"Fuel" <t>bool</t>:fuelState<br/>
+	<br/>
+	"Init" No arguments<br/>
+	<br/>
+	(1) position can be "driver", "gunner", "commander", "cargo"<br/>
+<br/>
+	MP notes: "Killed" and "Hit" event handlers are executed where given unit is local.
+	All other event handlers are executed on all computers.
+	Events added by <f>addEventHandler</f> may be different on each computer.
+		</description>
+    </topic>
+
+</scripting>

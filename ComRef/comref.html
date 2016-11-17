@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML xmlns:MSIE>
+<HEAD>
+<TITLE>XML version check.</TITLE>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=iso-8859-1">
+
+<STYLE>
+@media all {
+   MSIE\:CLIENTCAPS {behavior:url(#default#clientcaps)}
+}
+</STYLE>
+
+<SCRIPT>
+<!--
+function redirectWindow(sVersion)
+{
+	window.location = sVersion;
+}
+function window.onload()
+{
+	bMSvmAvailable = oClientCaps.isComponentInstalled("{89820200-ECBD-11CF-8B85-00AA005B4383}","componentid");
+	sMSvmVersion   = oClientCaps.getComponentVersion ("{89820200-ECBD-11CF-8B85-00AA005B4383}","componentid");
+
+	if (!bMSvmAvailable) return;
+
+	if (sMSvmVersion<"6")
+	{
+		myText.innerHTML =
+		"Internet Explorer 5.5 or earlier detected, switching to IE5 specific files.<br>"+
+		"We recommend you to upgrade to Internet Explorer 6.";
+		setTimeout('redirectWindow("data/comrefIE5.html")',4000);
+	}
+	else
+	{
+		setTimeout('redirectWindow("data/comref.html")',1000);
+	}
+
+}
+-->
+</SCRIPT>
+
+</HEAD>
+
+<BODY TOPMARGIN=0 LEFTMARGIN=0 BGPROPERTIES="FIXED" BGCOLOR="#FFFFFF">
+<!-- CONTENTS_START -->
+
+<MSIE:CLIENTCAPS ID="oClientCaps" />
+
+<center>
+<H2>XML version check...</H2>
+<P ID="myText"></P>
+<p>
+If your browser does not redirect you, please click on corresponding link below:
+</p>
+<table cellspacing="20px"><tr>
+<td align="center">
+<a href="data/comref.html">
+Internet Explorer 6<br>
+or other XML capable browser<br>
+supporting W3C XSLT specification and DTD.
+</a>
+</td>
+<td align="center">
+<a href="data/comrefMoz.html">
+Mozilla 5.0, FireFox<br>
+or other smart, pretty and capable browser.
+</a>
+</td>
+<td align="center">
+<a href="data/comrefIE5.html">
+Internet Explorer 5
+</a>
+</td>
+</tr>
+</table>
+</center>
+
+
+<!-- CONTENTS_END -->
+
+</BODY>
+</HTML>
