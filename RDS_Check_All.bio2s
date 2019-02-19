@@ -26,11 +26,257 @@ inLodShow={
 	_res
 };
 
+valid_res_properties =
+[
+"shadowlod",
+"lodnoshadow"
+];
+valid_geo_properties =
+[
+    "aicovers",
+    "armor",
+    "autocenter",
+    "buoyancy",
+	"canbeoccluded",
+	"canocclude",
+	"class",
+	"damage",
+	"dammage",
+	"destroysound",
+	"drawimportance",
+	"explosionshielding",
+	"forcenotalpha",
+	"frequent",
+	"keyframe",
+	"loddensitycoef",
+	//"lodnoshadow",
+	"map",
+	"mass",
+	"placement",
+	"prefershadowvolume",
+	"sbsource",
+	"shadow",
+	"shadowlod",
+	"shadowvolumelod",
+	"shadowbufferlod",
+	"shadowbufferlodvis",
+	"shadowoffset",
+	"viewdensitycoef"
+];
 
 #define ERROR(x) {console<<(_resol call inLodShow)<<"	"<<x<<eoln;}
 #define ERROR_LOG(x) ERROR(x)
 // define if you want autofix detected issues
 #define FIX_P3D true
+_getTexOrMatName =
+{
+	private["_currentLOD","_faceIndex","_isMat"];
+	_currentLOD = _this @ 0;
+	_faceIndex = _this @ 1;
+	_isMat = _this @ 2;
+
+	if (_isMat) then
+	{
+		getMaterial (_currentLOD face _faceIndex)
+	}
+	else
+	{
+		getTexture (_currentLOD face _faceIndex)
+	};
+};
+
+_getProxyFaces =
+{
+	private ["_currentLOD","_faces","_face","_proxySel"];
+	_currentLOD = _this;
+
+	_faces = [];
+	{
+		if (_x @ [0,6]=="proxy:") then
+		{
+			_proxySel = _currentLOD loadSelection _x;
+			_face = (getSelectedFaces _proxySel) @ 0;
+			_faces set [count _faces,_face];
+		};
+	} forEach (getSelections _currentLOD);
+
+	_faces
+};
+
+_faceIndicesByTexture =
+{
+	private["_currentLOD","_texName","_faceIndices"];
+	_currentLOD = _this @ 0;
+	_texName = _this @ 1;
+	_texIsMat = _this @ 2;
+
+	_proxyFaces = _currentLOD call _getProxyFaces;
+
+	_faceIndices = [];
+	_currentLOD forEachFace [{[_currentLOD,_x,_texIsMat] call _getTexOrMatName == _texName},
+	{
+		if (!(_x in _proxyFaces)) then
+		{
+			_faceIndices set [count _faceIndices,_x];
+		};
+	}];
+
+	_faceIndices
+};
+
+_selectByFaceIndices =
+{
+	private ["_currentLOD","_faceIndices","_sel"];
+	_currentLOD = _this @ 0;
+	_facesIndices = _this @ 1;
+
+	_sel = newSelection _currentLOD;
+	_sel selectFaces _facesIndices;
+	selectPointsFromFaces _sel
+};
+
+_selectionByTexture =
+{
+	private["_currentLOD","_texName","_texIsMat","_faceIndices"];
+	_currentLOD = _this @ 0;
+	_texName = _this @ 1;
+	_texIsMat = _this @ 2;
+
+	_faceIndices = [_currentLOD,_texName,_texIsMat] call _faceIndicesByTexture;
+	[_currentLOD,_faceIndices] call _selectByFaceIndices
+};
+
+_removeFaces =
+{
+	private["_currentLOD","_sel","_faceSel"];
+	_currentLOD = _this @ 0;
+	_sel = _this @ 1;
+
+	//create new selection with just faces
+	_faceSel = newSelection _currentLOD;
+	_faceSel selectFaces (getSelectedFaces _sel);
+
+	deleteSelected _faceSel;
+};
+
+_copySelection =
+{
+	private["_currentLOD","_sel","_pointsIndices","_faceIndices","_pointsCopy","_pointFlagsCopy","_pi","_facesCopy","_face","_vertices","_uv","_flags","_tex","_mat","_faceData"];
+	_currentLOD = _this @ 0;
+	_sel = _this @ 1;
+
+	_pointsIndices = getSelectedPoints _sel;
+	_faceIndices = getSelectedFaces _sel;
+
+	_pointsCopy = [];
+	_pointFlagsCopy = [];
+	for "_i" from 0 to ((count _pointsIndices) - 1) do
+	{
+		_pi = _pointsIndices @ _i;
+		_pointsCopy set [count _pointsCopy,_currentLOD getPoint _pi];
+		_pointFlagsCopy set [count _pointFlagsCopy,_currentLOD getPointFlags [_pi,[0,31]]];
+	};
+
+	_facesCopy = [];
+	for "_i" from 0 to ((count _faceIndices) - 1) do
+	{
+		_face = _currentLOD face (_faceIndices @ _i);
+		_vertices = getVertices _face;
+		_uv = getUVSet _face;
+		_flags = _face getFaceFlags [0,31];
+		_tex = getTexture _face;
+		_mat = getMaterial _face;
+
+		_faceData = [_vertices,_tex,_mat,_uv,_flags];
+		_facesCopy set [count _facesCopy,_faceData];
+	};
+
+	[_pointsCopy,_pointFlagsCopy,_facesCopy]
+};
+
+_pasteACopy =
+{
+	private["_currentLOD","_copyData","_points","_pointFlags","_pi","_faces","_face","_faceData","_faceIndex"];
+	_currentLOD = _this @ 0;
+	_copyData = _this @ 1;
+
+	_points = _copyData @ 0;
+	_pointFlags = _copyData @ 1;
+	_faces = _copyData @ 2;
+
+	for "_i" from 0 to ((count _points) - 1) do
+	{
+		_pi = obj addPoint (_points @ _i);
+		_currentLOD setPointFlags [_pi,[0,31],_pointFlags @ _i];
+	};
+
+	for "_i" from 0 to ((count _faces) - 1) do
+	{
+		_faceData = _faces @ _i;
+		_faceIndex = addFace _currentLOD;
+		_face = _currentLOD face _faceIndex;
+		_face setVertices (_faceData @ 0);
+		_face setTexture (_faceData @ 1);
+		_face setMaterial (_faceData @ 2);
+		_face setUVSet (_faceData @ 3);
+		_face setFaceFlags [[0,31],_faceData @ 4];
+	};
+};
+
+_optimizeByTex =
+{
+	private["_currentLOD","_texName","_texIsMat","_sel","_copyData"];
+	_currentLOD = _this @ 0;
+	_texName = _this @ 1;
+	_texIsMat = _this @ 2;
+
+	_sel = [_currentLOD,_texName,_texIsMat] call _selectionByTexture;
+	_copyData = [_currentLOD,_sel] call _copySelection;
+	[_currentLOD,_sel] call _removeFaces;
+	[_currentLOD,_copyData] call _pasteACopy;
+	//_currentLOD call _removeIsolatedPoints;
+};
+
+_optimizeLOD =
+{
+	private["_currentLOD","_texList","_matList"];
+	_currentLOD = _this;
+
+	_texList = (_currentLOD callRuntime "texlist");
+//	_matList = (_currentLOD callRuntime "matlist");
+
+	_textures =
+	[
+		"_ca.paa",
+		"#(argb,8,8,3)color(0,0,0,0)",
+		"#(argb,8,8,3)color(0,0,0,0,ca)",
+		"#(argb,8,8,3)color(0,0,0,0.0,ca)",
+		"#(argb,8,8,3)color(0,0,0,0.01,ca)",
+		"glass"
+	];
+
+	{
+
+		_tex = _x;
+		if (logging) then {console<<"_tex: "<<_tex<<eoln;};
+
+		{
+			_filter = _x;
+//			_found1 = _filter in [_tex];
+			_found2 = _tex findi _filter;
+
+//			if (logging) then {console<<"_in: "<<str _found1<<eoln;};
+//			if (logging) then {console<<"_found2: "<<typename _found2<<eoln;};
+
+			if (typename _found2=="SCALAR") then
+			{
+				if (logging) then {console<<"_findi: "<<str _found2<<eoln;};
+
+				[_currentLOD,_tex,false] call _optimizeByTex;
+			};
+		} forEach _textures;
+	} forEach _texList;
+};
 
 
 0 call
@@ -75,6 +321,7 @@ inLodShow={
 		private ["_obj","_resol","_isol","_numsect","_degen"];
 		_resol=resols @ _i;
 		_obj=objects @ _i;
+
 		// check isolated points
 		if (_resol<LOD_EDIT_MIN || _resol>=LOD_EDIT_MAX) then
 		{
@@ -121,7 +368,15 @@ inLodShow={
 					private "_mult";
 					_mult=[_resol,1] select (_resol>=1000);
 					_numsect=_obj callRuntime "countsections";
-					if (_numsect>1 && _numsect * _mult >50) then ERROR("probably too many sections ("<<str(_numsect)<<")");
+					if (_numsect>1 && _numsect * _mult >50) then
+					{
+						if(true)then ERROR("probably too many sections ("<<str(_numsect)<<")");
+						if(FIX_P3D)then
+						{
+							//_obj call _optimizeLOD;
+							needSave = true;
+						};
+					};
 					if (_numsect == 0)then ERROR("blank lod detected");
 			};
 
@@ -209,9 +464,15 @@ inLodShow={
 							};
 						}forEach getSelections _obj;
 					};
-					_proxies= _proxies + (countPoints _nsel);
 					// delete proxies
-					//deleteSelected _nsel;
+					if (IS_LOD_SHADOW(_resol)) then
+					{
+						if (true) then ERROR("proxies in shadow LOD detected - attempting to remove them");
+						deleteSelected _nsel;
+						needSave = true;
+					}else{
+						_proxies = _proxies + (countPoints _nsel);
+					};
 				};
 
 			}forEach getSelections _obj;
@@ -244,6 +505,21 @@ inLodShow={
 				if (countPoints (_obj loadSelection "_current")>_proxies) then ERROR("open topology detected! ");
 				_obj callRuntime "checkconvexity";
 				if (countPoints (_obj loadSelection "_current")>0) then ERROR("non-convex points detected!");
+
+				_prop = properties _obj;
+				for "_i" from 0 to count _prop step 2 do
+				{
+					_temp = _prop select _i;
+					if(!((toLower (_temp)) in valid_geo_properties))then
+					{
+						if (true) then ERROR("Invalid property dedetcted in geometry LOD. Property:" << _temp );
+						if(FIX_P3D)then{
+							if (true) then ERROR("deleting property");
+							_obj setProperty [_temp,nil];
+							needSave=true;
+						};
+					};
+				};
 			};
 
 			// check for zero mass
@@ -264,19 +540,18 @@ inLodShow={
 						}forEach _nsel;
 
 						if (!_nozero) then ERROR("Selection "<<_x<<" has zero mass.");
-						/*if (!_nozero && FIX_P3D)then{
+						if (!_nozero && FIX_P3D)then{
 							console<<"	attempting to fix it by adding mass = 0.1."<<eoln;
 							{
 								_obj setPointMass [_x,0.1];
 							}forEach _nsel;
 							needSave=true;
-						};*/
+						};
 					};
 				}forEach getSelections _obj;
-				_checkBuoyancy = (_obj getProperty "buoyancy");
-				if(isNil "_checkBuoyancy")then
+				if(_obj getProperty "buoyancy" == "")then
 				{
-					if (true) then ERROR("object is missing buoyancy = 1 named property " << _checkBuoyancy << "prop");
+					if (true) then ERROR("object is missing buoyancy = 1 named property");
 					if(FIX_P3D)then{
 						if (true) then ERROR("attempting to fix by adding buoyancy = 1");
 						_obj setProperty ["buoyancy",1];
@@ -316,90 +591,55 @@ inLodShow={
 			//if (_resol>=LOD_SHADOW_MIN) then {halt;};
 			if (IS_LOD_SHADOW(_resol)) then
 			{
-				if ((_resol==LOD_SHADOW_MIN) || (_resol==LOD_SHADOW_MIN+10)|| (_resol==LOD_SHADOW_VIEW_GUNNER)|| (_resol==LOD_SHADOW_VIEW_PILOT)|| (_resol==LOD_SHADOW_VIEW_CARGO)) then
-				{
-					private ["_edges","_quad"];
-					_obj callRuntime "checkclosed";
-					if (countPoints (_obj loadSelection "_current")>_proxies) then ERROR("open topology detected! ");
-					_edges=+[];
-					_quad=false;
-					_obj forEachFace [{true},
+					if ((_resol==LOD_SHADOW_MIN) || (_resol==LOD_SHADOW_MIN+10)|| (_resol==LOD_SHADOW_VIEW_GUNNER)|| (_resol==LOD_SHADOW_VIEW_PILOT)|| (_resol==LOD_SHADOW_VIEW_CARGO)) then
 					{
-							private ["_vx","_last"];
-							_vx=getVertices (_obj face _x);
-							_quad=[_quad,true] select (count _vx>3);
-							_last=_vx @ (count _vx-1);
-							{
-									_edges set [count _edges,_last];
-									_edges set [count _edges,_x];
-									_last=_x;
-							}forEach _vx;
-					}];
-					if (_obj testSharpEdges _edges<1) then ERROR("Smooth edges detected");
-					if (_obj testSharpEdges _edges<1 && FIX_P3D) then {
-						console<<"	attempting to fix it by making all edges sharp."<<eoln;
-						_obj sharpEdges _edges;
-						needSave=true;
-					};
-					if (_quad) then{
-						if (true) then ERROR("Polygons detected (only triangles allowed)");
-						if(FIX_P3D)then{
-							//if (true) then ERROR("attempting to fix by triangulation selections");
-							//_sel=	_obj loadSelection "open";
-							//_sel callRuntime "triangulatesel";
+						private ["_edges","_quad"];
+						_obj callRuntime "checkclosed";
+						if (countPoints (_obj loadSelection "_current")>0) then ERROR("opened topology detected!");
+						_edges=+[];
+						_quad=false;
+						_obj forEachFace [{true},
+						{
+								private ["_vx","_last"];
+								_vx=getVertices (_obj face _x);
+								_quad=[_quad,true] select (count _vx>3);
+								_last=_vx @ (count _vx-1);
+								{
+										_edges set [count _edges,_last];
+										_edges set [count _edges,_x];
+										_last=_x;
+								}forEach _vx;
+						}];
+						if (_obj testSharpEdges _edges<1) then ERROR("Smooth edges detected");
+						if (_obj testSharpEdges _edges<1 && FIX_P3D) then {
+							console<<"	attempting to fix it by making all edges sharp."<<eoln;
+							_obj sharpEdges _edges;
+							needSave=true;
 						};
-					};
-					//if (_resol>LOD_SHADOW_MIN) then ERROR("Warrning: Shadow volume LOD number different than 0");
-					if (_resol==LOD_SHADOW_MIN) then
-					{
-							private ["_num","_faceT","_texture","_material","_x","_txLinkBugInShadow","_matLinkBugInShadow"];
-							_num =  countFaces _obj;
-							for "_x" from 0 to _num do
-							{
-									_faceT =_obj face _X;
-									_texture = getTexture _FaceT;
-									_material = getMaterial _FaceT;
-									if (_texture!="") then
-									{
-										_txLinkBugInShadow=1
-										if(FIX_P3D)then{
-											_faceT setTexture "";
-										};
-									};
-									if (_material!="") then
-									{
-										_matLinkBugInShadow=1
-										if(FIX_P3D)then{
-											_faceT setMaterial "";
-										};
-									};
-							};
-							if (_txLinkBugInShadow==1) then ERROR("Warrning: There is a texture link");
-							if (_matLinkBugInShadow==1) then ERROR("Warrning: There is a material link");
-							if ( (_matLinkBugInShadow==1 or _txLinkBugInShadow == 1) AND FIX_P3D) then{
-								if (true) then ERROR("fix attempt - removing materials & textures from shadow lod");
-							};
-					};
-					_chckSHDProp=_obj getProperty "LODNoShadow";
-					if (_chckSHDProp=="1") then {
-						if(true) then ERROR("Warrning: ShadowVolume disabled by property");
-						if(FIX_P3D)then{
-							if (true) then ERROR("attempting to fix by deleting excese properties");
-							private ["_prop","_count"];
-							_prop=  properties _obj;
-							_count = (count _prop)-1;
-							private ["_i"];
-							for [{_i=0},{_i<=_count},{_i=_i+2}] do {
-								_obj setProperty [_prop select _i,nil];
-								needSave=true;
+						if (_quad) then{
+							if (true) then ERROR("Polygons detected (only triangles allowed)");
+							if(FIX_P3D)then{
+								//if (true) then ERROR("attempting to fix by triangulation selections");
+								//_sel=	_obj loadSelection "open";
+								//_sel callRuntime "triangulatesel";
 							};
 						};
-					};
-				}
-				else
-				{
-					if (_resol==LOD_SHADOW_MIN+1000) then
-					{
+						//if (_resol>LOD_SHADOW_MIN) then ERROR("Warrning: Shadow volume LOD number different than 0");
+						if (_resol==LOD_SHADOW_MIN) then
+						{
+								private ["_num","_faceT","_texture","_material","_x","_txLinkBugInShadow","_matLinkBugInShadow"];
+								_num =  countFaces _obj;
+								for "_x" from 0 to _num do
+								{
+										_faceT =_obj face _X;
+										_texture = getTexture _FaceT;
+										_material = getMaterial _FaceT;
+										if (_texture!="") then {_txLinkBugInShadow=1};
+										if (_material!="") then {_matLinkBugInShadow=1};
+								};
+								if (_txLinkBugInShadow==1) then ERROR("Warrning: There is a texture link");
+								if (_matLinkBugInShadow==1) then ERROR("Warrning: There is a material link");
+						};
 						_chckSHDProp=_obj getProperty "LODNoShadow";
 						if (_chckSHDProp=="1") then {
 							if(true) then ERROR("Warrning: ShadowVolume disabled by property");
@@ -410,16 +650,36 @@ inLodShow={
 								_count = (count _prop)-1;
 								private ["_i"];
 								for [{_i=0},{_i<=_count},{_i=_i+2}] do {
-									if(_prop select _i != "lodnoshadow")then{
-										_obj setProperty [_prop select _i,nil];
-									};
+									_obj setProperty [_prop select _i,nil];
 									needSave=true;
 								};
 							};
 						};
-					} else ERROR("ShadowVolume "+str(_resol-LOD_SHADOW_MIN)+" is not supported");
+					}
+					else
+					{
+						if (_resol==LOD_SHADOW_MIN+1000) then
+						{
+							_chckSHDProp=_obj getProperty "LODNoShadow";
+							if (_chckSHDProp=="1") then {
+								if(true) then ERROR("Warrning: ShadowVolume disabled by property");
+								if(FIX_P3D)then{
+									if (true) then ERROR("attempting to fix by deleting excese properties");
+									private ["_prop","_count"];
+									_prop=  properties _obj;
+									_count = (count _prop)-1;
+									private ["_i"];
+									for [{_i=0},{_i<=_count},{_i=_i+2}] do {
+										if(_prop select _i != "lodnoshadow")then{
+											_obj setProperty [_prop select _i,nil];
+										};
+										needSave=true;
+									};
+								};
+							};
+						} else ERROR("ShadowVolume "+str(_resol-LOD_SHADOW_MIN)+" is not supported");
 
-				};
+					};
 			};
 
 			// collect materials
@@ -463,44 +723,44 @@ inLodShow={
 
 			private "_checkUVSource";
 			_checkUVSource={
-				private ["_matname","_paramFile"];
-				_matname=texpath+_x;
-				_paramFile=openFile [_matname,1];
-				if (!isnil{_paramFile}) then
-				{
-					_paramFile=_paramFile call ParamFileRead;
+					private ["_matname","_paramFile"];
+					_matname=texpath+_x;
+					_paramFile=openFile [_matname,1];
 					if (!isnil{_paramFile}) then
 					{
-						private "_findUvSource";
-						_findUvSource={
-							if (_x @ 1=="class") then
+							_paramFile=_paramFile call ParamFileRead;
+							if (!isnil{_paramFile}) then
 							{
-									_findUvSource forEach (_x @ 2);
-							}else{
-							if (tolower(_x @ 0)=="uvsource") then
-							{
-									private "_tmp";
-									_tmp=_x @ 2;
-									if (_tmp=="tex") then
-									{
-											_tmp="tex0";
-									};
-									if (_tmp @ [0,3]=="tex") then
-									{
-											_tmp=val(_tmp@[3]);
-											if (!(_obj isuvset _tmp)) then
-													ERROR("Referenced unknown uv-set: "<<str(_tmp)<<" by material "<<_matname);
-									};
+									private "_findUvSource";
+									_findUvSource={
+											if (_x @ 1=="class") then
+											{
+													_findUvSource forEach (_x @ 2);
+											}else{
+											if (tolower(_x @ 0)=="uvsource") then
+											{
+													private "_tmp";
+													_tmp=_x @ 2;
+													if (_tmp=="tex") then
+													{
+															_tmp="tex0";
+													};
+													if (_tmp @ [0,3]=="tex") then
+													{
+															_tmp=val(_tmp@[3]);
+															if (!(_obj isuvset _tmp)) then
+																	ERROR("Referenced unknown uv-set: "<<str(_tmp)<<" by material "<<_matname);
+													};
 
-							};};
-						};
-						_findUvSource forEach _paramFile;
-					}
-					else
-					{
-					ERROR("Parse error: "<<_matname);
+											};};
+									};
+									_findUvSource forEach _paramFile;
+							}
+							else
+							{
+							ERROR("Parse error: "<<_matname);
+							};
 					};
-				};
 			};
 			_checkUVSource forEach (_obj callRuntime "matlist");
 
@@ -719,7 +979,6 @@ inLodShow={
 			{
 				_hasPhysx = true;
 			};
-
 
 			if ((LOD_VIEW_GUNNER==_resol)or(LOD_VIEW_PILOT==_resol)or(LOD_VIEW_CARGO==_resol)) then
 			{
