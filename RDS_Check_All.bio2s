@@ -542,6 +542,33 @@ _optimizeLOD =
 						};
 					};
 				};
+				// Removes UVs
+				_obj forEachFace [{true},
+				{
+					(_obj face _x) setUVSet [];
+				}];
+
+				_edges=+[];
+				_quad=false;
+				_obj forEachFace [{true},
+				{
+					private ["_vx","_last"];
+					(_obj face _x) setUVSet [];
+					_vx=getVertices (_obj face _x);
+					_quad=[_quad,true] select (count _vx>3);
+					_last=_vx @ (count _vx-1);
+					{
+						_edges set [count _edges,_last];
+						_edges set [count _edges,_x];
+						_last=_x;
+					}forEach _vx;
+				}];
+				if (_obj testSharpEdges _edges<1) then ERROR("Smooth edges detected");
+				if (_obj testSharpEdges _edges<1 && FIX_P3D) then {
+					console<<"	attempting to fix it by making all edges sharp."<<eoln;
+					_obj sharpEdges _edges;
+					needSave=true;
+				};
 			};
 
 			// check for zero mass
@@ -583,7 +610,7 @@ _optimizeLOD =
 							needSave=true;
 						};
 					};
-					if(_obj getProperty "autocenter" == 0)then
+					if(_obj getProperty "autocenter" == "0")then
 					{
 						if (true) then ERROR("object has geo physx but has autocenter = 0 named property. Is it intended?");
 					};
@@ -628,6 +655,7 @@ _optimizeLOD =
 					_obj forEachFace [{true},
 					{
 						private ["_vx","_last"];
+						(_obj face _x) setUVSet [];
 						_vx=getVertices (_obj face _x);
 						_quad=[_quad,true] select (count _vx>3);
 						_last=_vx @ (count _vx-1);
@@ -661,8 +689,22 @@ _optimizeLOD =
 							_faceT =_obj face _X;
 							_texture = getTexture _FaceT;
 							_material = getMaterial _FaceT;
-							if (_texture!="") then {_txLinkBugInShadow=1};
-							if (_material!="") then {_matLinkBugInShadow=1};
+							if (_texture!="") then 
+							{
+								_txLinkBugInShadow=1;
+								if(FIX_P3D)then
+								{
+									_faceT setTexture "";
+								};
+							};
+							if (_material!="") then 
+							{
+								_matLinkBugInShadow=1;
+								if(FIX_P3D)then
+								{
+									_faceT setMaterial "";
+								};
+							};
 						};
 						if (_txLinkBugInShadow==1) then ERROR("Warrning: There is a texture link");
 						if (_matLinkBugInShadow==1) then ERROR("Warrning: There is a material link");
