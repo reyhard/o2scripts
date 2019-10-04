@@ -1,0 +1,32 @@
+#include "std\lodNames.inc"
+
+obj=getActiveObject this;
+obj forEachFace [{true},
+{
+	_points  = getVertices (obj face _x);
+
+	_distance = [];
+	{
+		_distance = _distance
+	}foreach _points;
+
+	// Perform action on 2 long edges
+	if(count _point > 3)then
+	{
+	// Otherwise, face is an triangle and only 2nd longest face should be considered
+	}else
+	{
+
+	};
+}];
+
+{
+    sel=obj loadSelection _x;;
+    _points = [];
+    forEachPoint [{true},{_points = _points + [_x]}];
+    obj sharpEdges _points;
+   // sel =  selectFacesFromPoints (sel);
+
+    //obj save (sel as (_x));
+
+}forEach (getSelections obj);

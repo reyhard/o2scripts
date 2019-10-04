@@ -1,0 +1,73 @@
+/*
+
+Exports current lod as BITXT file at the same location as the p3d
+
+*/
+
+#include "std\lodNames.inc"
+console = openStandardIO;
+
+if (this in ["options"]) exitWith {MessageBox ["No options!",0];-1};
+
+private ["_sel","_curLod","_obj","_activeLod","_resols","_lodsToDeleteAr","_p3dname","_txtName","_lodname"];
+
+_p3dName = nameof this;
+if (_p3dname == "") exitWith {messageBox ["Please save the file first",0];};
+_resols = getResolutions this;
+_obj = getActiveObject this;
+_curLod = activeLevel this;
+_lodsToDeleteAr = [];
+
+// delete all lods except current
+for "_b" from 0 to ((count this) - 1) do
+{
+	_activeLod = _resols @ _b;
+	if (_b != _curLod) then
+	{
+		_lodsToDeleteAr = _lodsToDeleteAr + [_activeLod];
+	}
+	else
+	{
+		_lodname = _activeLod call lodNameGetName;
+	};
+};
+
+if (count _lodsToDeleteAr > 0) then
+{
+	{
+		this setActiveSpecial _x;
+		this deleteLevel (activeLevel this);
+	} forEach _lodsToDeleteAr;
+};
+
+{
+	// delete all proxies
+	if (_x @ [0,6]=="proxy:") then 
+	{
+		_sel = _obj loadSelection _x;
+		deleteSelected _sel;
+	};
+	
+	// delete all selections
+	_obj deleteSelection _x;
+
+} forEach (getSelections _obj);
+
+// save all as selection "filename"
+_sel = newSelection _obj;
+selectAll _sel;
+_obj save _sel as (((splitpath _p3dName) @ 2) + "_Lod" + _lodname);
+
+// save as bitxt
+_txtName = ((splitpath _p3dName) @ 0) + ((splitpath _p3dName) @ 1) + ((splitpath _p3dName) @ 2) + "_Lod" + _lodname + ".txt";
+if (this exportBiTXT_SG _txtName) then 
+{
+	console<<"Exported current lod as: "<<eoln<<_txtName<<eoln;
+}
+else
+{
+	console<<"Error exporting "<<_txtName<<eoln;
+};
+
+// revert
+if (true) exitWith {-1};

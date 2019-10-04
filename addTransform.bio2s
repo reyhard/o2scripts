@@ -1,0 +1,29 @@
+#include "std\lodNames.inc"
+
+//objects=getObjects p3d;
+//resols=getResolutions p3d;
+////activeResolution
+//
+////_res = activeLevel objects @ 0;
+//_resol = resols @ 0;
+//_obj   = getActiveObject this;
+//{
+//    _sel = selectFacesFromPoints (getSelectedPoints _x);
+//    _obj save _sel as ( nameOf _x);
+//}forEach getSelections _obj;
+
+
+obj=getActiveObject this;
+
+obj forEachPoint ["true","_sel = newSelection  obj;_sel selectPoint  _x;obj save _sel as ('center' + str(_x+0)) "];
+/*for "_i" from 1 to  countPoints obj do
+{
+	_selection = selectPoint
+};
+{
+    sel=obj loadSelection _x;;
+
+    sel = selectPointsFromFaces (sel);
+    //sel =  selectAll "_x";
+    obj save (sel as (_x));
+}forEach (getSelections obj);*/

@@ -1,0 +1,59 @@
+/*
+Script name: 
+
+	BiTXT to P3D Converter
+
+Command line:
+
+	source filename or array [source filename, target filename]
+	Note: use O2Script -a "source filename" "target filename" 
+
+Description: 
+
+	Converts BITXT file (created by Dorg's script in MAX) to P3D file.
+
+*/
+
+error=openErrorIO;
+exit=false;
+if (typename this!="ARRAY") then
+{
+	args=+[this];
+}
+else
+{
+	args=this;
+};
+if (count args<1) then
+{
+	error<<"Invalid parameter count."<<eoln;
+	error<<"Need minimal one parameter as source file."<<eoln;
+	error<<"Second parameter is optional and specifies target file"<<eoln;
+	exit=true;
+};
+if (exit) exitWith { -10};
+
+src=args select 0;
+if (count args>=2) then {trg=args select 1;}
+else
+{
+	private "_splt";
+	_splt=splitPath src;
+	trg=_splt @ 0+_splt @ 1+_splt @ 2+".p3d";
+};
+
+p3d=newLODObject;
+result=p3d importBiTXT src;
+if (!result) then
+{
+	error<<"Import failed: "<<getLastBiTXTImportError<<eoln;	
+};
+if (!result) exitWith { -11};
+result=save (p3d as trg);
+if (!result) then
+{
+	error<<"Unable to save: "<<trg<<eoln;	
+};
+if (!result) exitWith { -12};
+
+0

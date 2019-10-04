@@ -1,0 +1,66 @@
+
+_toFind = [
+"Component01",
+"Component02",
+"Component03",
+"Component04",
+"Component05",
+"Component06",
+"Component07",
+"Component08",
+"Component09",
+"Component10",
+"Component11",
+"Component12",
+"Component13",
+"Component14",
+"Component15",
+"Component16",
+"Component17",
+"Component18",
+"Component19",
+"Component20",
+"Component21",
+"Component22",
+"Component23"
+];
+_toReplace =
+[
+"Occluder01",
+"Occluder02",
+"Occluder03",
+"Occluder04",
+"Occluder05",
+"Occluder06",
+"Occluder07",
+"Occluder08",
+"Occluder09",
+"Occluder10",
+"Occluder11",
+"Occluder12",
+"Occluder13",
+"Occluder14",
+"Occluder15",
+"Occluder16",
+"Occluder17",
+"Occluder18",
+"Occluder19",
+"Occluder20",
+"Occluder21",
+"Occluder22",
+"Occluder23"
+];
+
+
+obj=getActiveObject this;
+obj callRuntime "createcompo";
+{
+	_searchIndex = _toFind find _x;
+	if(_searchIndex >= 0)then
+	{
+		console<< "index name"<<str(_searchIndex) << str(_x) <<eoln  << eoln;
+		_sel = obj loadSelection _x;
+		obj save _sel as (_toReplace select _searchIndex);
+		obj deleteSelection _x;
+	};
+}forEach (getSelections obj);

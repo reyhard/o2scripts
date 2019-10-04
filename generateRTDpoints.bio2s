@@ -1,0 +1,45 @@
+#include "std\lodNames.inc"
+
+//_p3d = _this @ 0;
+_modelName = (nameOf this);
+_fileDrive = ((splitpath _modelName) @ 0);
+_filePath = ((splitpath _modelName) @ 1);
+
+_actualPath = _fileDrive + _filePath;
+
+_output=openFile [(_actualPath + "rtdPoints.txt"),4];
+
+
+obj=getActiveObject this;
+_rtdCenter = obj getPoint ((getSelectedPoints (obj loadSelection "rtd_center")) @ 0);
+//_rtdCenter = [0,-0.706448,-1.26568];
+	_output << "RTD center " << str(_rtdCenter) << eoln;
+{
+    _sel=obj loadSelection _x;;
+
+    _coord = obj getPoint ((getSelectedPoints  _sel) @ 0);
+    _coord = _coord -- _rtdCenter;
+    // Invert Y with Z axis
+    //_coord = [_coord @ 0,_coord @ 2,_coord @ 1];
+_output << eoln;
+_output << "    <!-- " << _x << " -->" << eoln;
+_output << "    <GroundContact type=""FGGroundContact200"" >" << eoln;
+_output << "      <Features isBrakable=""false"" isRetractable=""false"" isSteerable=""false""  />" << eoln;
+_output << "      <Aerodynamics equivalentFlatPlateArea =""0.0"" />" << eoln;
+_output << "      <Suspension>" << eoln;
+_output << "        " <<"<MountStation  x=""" << str(-_coord @ 0) << """ y=""" << str(-_coord @ 2) <<""" z="""<< str(_coord @ 1)<<"""/>" << eoln;
+_output << "        <SliderAxis x=""0"" y=""0"" z=""1"" />" << eoln;
+_output << "        <SuspensionLength length=""0.1"" />" << eoln;
+_output << "        <SpringParameters springConstant=""4200000"" damperConstant=""500000"" maxCompression=""0.09"" />" << eoln;
+_output << "      </Suspension>" << eoln;
+_output << "      <Wheel mass=""1"" radius=""0.1"" >" << eoln;
+_output << "        <RollAxis x=""1"" y=""0"" z=""0"" />" << eoln;
+_output << "        <Friction slidingFriction=""2"" resistanceTorqueNoBrake=""1000"" resistanceTorqueFullBrake=""1000"" />" << eoln;
+_output << "      </Wheel>" << eoln;
+_output << "      <Damage thresholdLoad=""200000000"" />" << eoln;
+_output << "    </GroundContact>" << eoln;
+    //_output << _x << ": " <<"<MountStation  x=""" << str(_coord @ 0) << """ y=""" << str(_coord @ 2) <<""" z="""<< str(_coord @ 1)<<"""/>" << eoln;
+	//_output << _x << ": " << str(_coord) << eoln;
+
+}forEach (getSelections obj);
+

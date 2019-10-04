@@ -1,0 +1,64 @@
+#include "std\lodNames.inc"
+#include "std\o2config.inc"
+#include "std\paramFile.inc"
+#include "CheckMat.inc.bio2s"
+#include "std\flags.inc"
+
+
+
+scopeName "CheckAll";
+
+console=openStandardIO;
+
+if (typename this=="STRING") then
+{
+	p3d=newLODObject;
+	p3dname=this;
+	if (!(p3d loadP3d this)) then {	console<<"Unable to open:"<<this<<eoln;BreakTo "CheckAll";};
+	runFromO2=false;
+	texpath=((splitPath p3dname) @ 0);
+	//console<<"----------------------------------------------------------------------"<<eoln;
+	//console<<"Checking file: "<<p3dname<<eoln;
+}
+else
+{
+	p3dname=nameof this;
+	p3dname=splitPath p3dname;
+	p3dname=p3dname @ 2 + p3dname @ 3;
+	runFromO2=true;
+	p3d=this;
+	texpath=o2GetConfig IDS_CFGPATHFORTEX;
+	console<<"--------- Checking "<<p3dname<<" ------"<<eoln;
+};
+
+_changed = false;
+
+_LODs			= getObjects p3d;
+_resolutions	= getResolutions p3d;
+_objects		= getObjects p3d;
+
+for "_i" from 0 to ((count p3d) - 1) do
+{
+	_currentLOD			= _LODs @ _i;
+	_currentResolution	= _resolutions @ _i;
+	_currentObject		= _objects @ _i;
+
+	if (IS_LOD_RESOLUTION(_currentResolution)) then
+	{
+
+		_numsect=_currentObject callRuntime "countsections";
+
+		if (_numsect == 0)then {_changed = true};
+
+	};
+};
+
+if (_changed and !runFromO2) then
+{
+	console<<"----------------------------------------------------------------------"<<eoln;
+	console<<"--------- Empty LOD detected "<< str(p3dname) << eoln;
+	console<<"----------------------------------------------------------------------"<<eoln;
+}else{
+
+	//console<<"--------- No change ------" << eoln  << eoln;
+};

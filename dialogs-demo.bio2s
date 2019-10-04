@@ -1,0 +1,196 @@
+/*
+Description:
+	To show ways of dialog scripting.
+
+Licensing Info:
+	Copyright (C) 2007 Bohemia Interactive.
+	This script is free software for any non commercial use; you can redistribute it and/or
+	modify as long as you include this licensing notice. This script is distributed
+	in the hope that it will be useful, but without any warranty; without even
+	the implied warranty of merchanitility or fintess for a particular purpose.
+*/
+ShowConsole false;
+_text1="hello";
+_text2="world";
+_radio="option1";
+_longtext="some very long long long text wrapped";
+_listbox=3;
+_multilistbox=[3,5,6];
+_select=5;
+_combo="three";
+_hpos=500;
+_vpos=-200;
+_predefinedVals=		[
+				"one",
+				"two",
+				"three",
+				"four",
+				"five",
+				"six",
+				"seven",
+				"eight",
+				"nine",
+				"ten"
+				];
+res=dialogBox
+	[500,300,"ExampleDialog",
+		["minimize-button"],
+		["label",200,13,"This is an example for complex dialogs",0],
+		["break"],
+		["begin-subframe",100,130,"Align text"],
+			["label",80,15,"Align 0",0],
+			["label",80,15,"Align 1",1],
+			["label",80,15,"Align 2",2],
+			["label",80,15,"Align 3",3],
+			["label",30,20,"Align 0",0],["dynlabel",40,20,"_text1",0],
+			["label",30,20,"Align 1",1],["textline",40,20,"_text2",0],
+		["end-subframe"],
+		["begin-subframe",70,90,"Radio-buttons"],
+			["radio-button",50,10,"Option1","_radio","option1"],
+			["radio-button",50,10,"num 2","_radio",2],
+			["radio-button",50,10,"num 3","_radio",3],
+			["radio-button",50,10,"Option4","_radio","option4"],
+			["radio-button",50,10,"true","_radio",true],
+			["radio-button",50,10,"false","_radio",false],
+		["end-subframe"],
+		["begin-subframe",90,90,"textarea"],
+			["textarea",70,70,"_longtext",0],
+			["onexitchanged",{messageBox ["You wrote: "+_longtext,0];}],
+		["end-subframe"],
+		["begin-subframe",80,90,"Check-boxes"],
+			["check-box",70,10,"Check here","_chk1"],
+			["onclick",
+				{
+				{_x dlgEnableControl !_chk1;} forEach dlgGetControls "_radio";
+				}],
+			["check-box",70,10,"Check here","_chk2"],
+			["onclick",
+				{
+				{_x dlgVisibleControl !_chk2;} forEach dlgGetControls "_radio";
+				}],
+			["check-box",50,10,"num 3","_chk3"],
+			["check-box",50,10,"Option4","_chk4"],
+			["check-box",50,10,"true","_chk5"],
+			["check-box",50,10,"false","_chk6"],
+		["end-subframe"],
+		["begin-subframe",120,90,"listbox"],
+			["listbox",50,70,"_listbox",
+				[
+				"one",
+				"two",
+				"three",
+				"four",
+				"five",
+				"six",
+				"seven",
+				"eight",
+				"nine",
+				"ten"
+				]
+			],
+			["onchange",{_multilistbox=+[_listbox];_select=_listbox;["_multilistbox","_select"];}],
+			["extended-listbox",50,70,"_multilistbox", //can be also "extended-listbox"
+				[
+				"one",
+				"two",
+				"three",
+				"four",
+				"five",
+				"six",
+				"seven",
+				"eight",
+				"nine",
+				"ten"
+				]
+			],
+		["end-subframe"],
+		["move-to",120,120],
+		["label",60,10,"Select value:",0],
+		["select",60,100,"_select",
+				[
+				"one",
+				"two",
+				"three",
+				"four",
+				"five",
+				"six",
+				"seven",
+				"eight",
+				"nine",
+				"ten"
+				]
+			],
+		["label",60,10,"Combo edit:",0],
+		["combo-edit",60,100,"_combo",_predefinedVals],
+		["button",60,15,"Save new value"],
+		["onclick",{
+			_predefinedVals set [count _predefinedVals,_combo];
+			"_combo" dlgUpdateList _predefinedVals;
+			"_select" dlgUpdateList _predefinedVals;
+			"_listbox" dlgUpdateList _predefinedVals;
+			"_multilistbox" dlgUpdateList _predefinedVals;
+			}],
+		["move-to",10,150],
+		["label",40,10,"H-Trackbar",0],
+		["htrackbar",200,30,"_hpos",-1000,1000,51,2000],
+		["onchange",{_text1=_hpos;["_text1"]}],
+		["label",40,10,"V-Trackbar",0],
+		["vtrackbar",30,100,"_vpos",-1000,1000,51,2000],
+		["onchange",{_text2=_vpos;["_text2"]}],
+		["move-to",10,190],
+		["label",40,10,"Browse file:",0],["textline",120,13,"_file",0],
+			["onexitchanged",{messageBox ["You browsed the file: "+_file,0];}],
+			["browse-button",40,13,"Text files|*.txt|P3D files|*.p3d|All files|*.*|",false,"Select a file"],
+		["move-to",10,210],
+		["label",40,10,"Browse folder:",0],["textline",120,13,"_folder",0],
+			["onexitchanged",{messageBox ["You browsed the folder: "+_folder,0];}],
+			["browse-button",40,13,"folders"],
+		["move-to",10,230],
+			["label",40,10,"Timer:",0],["textline",120,13,"_timerCnt",0],
+		["move-to",320,270],
+		["button",45,15,"Test!"],
+		["onclick",{
+			_console=openStandardIO;
+			_console<<"Lets start"<<eoln;
+			messageBox ["Lets start!",0];
+			dlgWaitCursor;
+			for "_i" from -1000 to 1000 do
+				{
+				_hpos=_i;
+				_text1=_i;
+				dlgUpdate "_hpos";
+				dlgUpdate "_text1";
+				if (!dlgYield) exitWith {};
+				};
+			}],
+		["ok-button",45,15],
+		["cancel-button",45,15],
+		["onexitdlg",
+		{
+			private "_dataOk";
+			MessageBox ["Exitting dialog: button="+str(_this),0];
+			if (_this!=2 && (_text1 in ["hello"])) then
+			{
+				messageBox ["Validation error - remove 'hello' word from first text line ",0];
+				_dataOk=false;
+			}
+			else
+			{
+				_dataOk=true;
+			};
+			_dataOk //return true - close dialog, false - do not close dialog
+		}],
+		["init",
+		{
+			_timerCnt=0;
+			dlgUpdate "_timerCnt";
+			setTimer [1,
+			{
+				dlgSync "_timerCnt";
+				_timerCnt=_timerCnt+1;
+				dlgUpdate "_timerCnt";
+				true //continue in timer
+			}];
+		}]
+	];
+	

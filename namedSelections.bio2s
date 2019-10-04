@@ -1,0 +1,688 @@
+/*
+Named selections manager 1.4:
+
+File:
+		namedSelections.bio2s.
+
+Author:
+		Joris-Jan van 't Land
+		Bohemia Interactive Studio
+		modified by Maciej Pham
+
+Description:
+		This tool is used for managing named selections in models.
+
+Functionality:
+1.	Deleting, renaming and adding named selections.
+2.	Specifying on which of the named selections to perform these actions.
+3.	Specifying on which of the levels to perform these actions.
+*/
+
+/*
+Version 1.0 - 1.1:
+-----------------
+
+Added:
+1.	Ability to select individual levels.
+2.	Ability to optionally delete the vertices associated with a selection name.
+3.	Selection and level names are sorted alphabetically for their first character.
+
+Fixed:
+1.	Interface now accomodates for long selection names.
+2.	Adding of new selections now includes actually selected vertices.
+3.	Listing of named selections now avoids double entries.
+
+Version 1.1 - 1.2:
+-----------------
+
+Added:
+1.	Parameter for renaming selections, to allow merging multiple selections into a new selection and keep the old selections.
+2.	Option to filter out component selections in the selection list.
+
+Fixed:
+1.	Incorrect behavior in level selection.
+2.	List only selections available in the currently selected level.
+3.	Named selections and levels are sorted correctly. Levels no longer use alphabet sorting to ensure correct behavior.
+4.	Renaming X selections now adds each of these X selections to the renamed selection, instead of only the last one.
+
+Version 1.2 - 1.3:
+-----------------
+
+Added:
+
+Fixed:
+
+Version 1.3 - 1.4:
+-----------------
+
+Added:
+1. Added selections filtering
+2. Resized dialog box to better utilize space that is available on contemporary monitors
+3. Variables are no longer restarted after performing action
+4. It's possible to use some sort of Find & Replace with wildcard support - works similiar to "Mass Texture & Materials renaming script"
+
+Fixed:
+*/
+
+scopeName "mainScope";
+#include "std\lodNames.inc"
+console = openStandardIO;
+if (this in ["options"]) exitWith {messageBox ["No options available for this tool.", 0];};
+
+echo "--------------- Script START ---------------";
+
+_initLevel = (activeLevel this);
+
+//Sorts an array of strings in alphabetical order.
+_alphaSort =
+{
+	private ["_array", "_arrayL", "_arrayL1", "_l", "_p"];
+	_array = _this select 0;
+	_arrayL = [];
+
+	_l = 33;
+	while {_l < 127} do
+	{
+		_p = 0;
+		_arrayL1 = [];
+		while {_p < (count _array)} do
+		{
+			_string = (_array select _p);
+			_char = (_string @ 0);
+			if (((asc _char) == _l) && !(_string in _arrayL)) then
+			{
+				if (!((_radio2 == 2) && _filtComp)) then
+				{
+					_arrayL1 = _arrayL1 + [_string];
+				}
+				else
+				{
+					_boolTmp = _string findI "component";
+					if (isNil "_boolTmp") then
+					{
+						_arrayL1 = _arrayL1 + [_string];
+					};
+				};
+			};
+			_p = _p + 1;
+		};
+		_arrayL = _arrayL + _arrayL1;
+		_l = _l + 1;
+	};
+	_arrayL
+};
+
+_listSelections =
+{
+	_selections = [];
+	_objects = (getObjects this);
+	_u = 0;
+	while {_u < (count _objects)} do
+	{
+		if (_u in _levelsListbox) then
+		{
+			_selsObject = (getSelections (_objects select _u));
+			_p = 0;
+			while {_p < (count _selsObject)} do
+			{
+				_string = (_selsObject select _p);
+				if (!(_string in _selections)) then
+				{
+					if(_search != "")then
+					{
+						if(_string find _search >= 0)then
+						{
+							_selections = _selections + [_string];
+						};
+					}else{
+						_selections = _selections + [_string];
+					};
+				};
+				_p = _p + 1;
+			};
+		};
+		_u = _u + 1;
+	};
+	_selections = ([_selections] call _alphaSort);
+	_selectionsTmp = +_selections
+};
+
+// initialize variables
+_radio1 = 1; _radio2 = 3; _radio3 = 1;
+_delVert = false;
+_delOldSels = true;
+_filtComp = true;
+
+// for text filtering
+_filterText = "";
+_search = "";
+_replaceName = "";
+_newName = "";
+
+//List all of the model's levels for the interface.
+_levels = (getResolutions this);
+_levelsNames = [];
+for "_u" from 0 to ((count _levels) - 1) do
+{
+	_levelsNames = _levelsNames + [(_levels select _u) call lodNameGetName];
+};
+//_levelsNames = ([_levelsNames] call _alphaSort);
+_levelsTmp = +_levels;
+
+//List all of the model's selection names for the interface.
+_selections = [];
+_selectionsTmp = [];
+_x = 0; _levelsListbox = [];
+while {_x < ((count _levels) - 1)} do
+{
+	_levelsListbox = _levelsListbox + [_x]; _x = _x + 1;
+};
+[] call _listSelections;
+_levelsListbox = [];
+_mainInit = true;
+
+while {true} do
+{
+
+	_dlg = dialogBox
+		[400, 580, "Named selections manager 1.4",
+			["init", {
+					if(_mainInit)then{
+						_mainInit = false;
+						{_x dlgEnableControl false} forEach (dlgGetControls "_newName") + (dlgGetControls "_selsListbox") + (dlgGetControls "_filtComp") + (dlgGetControls "_levelsListbox") + (dlgGetControls "_delOldSels") + (dlgGetControls "_search") + (dlgGetControls "_replaceName");
+					}else{
+						// reinitalize state
+						switch (_radio1) do
+						{
+							case 1:
+							{
+								{_x dlgEnableControl false} forEach (dlgGetControls "_newName") + (dlgGetControls "_delOldSels") + (dlgGetControls "_replaceName");
+								{_x dlgEnableControl true} forEach (dlgGetControls "_radio2") + (dlgGetControls "_delVert");
+								if (_radio2 == 2) then {{_x dlgEnableControl true} forEach (dlgGetControls "_selsListbox") + (dlgGetControls "_filtComp")};
+								if (_radio3 == 2) then {{_x dlgEnableControl true} forEach (dlgGetControls "_levelsListbox")};
+							};
+
+							case 2:
+							{
+								{_x dlgEnableControl true} forEach (dlgGetControls "_newName") + (dlgGetControls "_radio2") + (dlgGetControls "_delOldSels");
+								{_x dlgEnableControl false} forEach (dlgGetControls "_delVert") + (dlgGetControls "_replaceName");
+								if (_radio2 == 2) then {{_x dlgEnableControl true} forEach (dlgGetControls "_selsListbox") + (dlgGetControls "_filtComp")};
+								if (_radio3 == 2) then {{_x dlgEnableControl true} forEach (dlgGetControls "_levelsListbox")};
+							};
+							case 3:
+							{
+								{_x dlgEnableControl true} forEach (dlgGetControls "_newName");
+								{_x dlgEnableControl false} forEach (dlgGetControls "_radio2") + (dlgGetControls "_selsListbox") + (dlgGetControls "_filtComp") + (dlgGetControls "_delVert") + (dlgGetControls "_delOldSels") + (dlgGetControls "_replaceName");
+								if (_radio3 == 2) then {{_x dlgEnableControl true} forEach (dlgGetControls "_levelsListbox")};
+							};
+							case 4:
+							{
+								{_x dlgEnableControl true} forEach (dlgGetControls "_newName") + (dlgGetControls "_radio2") + (dlgGetControls "_delOldSels") + (dlgGetControls "_replaceName");
+								{_x dlgEnableControl false} forEach (dlgGetControls "_delVert");
+								if (_radio2 == 2) then {{_x dlgEnableControl true} forEach (dlgGetControls "_selsListbox") + (dlgGetControls "_filtComp")};
+								if (_radio3 == 2) then {{_x dlgEnableControl true} forEach (dlgGetControls "_levelsListbox")};
+							};
+							default {};
+						};
+						switch (_radio3) do
+						{
+							case 1:
+							{
+								{_x dlgEnableControl false} forEach (dlgGetControls "_levelsListbox");
+							};
+							case 2:
+							{
+								{_x dlgEnableControl true} forEach (dlgGetControls "_levelsListbox");
+							};
+							default  {};
+						};
+						switch (_radio2) do
+						{
+							case 1;
+							case 3:
+							{
+								{_x dlgEnableControl false} forEach (dlgGetControls "_selsListbox") + (dlgGetControls "_filtComp") + (dlgGetControls "_search");
+							};
+							case 2:
+							{
+								{_x dlgEnableControl true} forEach (dlgGetControls "_selsListbox") + (dlgGetControls "_filtComp") + (dlgGetControls "_search");
+							};
+							default {};
+						};
+					};
+				}],
+			["begin-subframe", (379 / 3), 105, "Actions:"],
+				["radio-button", 50, 13, "Delete", "_radio1", 1],
+					["onclick",
+						{
+							{_x dlgEnableControl false} forEach (dlgGetControls "_newName") + (dlgGetControls "_delOldSels") + (dlgGetControls "_replaceName");
+							{_x dlgEnableControl true} forEach (dlgGetControls "_radio2") + (dlgGetControls "_delVert");
+							if (_radio2 == 2) then {{_x dlgEnableControl true} forEach (dlgGetControls "_selsListbox") + (dlgGetControls "_filtComp")};
+							if (_radio3 == 2) then {{_x dlgEnableControl true} forEach (dlgGetControls "_levelsListbox")};
+						}
+					],
+				["break"],
+				["radio-button", 50, 13, "Rename", "_radio1", 2],
+					["onclick",
+						{
+							{_x dlgEnableControl true} forEach (dlgGetControls "_newName") + (dlgGetControls "_radio2") + (dlgGetControls "_delOldSels");
+							{_x dlgEnableControl false} forEach (dlgGetControls "_delVert") + (dlgGetControls "_replaceName");
+							if (_radio2 == 2) then {{_x dlgEnableControl true} forEach (dlgGetControls "_selsListbox") + (dlgGetControls "_filtComp")};
+							if (_radio3 == 2) then {{_x dlgEnableControl true} forEach (dlgGetControls "_levelsListbox")};
+						}
+					],
+				["break"],
+				["radio-button", 50, 13, "Replace", "_radio1", 4],
+					["onclick",
+						{
+							{_x dlgEnableControl true} forEach (dlgGetControls "_newName") + (dlgGetControls "_radio2") + (dlgGetControls "_delOldSels") + (dlgGetControls "_replaceName");
+							{_x dlgEnableControl false} forEach (dlgGetControls "_delVert");
+							if (_radio2 == 2) then {{_x dlgEnableControl true} forEach (dlgGetControls "_selsListbox") + (dlgGetControls "_filtComp")};
+							if (_radio3 == 2) then {{_x dlgEnableControl true} forEach (dlgGetControls "_levelsListbox")};
+						}
+					],
+				["break"],
+				["radio-button", 50, 13, "Add", "_radio1", 3],
+					["onclick",
+						{
+							{_x dlgEnableControl true} forEach (dlgGetControls "_newName");
+							{_x dlgEnableControl false} forEach (dlgGetControls "_radio2") + (dlgGetControls "_selsListbox") + (dlgGetControls "_filtComp") + (dlgGetControls "_delVert") + (dlgGetControls "_delOldSels") + (dlgGetControls "_replaceName");
+							if (_radio3 == 2) then {{_x dlgEnableControl true} forEach (dlgGetControls "_levelsListbox")};
+						}
+					],
+			["end-subframe"],
+
+			["begin-subframe", (379 / 3), 105, "Parameters:"],
+				["label", 50, 13, "Find name:", 0], ["break"], ["textline", 118, 13, "_replaceName", 0], ["break"],
+				["label", 50, 13, "New name:", 0], ["break"], ["textline", 118, 13, "_newName", 0], ["break"],
+				 ["label", 70, 13, "Delete vertices:", 0], ["check-box", 13, 13, _delVert, "_delVert", 0],
+				 ["label", 70, 13, "Delete old selections:", 0], ["check-box", 13, 13, _delOldSels, "_delOldSels", 0],
+			["end-subframe"],
+
+			["begin-subframe", (379 / 3), 105, "Levels:"],
+				["radio-button", 50, 13, "All", "_radio3", 1],
+					["onclick",
+						{
+							dlgWaitCursor;
+							{_x dlgEnableControl false} forEach (dlgGetControls "_levelsListbox");
+							_levels = (getResolutions this);
+							_x = 0; _levelsListbox = [];
+							while {_x < ((count _levels) - 1)} do {_levelsListbox = _levelsListbox + [_x]; _x = _x + 1;};
+							[] call _listSelections;
+							"_selsListbox" dlgUpdateList _selections;
+							_levelsListbox = [];
+						}
+					],
+				["break"],
+				["radio-button", 50, 13, "Specify: ", "_radio3", 2],
+					["onclick",
+						{
+							dlgWaitCursor;
+							{_x dlgEnableControl true} forEach (dlgGetControls "_levelsListbox");
+							_tmpBool = (_levelsListbox select 0);
+							if (isNil "_tmpBool") then
+							{
+								_levels = (getResolutions this);
+								_x = 0; _levelsListbox = [];
+								while {_x < ((count _levels) - 1)} do {_levelsListbox = _levelsListbox + [_x]; _x = _x + 1;};
+								[] call _listSelections;
+								"_selsListbox" dlgUpdateList _selections;
+								_levelsListbox = [];
+							}
+							else
+							{
+								[] call _listSelections;
+								"_selsListbox" dlgUpdateList _selections;
+							};
+							_tmpBool = nil;
+						}
+					],
+				["break"],
+				["extended-listbox", 119, 61, "_levelsListbox", _levelsNames],
+					["onchange",
+						{
+							dlgWaitCursor;
+							_levels = [];
+							{_levels = _levels + [_levelsTmp select _x]} forEach _levelsListbox;
+							[] call _listSelections;
+							"_selsListbox" dlgUpdateList _selections;
+						}
+					],
+			["end-subframe"],
+
+			["break"],
+
+			["begin-subframe", 382, 440, "Selections:"],
+				["radio-button", 70, 13, "Currently selected", "_radio2", 3],
+					["onclick",
+						{
+							if(_radio2 == 3)then{{_x dlgEnableControl false} forEach (dlgGetControls "_selsListbox") + (dlgGetControls "_filtComp") + (dlgGetControls "_search")};
+						}
+					],
+				["break"],
+				["radio-button", 50, 13, "All", "_radio2", 1],
+					["onclick",
+						{
+							{_x dlgEnableControl false} forEach (dlgGetControls "_selsListbox") + (dlgGetControls "_filtComp") + (dlgGetControls "_search");
+							dlgWaitCursor;
+							if (_radio2 == 1 && _radio3 == 1) then
+							{
+								_levels = (getResolutions this);
+								_x = 0;
+								while {_x < ((count _levels) - 1)} do {_levelsListbox = _levelsListbox + [_x]; _x = _x + 1;};
+								[] call _listSelections;
+								"_selsListbox" dlgUpdateList _selections;
+								_levelsListbox = [];
+							}
+							else
+							{
+								[] call _listSelections;
+								"_selsListbox" dlgUpdateList _selections;
+							};
+						}
+					],
+
+				["break"],
+				["radio-button", 50, 13, "Specify: ", "_radio2", 2],
+					["onclick",
+						{
+							{_x dlgEnableControl true} forEach (dlgGetControls "_selsListbox") + (dlgGetControls "_filtComp") + (dlgGetControls "_search");
+							dlgWaitCursor;
+							_tmpBool = (_levelsListbox select 0);
+							if (_radio3 == 1 || isNil "_tmpBool") then
+							{
+								_levels = (getResolutions this);
+								_x = 0;
+								while {_x < ((count _levels) - 1)} do {_levelsListbox = _levelsListbox + [_x]; _x = _x + 1;};
+								[] call _listSelections;
+								"_selsListbox" dlgUpdateList _selections;
+								_levelsListbox = [];
+							}
+							else
+							{
+								[] call _listSelections;
+								"_selsListbox" dlgUpdateList _selections;
+							};
+							tmpBool = nil;
+						}
+					],
+				["label", 70, 13, "Filter components:", 0],
+				["check-box", 13, 13, _filtComp, "_filtComp", 0],
+					["onclick",
+						{
+							dlgWaitCursor;
+							_tmpBool = (_levelsListbox select 0);
+							if (_radio3 == 1 || isNil "_tmpBool") then
+							{
+								_levels = (getResolutions this);
+								_x = 0;
+								while {_x < ((count _levels) - 1)} do {_levelsListbox = _levelsListbox + [_x]; _x = _x + 1;};
+								[] call _listSelections;
+								"_selsListbox" dlgUpdateList _selections;
+								_levelsListbox = [];
+							}
+							else
+							{
+								[] call _listSelections;
+								"_selsListbox" dlgUpdateList _selections;
+							};
+							_tmpBool = nil;
+						}
+					],
+				["break"],
+				["move-to", 201, 144],
+				["label", 50, 13, "Search for:", 0],
+				["textline", 118, 13, "_search", 0],
+					["onchange",
+						{
+							// wait 3 seconds befor performing filtering
+							setTimer [2,
+							{
+								// check if there was change in the selection to avoide multiple updates one after another
+								if(_search == _filterText)exitWith{};
+								_filterText = _search;
+
+								// if all, update through all levels
+								if(_radio3 == 1)then
+								{
+									_levels = (getResolutions this);
+									_x = 0; _levelsListbox = [];
+									while {_x < ((count _levels) - 1)} do {_levelsListbox = _levelsListbox + [_x]; _x = _x + 1;};
+								};
+								dlgWaitCursor;
+								[] call _listSelections;
+								"_selsListbox" dlgUpdateList _selections;
+							}];
+						}
+					],
+				["break"],
+
+				["move-to", 21, 174],
+				["extended-listbox", 350, 372, "_selsListbox", _selections],
+			["end-subframe"],
+
+			["break"],
+
+			["move-to", 150, 560],
+			["ok-button", 45, 15],
+			["cancel-button", 45, 15]
+		];
+
+	if (_dlg != 2) then
+	{
+		//Determine action type and set to a function.
+		//Delete an existing selection and optionally the associated vertices.
+		_delete =
+		{
+			private ["_selection", "_objectData", "_sel", "_level"];
+			_selection = _this select 0;
+			_objectData = _this select 2;
+			if (_objectData checkSelectionName _selection) then
+			{
+				if (_delVert) then
+				{
+					_sel = _objectData loadSelection _selection;
+					deleteSelected _sel;
+				};
+				_objectData deleteSelection _selection;
+				_level = _this select 3;
+				console << (_level call lodNameGetName) + " - Deleting " + str(_selection) << eoln;
+			};
+		};
+
+		//Rename an existing selection.
+		_rename =
+		{
+			private ["_selection", "_objectData", "_selectionNew", "_level", "_sel", "_sel2"];
+			_selection = _this select 0;
+			_selectionNew = _this select 1;
+			_objectData = _this select 2;
+			if (_objectData checkSelectionName _selection) then
+			{
+				_level = _this select 3;
+				if (_objectData checkSelectionName _selectionNew) then
+				{
+					_sel = _objectData loadSelection _selection;
+					_sel2 = _objectData loadSelection _selectionNew;
+					_sel = _sel |= _sel2;
+					if (_delOldSels) then {_objectData deleteSelection _selection};
+					console << (_level call lodNameGetName) + " - Adding " + str(_selection) + " to " + _selectionNew << eoln;
+				}
+				else
+				{
+					_sel = _objectData loadSelection _selection;
+					if (_delOldSels) then {_objectData deleteSelection _selection};
+					console << (_level call lodNameGetName) + " - Renaming " + str(_selection) + " to " + _selectionNew << eoln;
+				};
+				_objectData save _sel as _selectionNew;
+			};
+		};
+
+		//Replace part of existing name
+		_replace =
+		{
+			private ["_selection", "_objectData", "_selectionNew", "_level", "_sel", "_sel2","_selectionFinal","_selectionLength","_keepLeft","_keepRight","_leftSide","_rightSide","_selectionPosition","_selectionFind"];
+			_selection = _this select 0;
+			_selectionNew = _this select 1;
+			_selectionFind = _this select 4;
+			_objectData = _this select 2;
+
+			_selectionFinal = "";
+			_selectionLength = (count _selectionFind) - 1;
+			_keepLeft = false;
+			_keepRight = false;
+			_noLeft = false;
+			_leftSide = "";
+			_rightSide = "";
+
+			// check "find" string for wildcard
+			if(_selectionFind @ 0 == "*")then{
+				_selectionFind = _selectionFind @ [1,_selectionLength+1];
+				_selectionLength = _selectionLength - 1;
+				_keepLeft = true;
+			}else{
+				_noLeft = true;
+				echo "no left";
+			};
+			if(_selectionFind @ _selectionLength == "*")then{
+				_selectionFind = _selectionFind @ [0,_selectionLength];
+				_selectionLength = _selectionLength - 1;
+				_keepRight = true;
+			};
+			// check new string string for wildcard
+			if(_selectionNew @ 0 == "*")then{
+				_selectionNew = _selectionNew @ [1,count _selectionNew];
+			}else{
+				_keepLeft = false;
+			};
+			if(_selectionNew @ ((count _selectionNew) - 1) == "*")then{
+				_selectionNew = _selectionNew @ [0,(count _selectionNew)-1];
+			}else{
+				_keepRight = false;
+				echo "no right";
+			};
+			echo str(_selectionNew);
+
+			// check if current selection is matching replace pattern
+			_selectionPosition = _selection find _selectionFind;
+			// strange workaround for find returning... 0 when nothing is found
+			if(_selectionPosition == 0)then
+			{
+				if(((_selection @ [0,count _selectionFind] strCmp _selectionFind) != 0) )then{_selectionPosition = -1};
+			};
+			if(_selectionPosition != 0 && _noLeft)then{_selectionPosition = -1};
+
+			// script goes forward only if current selection match find pattern
+			if(_selectionPosition >= 0)then{
+				// processing string - deciding if left & right side of the string should be included in final text
+				if(_selectionPosition>0)then{_leftSide = _selection @ [0,_selectionPosition]};
+				_rightSide = _selection @ [_selectionPosition+_selectionLength+1,count _selection];
+				if(_keepLeft)then{
+					if(_keepRight)then{
+						_selectionNew = _leftSide + _selectionNew + _rightSide;
+					}else{
+						_selectionNew = _leftSide + _selectionNew;
+					};
+				}else{
+					if(_keepRight)then{
+						_selectionNew =  _selectionNew + _rightSide;
+					};
+				};
+				echo (str(_selectionFind) + " left side:" + str(_leftSide) + " right side " + str(_rightSide) + " selection name " + str(_selection) + " number: " + str(_selectionPosition));
+
+				if (_objectData checkSelectionName _selection) then
+				{
+					_level = _this select 3;
+					if (_objectData checkSelectionName _selectionNew) then
+					{
+						_sel = _objectData loadSelection _selection;
+						_sel2 = _objectData loadSelection _selectionNew;
+						_sel = _sel |= _sel2;
+						if (_delOldSels) then {_objectData deleteSelection _selection};
+						console << (_level call lodNameGetName) + " - Adding " + str(_selection) + " to " + _selectionNew << eoln;
+					}
+					else
+					{
+						_sel = _objectData loadSelection _selection;
+						if (_delOldSels) then {_objectData deleteSelection _selection};
+						console << (_level call lodNameGetName) + " - Renaming " + str(_selection) + " to " + _selectionNew << eoln;
+					};
+					_objectData save _sel as _selectionNew;
+				};
+			};
+		};
+
+		//Add a new selection based on the selected vertices.
+		_add =
+		{
+			private ["_selectionNew", "_objectData", "_newSel", "_level"];
+			_objectData = _this select 1;
+			_newSel = _objectData loadSelection "_current";
+			if ((countPoints _newSel) > 0) then
+			{
+				_selectionNew = _this select 0;
+				_objectData save _newSel as _selectionNew;
+				_level = _this select 2;
+				console << (_level call lodNameGetName) + " - Adding " + str(_selectionNew) << eoln;
+			};
+		};
+
+		_action = "";
+		switch (_radio1) do
+		{
+			case 1:  {_action = _delete};
+			case 2:  {_action = _rename};
+			case 3:  {_action = _add};
+			case 4:  {_action = _replace};
+
+			default {};
+		};
+
+		//Loop for each level of the model.
+		for "_i" from 0 to ((count _levels) - 1) do
+		{
+			//Select new active level.
+			this setActive (this findLevel (_levels select _i));
+
+			//Determine selections in the current level.
+			_objectData = ((getObjects this) select (activeLevel this));
+
+			if (_radio2 == 1) then
+			{
+				_selections = getSelections _objectData;
+			}
+			else
+			{
+				_selections = [];
+				{_selections = _selections + [_selectionsTmp select _x]} forEach _selsListbox;
+			};
+
+			//Loop for each selection in the current level.
+			if (_action != _add) then
+			{
+				for "_k" from 0 to ((count _selections) - 1) do
+				{
+					[(_selections select _k), _newName, _objectData, (_levels select _i),_replaceName] call _action;
+				};
+			}
+			else
+			{
+				[_newName, _objectData, (_levels select _i)] call _action;
+			};
+		};
+	}
+	else
+	{
+		this setActive (this findLevel _initLevel);
+		breakOut "mainScope";
+	};
+
+	// update selections
+	if(_radio3 == 1)then
+	{
+		_levels = (getResolutions this);
+		_x = 0; _levelsListbox = [];
+		while {_x < ((count _levels) - 1)} do {_levelsListbox = _levelsListbox + [_x]; _x = _x + 1;};
+	};
+	[] call _listSelections;
+};

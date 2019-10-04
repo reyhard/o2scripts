@@ -257,43 +257,43 @@ paramFileRead=
 
 			switch (true) do
 			{
-                                if (not (_this exploreFor "//[^\x0A^\x0D]*[\x0A\x0D]*")) then
-                                {
-	                                case (_this exploreFor "class "):               //in case class word
-	                                {
-	                                        _this ignore 0;
-	                                        if ((_this exploreFor "[_a-zA-Z0-9]+[\S]*;") || (_this exploreFor "[_a-zA-Z0-9]+[\S]*:") ) then
-	                                         {
-	                                          if ((_this exploreFor "[_a-zA-Z0-9]+[\S]*;")) then
-	                                           {
-	                                                 _item=_this call _ReadEmptyClass ;
-	                                           }
-	                                          else
-	                                           {
-	                                             _item=_this call _ReadDerivedClass ;
-	                                           };
-	                                         }
-	                                         else
-	                                         {
-	                                          _item=_this call _ReadClass ;
-	                                         };
-                                                 if (isnil "_item") then {_loop=false;};
-	                                };
-	                                case (_this exploreFor "[_a-zA-Z][_a-zA-Z0-9]*\[\]_*="):        //in case "name[]=" (_ - is whitespace without new line)
-	                                {
-	                                        _item=_this call _ReadArray ;
-                                                if (isnil "_item") then {_loop=false;};
-	                                };
-	                                case (_this exploreFor "[_a-zA-Z][_a-zA-Z0-9]*_*="):  //in case "name=" (_ - is whitespace without new line)
-	                                {
-	                                        _item=_this call _ReadSimpleItem ;
-                                                if (isnil "_item") then {_loop=false;};
-	                                };
-	                                default                                                         //in case we don't know
-	                                {
-	                                        _loop=false;
-	                                };
-                                }else{_this ignore 0;};
+                if (not (_this exploreFor "//[^\x0A^\x0D]*[\x0A\x0D]*")) then
+                {
+                    case (_this exploreFor "class "):               //in case class word
+                    {
+                        _this ignore 0;
+                        if ((_this exploreFor "[_a-zA-Z0-9]+[\S]*;") || (_this exploreFor "[_a-zA-Z0-9]+[\S]*:") ) then
+                         {
+                          if ((_this exploreFor "[_a-zA-Z0-9]+[\S]*;")) then
+                           {
+                                 _item=_this call _ReadEmptyClass ;
+                           }
+                          else
+                           {
+                             _item=_this call _ReadDerivedClass ;
+                           };
+                         }
+                         else
+                         {
+                          _item=_this call _ReadClass ;
+                         };
+                             if (isnil "_item") then {_loop=false;};
+                    };
+                    case (_this exploreFor "[_a-zA-Z][_a-zA-Z0-9]*\[\]_*="):        //in case "name[]=" (_ - is whitespace without new line)
+                    {
+                        _item=_this call _ReadArray ;
+                            if (isnil "_item") then {_loop=false;};
+                    };
+                    case (_this exploreFor "[_a-zA-Z][_a-zA-Z0-9]*_*="):  //in case "name=" (_ - is whitespace without new line)
+                    {
+                        _item=_this call _ReadSimpleItem ;
+                            if (isnil "_item") then {_loop=false;};
+                    };
+                    default                                                         //in case we don't know
+                    {
+                        _loop=false;
+                    };
+                }else{_this ignore 0;};
 			};
 			if !(isnil "_item") then { _result set [count _result,_item];};
 		};

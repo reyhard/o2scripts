@@ -1,0 +1,60 @@
+#include "std\lodNames.inc"
+#include "std\o2config.inc"
+#include "std\paramFile.inc"
+#include "CheckMat.inc.bio2s"
+#include "std\flags.inc"
+
+scopeName "CheckAll";
+
+console		= openStandardIO;
+
+if (typename this=="STRING") then
+{
+	p3d=newLODObject;
+	p3dname=this;
+	if (!(p3d loadP3d this)) then {	console<<"Unable to open:"<<this<<eoln;BreakTo "CheckAll";};
+	runFromO2=false;
+	texpath=((splitPath p3dname) @ 0);
+	console<<"----------------------------------------------------------------------"<<eoln;
+	console<<"Checking file: "<<p3dname<<eoln;
+}
+else
+{
+	p3dname=nameof this;
+	p3dname=splitPath p3dname;
+	p3dname=p3dname @ 2 + p3dname @ 3;
+	runFromO2=true;
+	p3d=this;
+	texpath=o2GetConfig IDS_CFGPATHFORTEX;
+	console<<"--------- Checking "<<p3dname<<" ------"<<eoln;
+
+};
+
+_found = false;
+
+_LODs				= getObjects p3d;
+_resolutions		= getResolutions p3d;
+
+_success = p3d setActive (p3d findLevel 10000);
+_currentLOD = _LODs select (activeLevel p3d);
+
+for "_i" from 0 to ((count p3d) - 1) do
+{
+	_currentLOD			= _LODs @ _i;
+	_currentResolution	= _resolutions @ _i;
+
+	if(LOD_VIEW_PILOT == _currentResolution)then
+	{
+		_currentLOD createProxy ["\A3\characters_f\Heads\bysta",[0,0,0]];
+		_found = true;
+	};
+};
+
+if (_found and !runFromO2) then
+{
+	console<< eoln << p3dname << eoln<<" --------- Added head ------" << str(_LODs) <<eoln  << eoln;
+	if (!save p3d)then {console <<"unable to SAVE "<<p3dname<<eoln;};
+}else{
+
+	console<< p3dname <<" --------- Did nothing ------" << eoln  << eoln;
+};

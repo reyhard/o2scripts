@@ -1,0 +1,81 @@
+#include "std\lodNames.inc"
+#include "std\o2config.inc"
+#include "std\paramFile.inc"
+#include "CheckMat.inc.bio2s"
+#include "std\flags.inc"
+
+
+_toFind =
+[
+
+
+"rhsusf\addons\rhsusf_fmtv\data\fmtv_wheel_spare.rvmat"
+
+];
+_toReplace =
+[
+"rhsusf\addons\rhsusf_hemtt_a4\data\M977_Wheels_spare.rvmat"
+];
+
+scopeName "CheckAll";
+
+console		= openStandardIO;
+
+if (typename this=="STRING") then
+{
+	p3d=newLODObject;
+	p3dname=this;
+	if (!(p3d loadP3d this)) then {	console<<"Unable to open:"<<this<<eoln;BreakTo "CheckAll";};
+	runFromO2=false;
+	texpath=((splitPath p3dname) @ 0);
+	console<<"----------------------------------------------------------------------"<<eoln;
+	console<<"Checking file: "<<p3dname<<eoln;
+}
+else
+{
+	p3dname=nameof this;
+	p3dname=splitPath p3dname;
+	p3dname=p3dname @ 2 + p3dname @ 3;
+	runFromO2=true;
+	p3d=this;
+	texpath=o2GetConfig IDS_CFGPATHFORTEX;
+	console<<"--------- Checking "<<p3dname<<" ------"<<eoln;
+
+};
+
+_found = false;
+
+_LODs				= getObjects p3d;
+_resolutions		= getResolutions p3d;
+_objects			= getObjects p3d;
+_memoryPointsList	= [];
+
+for "_i" from 0 to ((count p3d) - 1) do
+{
+	_currentLOD			= _LODs @ _i;
+	_currentResolution	= _resolutions @ _i;
+	_currentObject		= _objects @ _i;
+
+	_num =  countFaces _currentObject;
+	for "_x" from 0 to _num do
+	{
+		_faceT		=_currentObject face _X;
+		_texture	= getTexture _FaceT;
+		_material	= getMaterial _FaceT;
+
+		_texIndex = _toFind find _texture;
+		_matIndex = _toFind find _material;
+		if (_texIndex>=0) then {_faceT setTexture (_toReplace select _texIndex);_found = true};
+		if (_matIndex>=0) then {_faceT setMaterial (_toReplace select _matIndex);_found = true;
+			//_faceT setFaceFlags [FACE_Z_BIAS_MASK,3];
+		};
+	};
+};
+if (_found and !runFromO2) then
+{
+	console<< eoln << p3dname << eoln<<" --------- Texture or material found & replaced ------" << eoln  << eoln;
+	if (!save p3d)then {console <<"unable to SAVE "<<p3dname<<eoln;};
+}else{
+
+	console<< p3dname <<" --------- No textures or materials found ------" << eoln  << eoln;
+};

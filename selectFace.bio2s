@@ -1,0 +1,22 @@
+/*
+Description:
+	This script select face by its index
+
+Licensing Info:
+	Copyright (C) 2007 Bohemia Interactive.
+	This script is free software for any non commercial use; you can redistribute it and/or
+	modify as long as you include this licensing notice. This script is distributed
+	in the hope that it will be useful, but without any warranty; without even
+	the implied warranty of merchanitility or fintess for a particular purpose.
+*/
+if (this in ["options"]) exitWith {messageBox ["No options",0];};
+
+facenum=o2InputBox ["",false,"Enter face index",""];
+if (facenum=="") exitWith {-1;};
+faceid=val(facenum);
+if (isnil("faceid")) exitWith {-1;};
+obj=getActiveObject this;
+sel=newSelection obj;
+sel selectFace faceid;
+selectPointsFromFaces sel;
+obj save (sel as "_current");

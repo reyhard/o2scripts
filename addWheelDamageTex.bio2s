@@ -1,0 +1,121 @@
+#include "std\lodNames.inc"
+#include "std\o2config.inc"
+#include "std\paramFile.inc"
+#include "CheckMat.inc.bio2s"
+#include "std\flags.inc"
+
+_toFind = [
+"proxy:\rhsusf\addons\rhsusf_airweapons\proxypylon\rhsusf_pylon_dummy.001",
+"proxy:\rhsusf\addons\rhsusf_airweapons\proxypylon\rhsusf_pylon_dummy.002",
+"proxy:\rhsusf\addons\rhsusf_airweapons\proxypylon\rhsusf_pylon_dummy.003",
+"proxy:\rhsusf\addons\rhsusf_airweapons\proxypylon\rhsusf_pylon_dummy.004",
+"proxy:\rhsusf\addons\rhsusf_airweapons\proxypylon\rhsusf_pylon_dummy.005",
+"proxy:\rhsusf\addons\rhsusf_airweapons\proxypylon\rhsusf_pylon_dummy.006",
+"proxy:\rhsusf\addons\rhsusf_airweapons\proxypylon\rhsusf_pylon_dummy.007",
+"proxy:\rhsusf\addons\rhsusf_airweapons\proxypylon\rhsusf_pylon_dummy.008"
+];
+_toAdd =
+[
+"pylon_1",
+"pylon_2",
+"pylon_3",
+"pylon_4",
+"pylon_5",
+"pylon_6",
+"pylon_7",
+"pylon_8"
+];
+
+scopeName "CheckAll";
+
+console		= openStandardIO;
+
+if (typename this=="STRING") then
+{
+	p3d=newLODObject;
+	p3dname=this;
+	if (!(p3d loadP3d this)) then {	console<<"Unable to open:"<<this<<eoln;BreakTo "CheckAll";};
+	runFromO2=false;
+	texpath=((splitPath p3dname) @ 0);
+	console<<"----------------------------------------------------------------------"<<eoln;
+	console<<"Checking file: "<<p3dname<<eoln;
+}
+else
+{
+	p3dname=nameof this;
+	p3dname=splitPath p3dname;
+	p3dname=p3dname @ 2 + p3dname @ 3;
+	runFromO2=true;
+	p3d=this;
+	texpath=o2GetConfig IDS_CFGPATHFORTEX;
+	console<<"--------- Checking "<<p3dname<<" ------"<<eoln;
+
+};
+
+lastLodShow=-1;
+inLodShow={
+	private "_res";
+	bugreported=true;
+	if (lastLodShow!=_this) then
+	{
+				_res=eoln+"In level "+(_this call lodNameGetName)+":"+eoln;
+		lastLodShow=_this;
+	}
+	else
+	{
+		_res="";
+	};
+_res
+};
+#define ERROR(x) console<<(_currentResolution call inLodShow)<<"	"<<x<<eoln;
+
+_found = false;
+_hasPhysx = false;
+
+_LODs				= getObjects p3d;
+_resolutions		= getResolutions p3d;
+_objects			= getObjects p3d;
+_memoryPointsList	= [];
+
+for "_i" from 0 to ((count p3d) - 1) do
+{
+	_currentLOD			= _LODs @ _i;
+	_currentResolution	= _resolutions @ _i;
+	_currentObject		= _objects @ _i;
+
+	if(IS_LOD_RESOLUTION(_currentResolution))then
+	{
+		{
+			_selection		=  _x;
+			_selectionLow	= toLower _x;
+			_index = 0;
+			{
+				if(_selectionLow == toLower _x)exitWith
+				{
+					ERROR("found wheel: " << _selection )
+					ERROR("++ adding: " << (_toAdd select _index) )
+					_newSelection = _currentObject loadSelection _selection;
+					_currentObject save _newSelection as (_toAdd select _index);
+					_found = true;
+				};
+				_index = _index + 1;
+			}foreach _toFind;
+		}forEach (getSelections _currentObject);
+	};
+	/*if ( LOD_GEOMETRY_PHYSX==_currentResolution) then
+	{
+		_hasPhysx = true;
+		{
+			_currentObject setPointMass [_x,0.0];
+		}forEach getSelections _currentObject;
+	};*/
+
+};
+if (_found and !runFromO2) then
+{
+	console<< eoln << p3dname << eoln<<" --------- Wheels selections added ------" << eoln  << eoln;
+	if (!save p3d)then {console <<"unable to SAVE "<<p3dname<<eoln;};
+}else{
+
+	console<< p3dname <<" --------- No wheels selections to add ------" << eoln  << eoln;
+};

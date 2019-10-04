@@ -1,0 +1,176 @@
+
+#include "std\lodNames.inc"
+
+console=openStandardIO;
+
+
+
+
+
+_main =
+{
+        if (typename _this=="STRING") then
+	{
+		p3d=newLODObject;
+		p3dname=_this;
+		if (!(p3d loadP3d _this)) then {	console<<"Unable to open:"<<_this<<eoln;BreakTo "CheckAll";};
+		runFromO2=false;
+		texpath=((splitPath p3dname) @ 0);
+		console<<"----------------------------------------------------------------------"<<eoln;
+		console<<"Checking file: "<<p3dname<<eoln;
+	}
+	else
+	{
+		p3dname=nameof _this;
+		p3dname=splitPath p3dname;
+		p3dname=p3dname @ 2 + p3dname @ 3;
+		runFromO2=true;
+		p3d=_this;
+		texpath=o2GetConfig IDS_CFGPATHFORTEX;
+		console<<"--------- Checking "<<p3dname<<" ------"<<eoln;
+	};
+
+	objects=getObjects p3d;
+	resols=getResolutions p3d;
+	_textures = [];
+
+        // find textures
+	for "_i" from 0 to (count p3d-1) do
+	{
+	        _resol=resols @ _i;
+	        _obj=objects @ _i;
+
+	        // check isolated points
+	        if (IS_LOD_RESOLUTION(_resol)) then
+	        {
+                        _num =  countFaces _obj;
+                        _obj setActiveUVSet 0;
+                        for "_x" from 0 to (_num-1) do
+	                {
+                                _tx = getTexture  (_obj face _x);
+	                        if ((_tx!="")and(not (_tx in _textures))) then {_textures=_textures+[_tx]};
+	                };
+	        };
+	};
+
+        //make lods
+        _countquad = -1;
+        {
+                _countquad=_countquad+1;
+                _thisTexture = _x;
+                console <<("texture: "+(splitpath _thisTexture)@2)+(splitpath _thisTexture)@3 <<eoln;
+                for "_i" from 0 to (count p3d-1) do
+	        {
+	                _resol=resols @ _i;
+	                _obj=objects @ _i;
+
+	                // check isolated points
+	                if (IS_LOD_RESOLUTION(_resol)) then
+	                {
+                        	_U = [];
+                		_V = [];
+                                _uvsets = [];
+                                _num =  countFaces _obj;
+                                _obj setActiveUVSet 0;
+
+	                        for "_x" from 0 to (_num-1) do
+	                        {
+                                        _face = (_obj face _x);
+                                        _tx = getTexture _face;
+	                                if (_tx == _thisTexture) then
+                                        {
+                                        	_uvset=getUVSet _face;
+                                                _uvsets = _uvsets +[_uvset];
+                                                for "_i" from 0 to ((count _uvset)/2-1) do
+                                                {
+
+                                                        _iU = _i*2;
+                                                        _iV = _i*2+1;
+                                                        _U=_U+[_uvset@_iU];
+                                                        _V=_V+[_uvset@_iV];
+                                                };
+                                        };
+	                        };
+                                if (count _uvsets>0) then
+                                {
+                                	_maxU = _U@0;
+                                        _minU = _U@0;
+                                        _maxV = _V@0;
+                                        _minV = _V@0;
+                                        {
+                                        	if (_x < _minU) then {_minU=_x};
+                                                if (_x > _maxU) then {_maxU=_x};
+                                        } foreach _U;
+                                        {
+                                        	if (_x < _minV) then {_minV=_x};
+                                                if (_x > _maxV) then {_maxV=_x};
+                                        } foreach _V;
+                                        _Usize =(_maxU - _minU)/0.4;
+                                        _Vsize =(_maxV - _minV)/0.4;
+	                                _U = [];
+	                                _V = [];
+
+                                        _a0 = getActiveUVSet _obj;
+                                        _a1 = _a0;
+
+                                        if (!( _obj setActiveUVSet 1)) then
+                                        {
+                                        	console <<"unable  create next UVset"<<eoln;
+                                        }
+                                        else
+                                        {
+                                        	_a1 = getActiveUVSet _obj;
+                                                console <<("creating "+str _a1+" UVs from "+str _a0+" UVs, LOD " + (_resol call lodNameGetName))<<eoln;
+                                        };
+
+                                        _offsetquad = round((_countquad)/4-0.5);
+                                        _offsetY = round((_countquad)/2-0.5)%2;
+                                        _offsetX = _countquad%2;
+
+                                        _count = 0;
+	                                for "_x" from 0 to (_num-1) do
+	                                {
+	                                        _face = (_obj face _x);
+	                                        _tx = getTexture _face;
+	                                        if (_tx == _thisTexture) then
+	                                        {
+
+                                                        _uvset = _uvsets@_count;
+                                                        _count = _count+1;
+	                                                for "_i" from 0 to ((count _uvset)/2-1) do
+	                                                {
+
+	                                                        _iU = _i*2;
+	                                                        _iV = _i*2+1;
+	                                                        _U=_uvset@_iU;
+	                                                        _V=_uvset@_iV;
+                                                                _U = (_U-_minU)/_Usize+0.05 + _offsetX*0.5 + _offsetquad;
+                                                                _V = (_V-_minV)/_Vsize+0.05 + _offsetY*0.5 ;
+                                                                _uvset set [_iU,_U];
+                                                                _uvset set [_iV,_V];
+	                                                };
+
+                                                        _face setUVSet _uvset;
+	                                        };
+	                                };
+                                        /*
+                                        _face setUVSet [0,0, 1,0, 1,1, 1,0];
+                                        changeIdOfActiveUVSet
+                                        setActiveUVSet
+                                        if (_mesh isUVSet 2)
+                                        */
+                                };
+
+	                };
+	        };
+        } foreach _textures;
+      /*  if (!runFromO2) then
+        {
+                halt;
+                if (!save p3d)then {console <<"unable to SAVE "<<p3dname<<eoln;}
+        }; */
+};
+_in = this;
+if ((count this)==0) then {_in="P:\Ca\buildings\stodola_old_open.p3d";};
+
+_in call _main;

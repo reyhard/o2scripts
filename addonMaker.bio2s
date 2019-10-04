@@ -1,0 +1,217 @@
+/*
+Script name: 
+	
+	Addon Maker
+
+Command line: 
+
+	Variant 1) none - dialog will shown to ask parameters
+	Variant 2) text or filename - dialog will shown to ask parameters, text will be used to fill first line in dialog
+	Variant 3) Object - dialog will shown to ask parameters, object name will be used to fill first line in dialog
+	Variant 4) Array - in form [source,sourceBase,target,targetBase], no dialog, use parameters in array
+
+	Note: Variant 3) is useful for running in O2 directly
+	  Variant 4) is useful for o2script -a		
+			
+
+Description: 
+
+	Addon Maker creates a copy of source P3D file to target P3D file and also copy all 
+	referenced files (textures, materials, etc) to target location.
+
+*/
+
+#include "std/paramFile.inc"
+scopeName "Base";
+if (this in ["options"]) then {messageBox ["No options available",0]; breakOut "Base";};
+console=openStandardIO;
+
+ResourceList=+[];
+CanCopyResource={  //_this=src
+	private ["_src","_i","_found"];
+	_found=false;
+	_src=_this;
+	for "_i" from 0 to (count ResourceList-1) do
+	{
+		if (ResourceList select _i==_src) then
+		{
+			_found=true;
+			_i=nil;	
+		};
+	};
+	if (!_found) then
+	{
+		ResourceList set [count ResourceList,_src];
+	};
+	!_found
+};
+this call
+{	
+	sourceModel="";
+	sourceBasePath="x:\";
+	targetModel="";
+	targetBasePath="p:\";
+
+	switch (typename this) do
+	{
+		case "STRING": {sourceModel=this;};
+		case "LODObject": {sourceModel=nameOf this;};
+		case "ARRAY":
+		{
+			sourceModel=this @ 0;
+			sourceBasePath=this @ 1;
+			targetModel=this @ 2;
+			targetBasePath=this @ 3;
+		};
+	};
+	private "_res";
+
+	if (targetModel=="") then 
+	{
+	   _res=dialogBox [250,150,"Addon Maker",
+		["label",180,10,"Source P3D",0],["break"],
+		["textline",180,15,"sourceModel",0],
+		["browse-button",50,15,"P3D files|*.p3d|All files|*.*|",false,"Select source P3D"],["break"],
+		["label",180,10,"Source Base Path",0],["break"],
+		["textline",180,15,"sourceBasePath",0],["break"],
+		["label",180,10,"Target P3D",0],["break"],
+		["textline",180,15,"targetModel",0],
+		["browse-button",50,15,"P3D files|*.p3d|All files|*.*|",true,"Select target P3D"],["break"],
+		["label",180,10,"Target Base Path",0],["break"],
+		["textline",180,15,"targetBasePath",0],["break"],
+		["submit",90,20,1,"Create"],
+		["cancel-button",85,20]
+		];
+	}
+	else
+	{
+		_res=1;
+	};
+	if (_res!=1) then {breakTo "Base";};
+	_srcPathInfo=splitPath sourceModel;
+	_trgPathInfo=splitPath targetModel;
+	_dataPath=(_trgPathInfo select 0)+(_trgPathInfo select 1)+"data";
+	_trgOff=[0,count targetBasePath] select (targetBasePath==(targetModel @ [0,count targetBasePath]));
+
+	p3d=newLODObject;
+	console<<"Loading P3D: "<<sourceModel<<eoln;
+	_res=p3d loadP3D sourceModel;
+	if (!_res) then
+	{
+		console<<"Unable to load p3d "<<sourceModel<<eoln;
+		getLine console;
+	};
+	if (!_res) exitWith {};
+
+	createFolder _dataPath;
+	_dataPath=_dataPath+"\";
+	{
+		console << "Relocating data..."<<eoln;
+		private "_mesh";
+		_mesh=_x;
+		{
+			if (_x!="") then
+			{
+				private ["_src","_trg","_pth"];
+				_src=sourceBasePath+_x;
+				_pth=splitPath _src;
+				_trg=_dataPath+(_pth select 2)+(_pth select 3);
+				if (_src call CanCopyResource) then
+				{
+					console<<"Copying texture: "<<(_pth select 2)<<(_pth select 3)<<eoln;
+					_src copyFileTo _trg;
+				};
+			};
+		}  forEach (_mesh callRuntime "texlist");
+
+
+		{
+			if (_x!="") then
+			{
+				private ["_src","_trg","_pth"];
+				_src=sourceBasePath+_x;
+				_pth=splitPath _src;
+				_trg=_dataPath+(_pth select 2)+(_pth select 3);
+				if (_src call CanCopyResource) then
+				{
+					console<<"Copying material: "<<(_pth select 2)<<(_pth select 3)<<eoln;
+					private ["_pfile","_input","_output","_process"];
+					_input=openFile [_src,1];
+					_output=openFile [_trg,2];
+					if (isnil("_input")) then {console<<"Error openning source:"<<_src<<eoln;};
+					if (isnil("_output")) then {console<<"Error openning target:"<<_trg<<eoln;};
+					if (isnil("_output") || isnil("_input")) exitWith {};
+					_pfile=_input call paramFileRead;
+					if (isnil("_pfile")) then
+					{
+						console<<"Param file parser error near:"<<getLine _input<<eoln;
+					}
+					else
+					{
+						_process=
+						{
+							switch (true) do
+							{
+								case ((_x select 1)=="class"):{	_process forEach (_x select 2);};
+								case ((_x select 0)=="texture"):
+								{
+									if ((_x select 2)!="") then 
+									{
+										private "_xs";
+										_xs=_x select 2;
+										if (_xs @ 0!="#") then
+										{ 
+											private ["_src","_trg","_pth"];
+											_src=sourceBasePath+_xs;
+											_pth=splitPath _src;
+											_trg=_dataPath+(_pth select 2)+(_pth select 3);
+											if (_src call CanCopyResource) then
+											{
+												console<<"...Copying texture: "<<(_pth select 2)<<(_pth select 3)<<eoln;
+												_src copyFileTo _trg;
+											};
+											_trg=_trg @ [_trgOff];
+											_x set [2,_trg];
+										};
+									};
+								};
+							};
+						};
+						_process forEach _pfile;
+						[_output,_pfile] call paramFileWrite;
+						if (!_output) then {console<<"Unable to save rvmat file: "<<_trg<<eoln;}
+					};
+				};
+			};
+		} forEach (_mesh callRuntime "matlist");
+		console << "Rebuilding references..."<<eoln;
+		private "_reloc";
+		_reloc={
+			if (_this!="") then
+			{
+				private ["_src","_pth"];
+				_src=sourceBasePath+_this;
+				_pth=splitPath _src;
+				_this=(_dataPath+(_pth select 2)+(_pth select 3)) @ [_trgOff];
+			};
+			_this
+		};
+
+		_mesh forEachFace [{true},
+		{
+			_this face _x setTexture(getTexture(_this face _x) call _reloc);
+			_this face _x setMaterial(getMaterial(_this face _x) call _reloc);
+		}];
+	}
+	forEach getObjects p3d;
+	console << "Saving..."<<eoln;
+
+	_res=save (p3d as targetModel);
+	if (!_res) then
+	{
+		console<<"Unable to save p3d "<<targetModel<<eoln;
+		getLine console;
+	};
+	if (!_res) exitWith {};
+
+};

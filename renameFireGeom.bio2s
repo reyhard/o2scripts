@@ -1,0 +1,128 @@
+#include "std\lodNames.inc"
+#include "std\o2config.inc"
+#include "std\paramFile.inc"
+#include "CheckMat.inc.bio2s"
+#include "std\flags.inc"
+
+scopeName "CheckAll";
+
+console=openStandardIO;
+
+lastLodShow=-1;
+inLodShow={
+	private "_res";
+	bugreported=true;
+	if (lastLodShow!=_this) then
+	{
+                _res=eoln+"In level "+(_this call lodNameGetName)+":"+eoln;
+		lastLodShow=_this;
+	}
+	else
+	{
+		_res="";
+	};
+_res
+};
+
+#define ERROR(x) {console<<(_resol call inLodShow)<<"	"<<x<<eoln;}
+#define ERROR_LOG(x) ERROR(x)
+
+
+0 call
+{
+	bugreported=false;
+
+	if (this in ["options"]) then {messageBox ["No options are available in this script!",0];BreakTo "CheckAll";};
+	if (typename this=="STRING") then
+	{
+		p3d=newLODObject;
+		p3dname=this;
+		if (!(p3d loadP3d this)) then {	console<<"Unable to open:"<<this<<eoln;BreakTo "CheckAll";};
+		runFromO2=false;
+		texpath=((splitPath p3dname) @ 0);
+		console<<"----------------------------------------------------------------------"<<eoln;
+		console<<"Checking file: "<<p3dname<<eoln;
+	}
+	else
+	{
+		p3dname=nameof this;
+		p3dname=splitPath p3dname;
+		p3dname=p3dname @ 2 + p3dname @ 3;
+		runFromO2=true;
+		p3d=this;
+		texpath=o2GetConfig IDS_CFGPATHFORTEX;
+		console<<"--------- Checking "<<p3dname<<" ------"<<eoln;
+	};
+
+	objects=getObjects p3d;
+	resols=getResolutions p3d;
+	collectMats=+[];
+
+        _hasView = false;
+        _hasFire = false;
+        _shadow0  = false;
+        _shadow10 = false;
+
+	for "_i" from 0 to (count p3d-1) do
+	{
+		private ["_obj","_resol","_isol","_numsect","_degen"];
+		_resol=resols @ _i;
+		_obj=objects @ _i;
+
+		if (_resol<LOD_EDIT_MIN || _resol>=LOD_EDIT_MAX) then
+	        {
+
+                        #define CHECK_FIRE_AND_VIEW true
+
+                        if (IS_LOD_RESOLUTION(_resol)) then
+	                {
+                        	_num =  countFaces _obj;
+                                if (_num>1000) then
+                                {
+                                        _obj setProperty ["lodnoshadow","1"];
+                                };
+                        };
+	                if (IS_LOD_SHADOW(_resol)) then
+	                {
+                         	_obj setProperty ["lodnoshadow",nil];
+                         };
+
+                        if (CHECK_FIRE_AND_VIEW and LOD_VIEWGEO==_resol) then
+                        {
+                                 _hasView = true;
+                        };
+
+                        if (CHECK_FIRE_AND_VIEW and LOD_FIREGEO==_resol) then
+                        {
+                                _hasFire = true;
+                        };
+
+                        if (CHECK_FIRE_AND_VIEW and LOD_GET_SHADOW(0)==_resol) then
+                        {
+                                _shadow0 = true;
+                        };
+                        if (CHECK_FIRE_AND_VIEW and LOD_GET_SHADOW(10)==_resol) then
+                        {
+                                _shadow10 = true;
+                        };
+		};
+	};
+	if (CHECK_FIRE_AND_VIEW) then
+	{
+		if (_hasFire and not _hasView) then
+                {
+                	p3d setActiveSpecial LOD_FIREGEO;
+                        p3d setResolution LOD_VIEWGEO;
+                        console<<"Fire geom renamed to View geom"<<eoln;
+                };
+		if (_shadow0 and not _shadow10) then
+                {
+	              _obj2=addLevel p3d;
+	               p3d setResolution LOD_GET_SHADOW(10);
+		      _obj=p3d getObject (p3d findLevelSpecial LOD_GET_SHADOW(0));
+		      _obj2:=_obj;
+                	console<<"Shadow 0 duplicate to shadow 10"<<eoln;
+                };
+	};
+
+};

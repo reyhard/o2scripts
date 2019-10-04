@@ -1,0 +1,150 @@
+console=openStandardIO;
+o2NoRunScriptDialog;
+
+
+_p3d = newLODObject;
+_radio=1;
+_in = 0;
+_in=0;
+_isinsel=0;
+_activeobject = getActiveObject this;
+_selekce = getSelections _activeobject;
+_pocetselekci = count _selekce;
+_naselektenebody = getSelectedPoints (_activeobject loadSelection "_current");
+_pocetnaselektenych = count _naselektenebody;
+
+if (_pocetnaselektenych == 0) then
+ {
+ 	messageBox ["No point selected!!!",48,"Error"];
+ }
+else
+ {
+  if (_pocetnaselektenych > 1) then
+   {
+
+  	    for "_i" from 0 to (_pocetselekci-1) do
+   	     {
+   	      _nazevselekce = _selekce @ _i;
+   	      _prvnitri = _nazevselekce @ [0,3];
+   	      if (_prvnitri == "in") then
+   	       {
+   	   	    _pocetpismennazvu = count _nazevselekce;
+   	   	    _poradipozice = val(_nazevselekce @ [3,(_pocetpismennazvu+1)]);
+   	   	    if (_poradipozice > _in) then
+   	   	     {
+   	   	 	    _in = _poradipozice;
+   	   	     };
+   	       };
+   	     };
+
+    {
+    	_prvnibod = _x;
+    	_isinsel=0;
+    	{
+     if (((_x @ [0,3])=="in")||((_x @ [0,2])=="in")) then
+      {
+   	   _bodyvselu = getSelectedPoints (_activeobject loadSelection _x);
+   	   if (_prvnibod in _bodyvselu) then
+   	    {
+   	  	 messageBox ["Point "+str(_prvnibod)+" is already in "+str(_x)+" selection!!!",48,"Error"];
+   	  	 _isinsel=1;
+   	    };
+   	  };
+     	} forEach _selekce;
+
+      if (_isinsel==0) then
+       {
+        _in=_in+1;
+ 	      _bodik=newSelection _activeobject;
+        _bodik selectPoint _prvnibod;
+        _activeobject save ((_bodik) as ("in"+str(_in)));
+	     };
+    } forEach _naselektenebody;
+   }
+  else
+   {
+   	{
+     if (((_x @ [0,3])=="in")||((_x @ [0,2])=="in")) then
+      {
+   	   _bodyvselu = getSelectedPoints (_activeobject loadSelection _x);
+   	   if (((_naselektenebody @ 0)in _bodyvselu)&&_isinsel==0) then
+   	    {
+   	  	 messageBox ["Point is already in "+str(_x)+" selection!!!",48,"Error"];
+   	  	 _isinsel=1;
+   	    };
+   	  };
+   	} forEach _selekce;
+   if (_isinsel==0) then
+    {
+    _dlg = dialogBox
+	   [70,80,"Paths",
+		  ["move-to",0,0],
+      ["begin-subframe",60,35,""],
+       ["move-to",10,10],
+			 ["radio-button",50,10,"Position","_radio",1],
+			 ["radio-button",50,10,"Entry Point","_radio",2],
+	    ["end-subframe"],
+	    ["break"],
+	    ["move-to",10,40],
+	    ["ok-button",45,15],
+	    ["break"],
+	    ["move-to",10,60],
+	    ["cancel-button",45,15]
+     ];
+
+    if (_dlg==1) then
+     {
+      if (_radio==1) then
+       {
+   	    for "_i" from 0 to (_pocetselekci-1) do
+   	     {
+   	      _nazevselekce = _selekce @ _i;
+   	      _prvnitri = _nazevselekce @ [0,3];
+   	      if (_prvnitri == "in") then
+   	       {
+   	   	    _pocetpismennazvu = count _nazevselekce;
+   	   	    _poradipozice = val(_nazevselekce @ [3,(_pocetpismennazvu+1)]);
+   	   	    if (_poradipozice > _in) then
+   	   	     {
+   	   	 	    _in = _poradipozice;
+   	   	     };
+   	       };
+   	     };
+
+   	    _activeobject save ((_activeobject loadSelection "_current") as ("in"+str(_in+1)));
+      };
+      if (_radio==2) then
+       {
+   	    for "_i" from 0 to (_pocetselekci-1) do
+   	     {
+   	      _nazevselekce = _selekce @ _i;
+   	      _prvnidva = _nazevselekce @ [0,2];
+   	      if (_prvnidva == "in") then
+   	       {
+   	   	    _pocetpismennazvu = count _nazevselekce;
+   	   	    _poradiinsertu = val(_nazevselekce @ [2,(_pocetpismennazvu+1)]);
+   	   	    if (_poradiinsertu > _in) then
+   	   	     {
+   	   	 	    _in = _poradiinsertu;
+   	   	     };
+   	       };
+   	     };
+
+   	    _activeobject save ((_activeobject loadSelection "_current") as ("in"+str(_in+1)));
+      };
+
+      }
+     else
+      {
+       messageBox ["You pressed Cancel",0,"Cancel!"];
+      };
+    };
+    };
+ };
+
+
+
+
+
+
+

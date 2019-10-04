@@ -1,0 +1,188 @@
+//#include "std\paramFile.inc"
+#include "std\lodNames.inc"
+
+
+lastLodShow=-1;
+inLodShow={
+	private "_res";
+	bugreported=true;
+	if (lastLodShow!=_this) then
+	{
+                _res=eoln+"In level "+(_this call lodNameGetName)+":"+eoln;
+		lastLodShow=_this;
+	}
+	else
+	{
+		_res="";
+	};
+_res
+};
+#define ERROR(x) {console<<(_resol call inLodShow)<<"	"<<x<<eoln;}
+
+console = openStandardIO;
+
+_log = "p:\log.txt";
+_wrnlog = "p:\wrn.txt";
+
+shellCmd ("CMD /C DEL /Q "+_log+" 2>nul");
+shellCmd ("CMD /C DEL /Q "+_wrnlog+" 2>nul");
+
+
+//SSLogIn ["\\core1\vssdatap\cfg\srcsafe.ini","$/ca","p:\ca"];
+
+
+f_toSSFormat = {
+	private ["_path","_index"];
+	_path = _this @ 0;
+	for "_index" from 0 to (count(_path) - 1) step 1 do {
+		if ((_path @ _index) == "\") then {
+			_path = _path @ [0,_index] + "/" + _path @ [_index + 1];
+		};
+	};
+	_path
+};
+f_toSVNFormat = {
+	private ["_path","_SVNPath","_exist","_folder","_folders"];
+	_path = (_this @ 0);
+	_folders = [];
+	_SVNPath = _this@1;
+	_exist = true;
+	while {_path != "p:"} do {
+		_folder = ((splitPath _path) select 2)+((splitPath _path) select 3);
+		_folders = [_folder] + _folders;
+		_path = _path @ [0, ((_path findI _folder) - 1)];
+	};
+	{
+		if (_exist) then {
+			_folderList = shellCmdOpenPipe ("c:\tools\subversion\bin\svn.exe list "+ _SVNPath);
+			_exist = false;
+			while {!eof _folderList && !_exist} do {
+				_line =getLine _folderList;
+                                _name =_x;
+                                if (_line@[(count _line)-1]=="/") then {_name=_name+"/"};
+				if (toLower (_name) == toLower (_line)) then {
+					_SVNPath = _SVNPath + _line;
+					_exist = true;
+				};
+			};
+		};
+	} forEach _folders;
+	if (!_exist) then {_SVNPath = ""};
+	_SVNPath
+};
+
+
+f_main =
+{
+	//  _mat = "P:\Ca\structures\Wall\Data\wall_cbrk.rvmat";
+	// _svn = "c:\tools\subversion\bin\svn.exe";
+	// _path = ((splitPath _mat) select 0)+((splitPath _mat) select 1);
+	// _path = _path@[0,count _path-1];
+
+        _fail =false;
+        _changed = false;
+	if (typename _this=="STRING") then
+	{
+		p3d=newLODObject;
+		p3dname=_this;
+                _fail = !(p3d loadP3d p3dname);
+		if (_fail) then {	console<<"Unable to open:"<<p3dname<<eoln;};
+		runFromO2=false;
+		texpath=((splitPath p3dname) @ 0);
+	}
+	else
+	{
+		p3dname=nameof _this;
+		p3dname=splitPath p3dname;
+		p3dname=p3dname @ 2 + p3dname @ 3;
+		runFromO2=true;
+		p3d=_this;
+	};
+        if (!_fail) then
+        {
+		console<<"----------------------------------------------------------------------"<<eoln;
+		console<<"Checking file: "<<p3dname<<eoln;
+	        objects=getObjects p3d;
+	        resols=getResolutions p3d;
+	        for "_i" from 0 to (count p3d-1) do
+	        {
+	                private ["_obj","_resol","_isol","_numsect","_degen"];
+	                _resol=resols @ _i;
+	                _obj=objects @ _i;
+	                if (_resol<LOD_EDIT_MIN || _resol>=LOD_EDIT_MAX) then
+	                {
+
+	                        //check 3. UV in visible LODS
+	                        if (IS_LOD_RESOLUTION(_resol)) then
+	                        {
+                                        _UV =  getUVSetList _obj;
+                                        _count = count _UV;
+	                                if (_count>2) then
+                                        {
+                                                if (true) then ERROR("3rd UV not supported");
+	                                        if ((0 in _UV)and (1 in _UV)) then
+	                                        {
+	                                                _obj setActiveUVSet 0;
+	                                                _UV = _UV- [0,1];
+	                                                {
+	                                                        _obj deleteUVSet _x;
+	                                                }foreach _UV;
+	                                                _changed=true;
+                                                } else ERROR("no 0 and 1 UV SET");
+                                        };
+	                        };
+
+	                        //check 2. UV in not visible LODS
+	                        if (NOT IS_LOD_RESOLUTION(_resol)) then
+	                        {
+                        		_UV =  getUVSetList _obj;
+                                        _count = count _UV;
+	                                if (_count>1) then
+                                        {
+                                                if (true) then ERROR("2nd UV in special lod ");
+	                                        if (0 in _UV) then
+	                                        {
+	                                                _obj setActiveUVSet 0;
+	                                                _UV = _UV- [0];
+	                                                {
+	                                                        _obj deleteUVSet _x;
+	                                                }foreach _UV;
+	                                                _changed=true;
+                                                } else ERROR("no 0 and 1 UV SET");
+                                        };
+	                                //mesh deleteUVSet UVSet_id
+	                                //mesh isUVSet UVSet_id
+	                                //mesh setActiveUVSet UVSet_id
+	                        };
+	                };
+	        };
+                if (_changed and !runFromO2) then
+                {
+                  if (!save p3d)then {console <<"unable to SAVE "<<p3dname<<eoln;};
+                };
+        };
+};
+
+if (typename this=="STRING") then
+{
+        _filename= this;
+
+        if (_filename@((count _filename) - 1)=="\") then
+        {
+	        _stream =  shellCmdOpenPipe ("CMD /C for /r "+_filename+" %i in (*.p3d)do @ECHO %i");
+	        while {! eof _stream} do
+	        {
+	          (getline _stream) call f_main;
+	        };
+	        shellCmd("CMD /C pause");
+	        console << "konec" << eoln;
+        }
+        else
+        {
+          _filename call f_main;
+        }
+}
+else
+{
+	this call f_main;
+};

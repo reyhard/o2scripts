@@ -1,0 +1,98 @@
+//#include "std\paramFile.inc"
+#include "std\lodNames.inc"
+
+
+lastLodShow=-1;
+inLodShow={
+	private "_res";
+	bugreported=true;
+	if (lastLodShow!=_this) then
+	{
+				_res=eoln+"In level "+(_this call lodNameGetName)+":"+eoln;
+		lastLodShow=_this;
+	}
+	else
+	{
+		_res="";
+	};
+_res
+};
+#define ERROR(x) {console<<(_resol call inLodShow)<<"	"<<x<<eoln;}
+
+console = openStandardIO;
+
+_log = "p:\log.txt";
+_wrnlog = "p:\wrn.txt";
+
+shellCmd ("CMD /C DEL /Q "+_log+" 2>nul");
+shellCmd ("CMD /C DEL /Q "+_wrnlog+" 2>nul");
+
+f_main =
+{
+	_fail =false;
+	_changed = false;
+	if (typename _this=="STRING") then
+	{
+		p3d=newLODObject;
+		p3dname=_this;
+				_fail = !(p3d loadP3d p3dname);
+		if (_fail) then {	console<<"Unable to open:"<<p3dname<<eoln;};
+		runFromO2=false;
+		texpath=((splitPath p3dname) @ 0);
+	}
+	else
+	{
+		p3dname=nameof _this;
+		p3dname=splitPath p3dname;
+		p3dname=p3dname @ 2 + p3dname @ 3;
+		runFromO2=true;
+		p3d=_this;
+	};
+	if (!_fail) then
+	{
+		console<<"----------------------------------------------------------------------"<<eoln;
+		console<<"Checking file: "<<p3dname<<eoln;
+		objects=getObjects p3d;
+		resols=getResolutions p3d;
+		for "_i" from 0 to (count p3d-1) do
+		{
+			private ["_obj","_resol","_isol","_numsect","_degen"];
+			_resol=resols @ _i;
+			_obj=objects @ _i;
+			//
+			if (LOD_GEOMETRY == (_resol) OR LOD_VIEWGEO == (_resol) OR LOD_FIREGEO == (_resol)) then
+			{
+				_obj callRuntime "createcompo";
+				_changed=true;
+			};
+		};
+		if (_changed and !runFromO2) then
+		{
+			if (!save p3d)then {console <<"unable to SAVE "<<p3dname<<eoln;};
+		};
+	};
+};
+
+if (typename this=="STRING") then
+{
+		_filename= this;
+
+		if (_filename@((count _filename) - 1)=="\") then
+		{
+			_stream =  shellCmdOpenPipe ("CMD /C for /r "+_filename+" %i in (*.p3d)do @ECHO %i");
+			while {! eof _stream} do
+			{
+			  (getline _stream) call f_main;
+			};
+			shellCmd("CMD /C pause");
+			console << "ja sem konec" << eoln;
+		}
+		else
+		{
+		  _filename call f_main;
+		}
+}
+else
+{
+	this call f_main;
+};
