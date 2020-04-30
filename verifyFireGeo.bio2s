@@ -1,0 +1,15 @@
+_obj = getActiveObject this;
+_toVerify = _obj loadSelection "_current";
+{
+    sel=_obj loadSelection _x;;
+    // Add suspicious selection to the list
+    if(countPoints sel == 3)then{
+    	if((_x find "Component" >= 0))then
+    	{ 
+    		_toVerify += sel; 
+    	};  
+    };
+}forEach (getSelections _obj);
+
+selectPointsFromFaces _toVerify;
+_obj save (_toVerify as "_current");

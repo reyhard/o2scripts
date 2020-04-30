@@ -1,6 +1,6 @@
 @ECHO OFF
 set Object=C:\Program Files (x86)\Steam\SteamApps\common\Arma 3 Tools\ObjectBuilder\O2Script.exe
-set Script=C:\Program Files (x86)\Steam\SteamApps\common\Arma 3 Tools\ObjectBuilder\O2Scripts\renameSpareWheelsTI.bio2s
+set Script=C:\Program Files (x86)\Steam\SteamApps\common\Arma 3 Tools\ObjectBuilder\RDS\O2Scripts\renameSpareWheelsTI.bio2s
 if exist %1\* goto dir
 
 :file
