@@ -1,0 +1,147 @@
+#include "std\lodNames.inc"
+#include "std\o2config.inc"
+#include "std\paramFile.inc"
+#include "CheckMat.inc.bio2s"
+#include "std\flags.inc"
+
+/*
+
+Export composition by selecting all your elements in 3DEN
+Go to Tools -> Debug Console, put in this script and click Local Exec, you now have the _data in your clipboard, put it in below
+
+############ (script is between ######'s, the # are not part of it)
+
+private _posArray = []; 
+private _center = [0,0,0]; 
+private _selection = get3DENSelected "Object";
+ 
+{ 
+    private _modelPath = getText (configOf _x >> "model"); 
+    private _position = (getPosASL _x); 
+    private _dir = (_x get3DENAttribute "Rotation") # 0;     
+ 
+    if (_x isKindOf "WeaponHolder") then {
+        //I only support one item per holder, usually the case in 3den
+    
+        private _isGun = false;
+    
+        private _weaponClass = if ((getItemCargo _x select 0) isEqualTo []) then { //#TODO magazine?
+            _isGun = true;
+            (getWeaponCargo _x select 0) select 0
+        } else {
+            (getItemCargo _x select 0) select 0
+        };
+        
+        private _weaponConfig = configFile >> "CfgWeapons" >> _weaponClass;
+        _modelPath =  getText (_weaponConfig >> "model"); 
+        
+        
+        private _heightOffset = ((getPosASL _x) select 2) - ((_x modelToWorld [0,0,0]) select 2);
+        
+        private _bounds = 2 boundingBoxReal _x;
+        private _holderHeight = abs (_bounds select 0 select 2);
+        
+        _position = (_x modelToWorld [0,0,- _holderHeight]) vectorAdd [0,0,_heightOffset]; 
+        
+        _dir = [_dir#1, _dir#2, _dir#0 - 270  + 180];
+        if (_isGun) then {
+            _dir = _dir vectorAdd [0, -180, 0];
+        }        
+    };
+
+    _center = _center vectorAdd _position;
+
+    _posArray pushBack [_modelPath, _position, _dir]; 
+} forEach _selection; 
+ 
+
+private _heights = _posArray apply {_x select 1 select 2};
+_center = _center vectorMultiply -(1/ count _selection); 
+_center set [2, - selectMin _heights];
+
+
+{_x set [1, (_x select 1) vectorAdd _center]} forEach _posArray;
+
+copyToClipboard format ["_data = %1;", _posArray]; 
+
+###########
+
+To Execute this script, Go to Object Builder, Automation -> Script -> Run Script.
+Before you run the script create your LODs, the proxies will be placed in all lods, you will want 0.0 and Geometry at minimum (unless you want the object to have no collision)
+*/
+
+
+
+// ##### Place data right under here
+_data = [
+
+["\rhsafrf\addons\rhs_infantry\gear\head\rhs_6b26_green",[0.128418,1.18542,0.535189],[2.66804e-006,1.70755e-006,176.399]],
+["rhsafrf\addons\rhs_infantry\gear\vests\rhs_6b13",[0.123535,1.23682,0.559834],[360,1.70755e-006,179.245]],
+["\A3\Structures_F\Walls\Wired_Fence_4mD_F.p3d",[0.250488,1.11987,0],[0,0,0]],
+["\A3\Structures_F_Orange\Walls\Plastic\PlasticNetFence_01_roll_F.p3d",[-0.521484,0.971313,0.263509],[0,30.1444,0]],
+["\ca\Structures_E\Misc\Misc_Market\sunshade_EP1.p3d",[-0.118652,0.601807,0],[-0,0,0]],
+["\ca\buildings\furniture\Dhangar_knihovna.p3d",[1.52832,-0.290894,0],[-0,0,144.612]],
+["\ca\structures\furniture\cases\almara\almara.p3d",[0.447266,-0.9552,0],[-0,0,167.852]],
+["\ca\structures\furniture\bathroom\basin_a\basin_a.p3d",[1.43457,-0.15918,0.6503],[0,0,325.139]],
+["\ca\buildings\furniture\case_wall_unit_part_c.p3d",[-0.802246,-0.773682,0],[-0,0,200.678]],
+["\ca\structures\furniture\decoration\flowers\flower_01.p3d",[-0.577637,-0.863647,1.22788],[0,0,0]],
+["\ca\structures\furniture\decoration\flowers\flower_02.p3d",[-0.895996,-0.886963,1.22274],[0,0,0]],
+["\ca\structures\furniture\decoration\lekarnicka\lekarnicka.p3d",[2.02148,-0.745483,0],[-0,0,162.744]],
+["\ca\structures\furniture\decoration\wallboards\picture_d\picture_d.p3d",[0.712402,-0.495728,0.830238],[0,-0,347.104]],
+["\ca\buildings\furniture\toilet_b.p3d",[-1.4917,-0.320435,0],[-0,0,120.988]],
+["\a3\Props_F_Orange\Furniture\Rug_01_F.p3d",[-0.641113,0.196655,0],[-0,0,350.155]],
+["\A3\Structures_F_Heli\Furniture\OfficeCabinet_01_F.p3d",[-1.70557,-0.91748,0],[-0,0,206.932]],
+["\rhsafrf\addons\rhs_weapons2\asval\rhs_asval_npz",[0.105957,1.09399,1.13106],[0,0.000350952,0]]
+];
+
+
+
+
+
+
+
+
+_p3d=this;
+_LODs				= getObjects _p3d;
+
+{
+	_element = _x;
+	_model = _element @ 0;
+	_pos = _element @ 1;
+	//XYZ XZY
+	_pos = [(_pos @ 0), (_pos @ 2), (_pos @ 1)];
+	_dir = _element @ 2;
+	_pitch = - (_dir @ 0);
+	_roll = - (_dir @ 1);
+	_yaw =  - (_dir @ 2);
+	// Local rotation in degrees. X is pitch, Y is roll and Z is yaw. 
+
+
+	for "_i" from 0 to ((count _p3d) - 1) do
+	{
+		_currentLOD			= _LODs @ _i;
+
+		_newProxy = _currentLOD createProxy [_model, _pos];
+		_sels = (getSelections _newProxy);
+		_selName = (getSelections _newProxy) @ (count getSelections _newProxy - 1);
+		_newsel= _newProxy loadSelection _selName;
+		
+		_mx = (_pos * -1)  mxPivotRotate [1,0,0, -_pitch];
+		_newsel transform _mx;
+		
+		_mx = (_pos * -1) mxPivotRotate [0,0,1, -_roll];
+		_newsel transform _mx;
+
+		_mx =  (_pos * -1) mxPivotRotate [0,1,0, -_yaw];
+		_newsel transform _mx;
+	};
+} forEach _data;
+
+
+
+
+
+
+
+
+
